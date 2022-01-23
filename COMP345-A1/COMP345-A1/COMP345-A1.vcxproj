@@ -142,6 +142,9 @@
     <ClCompile Include="CardsDriver.cpp" />
     <ClCompile Include="Deck.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Deck.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
