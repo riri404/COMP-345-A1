@@ -1,2 +1,4 @@
 .vscode
-MapDriver.dSYM
+MapDriver.dSYM/
+.DS_Store
+*.o
