@@ -19,7 +19,6 @@ class Territory {
   int continentNumber;
   string continentName;
   string territoryName;
-  int armyValue;
   Point coords;
   Player* player
 public:
