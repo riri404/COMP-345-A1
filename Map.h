@@ -35,8 +35,9 @@ class Continent {
 
 // map is implemented as a graph, using adjacency list
 class Map {
-  vector<pair<int, vector<Territory*>>> adjList; // adjacency list, key is the territory number and the value is a vector of adjacent territories
-  vector<pair<int, Continent*>> territories; // territories as a set of countries, each country mapped with its country number
+  vector<pair<int, vector<int>>> adjList; // adjacency list, key is the territory number and the value is a vector of adjacent territory numbers
+  vector<Territory*> territories;
+  vector<Continent*> continents;
   int numTerritories;
 public:
   Map();
@@ -47,7 +48,7 @@ public:
 };
 
 class MapLoader {
-  pair<int, vector<Territory*>> readBorder(string);
+  pair<int, vector<int>> readBorder(string);
 public:
   MapLoader();
   Map* loadMap(const string&);
