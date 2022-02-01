@@ -6,12 +6,11 @@ using namespace std;
 
 class Player;
 
-// territory class which contains info about the territory, and the player who owns it
 class Territory {
-  int playerId = -1; 
-  int armies = 0;
-  int number = 0;
+  int id = 0;
   string name = "";
+  int playerId = -1;  // this territory is owned by player with this id
+  int armies = 0;
   vector<Territory*> adjacentTerritories = {};
 public:
   ~Territory();
@@ -22,9 +21,9 @@ public:
 };
 
 class Continent {
-  int armyValue = 0;
-  int number = 0;
+  int id = 0;
   string name = "";
+  int armyValue = 0;
   vector<Territory*> territories = {};
 public:
   ~Continent();
@@ -34,10 +33,11 @@ public:
   friend ostream& operator<<(ostream&, const Continent&);
 }
 
-// map is implemented as a graph, using adjacency list
+// an adjacency list is used to represent the graph, 
+// implemented with a vector of territories, where each territory contains a vector of adjacent territories
 class Map {
-  vector<Continent*> continents = {};
-  vector<Territory*> territories = {};
+  vector<Continent*> continents = {}; // sub graphs
+  vector<Territory*> territories = {}; // adjacency list
   int numTerritories = 0;
 public:
   Map();
@@ -45,8 +45,8 @@ public:
   Map(const Map&);
   Map& operator=(const Map&);
   void addTerritory(Territory* territory);
-  void addBorder(Territory* from, Territory* to);
-  bool validate() const; // TODO: validate by going through the graph, counting each nodes that has not been visited before and comparing with total number of nodes, if equal, graph is connected, otherwise no
+  void addBorder(Territory* t1, Territory* t2);
+  bool validate() const; // TODO: validate by going through the graph, counting each nodes that has not been visited before and comparing with total number of nodes, if equal, graph is connected, otherwise no, do this for territories and continents, and finally check that continents contains no duplicate territories
 };
 
 class MapLoader {

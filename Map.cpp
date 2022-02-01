@@ -7,17 +7,17 @@ Territory::~Territory() {
   for (Territory* t : adjacentTerritories) delete t;
 }
 
-Territory::Territory(int armies, int number, string name) {
+Territory::Territory(int armies, int id, string name) {
   this->playerId = -1;
   this->armies = armies;
-  this->number = number;
+  this->id = id;
   this->name = name;
 }
 
 Territory::Territory(const Territory& other) {
   playerId = other.playerId;
   armies = other.armies;
-  number = other.number;
+  id = other.id;
   name = other.name;
   for (Territory* t : other.adjacentTerritories) {
     adjacentTerritories.push_back(new Territory(*t));
@@ -27,7 +27,7 @@ Territory::Territory(const Territory& other) {
 Territory& Territory::operator=(const Territory& rhs) {
   playerId = rhs.playerId;
   armies = rhs.armies;
-  number = rhs.number;
+  id = rhs.id;
   name = rhs.name;
   for (Territory* t : adjacentTerritories) delete t;
   adjacentTerritories.clear();
@@ -37,7 +37,7 @@ Territory& Territory::operator=(const Territory& rhs) {
 }
 
 ostream& operator<<(ostream& out, const Territory& territory) {
-  out << territory.name << " (" << territory.number << ")" << endl;
+  out << "Name: " << territory.name << " (" << territory.id << ")" << endl;
   out << "Armies: " << territory.armies << endl;
   out << "Owned by player " << territory.playerId << endl;
   return out;
@@ -47,15 +47,15 @@ Continent::~Continent() {
   for (Territory* t : territories) delete t;
 }
 
-Continent::Continent(int armyValue, int number, string name) {
+Continent::Continent(int armyValue, int id, string name) {
   this->armyValue = armyValue;
-  this->number = number;
+  this->id = id;
   this->name = name;
 }
 
 Continent::Continent(const Continent& other) {
   armyValue = other.armyValue;
-  number = other.number;
+  id = other.id;
   name = other.name;
   for (Territory* t : other.territories) {
     territories.push_back(new Territory(*t));
@@ -64,7 +64,7 @@ Continent::Continent(const Continent& other) {
 
 Continent& Continent::operator=(const Continent& rhs) {
   armyValue = rhs.armyValue;
-  number = rhs.number;
+  id = rhs.id;
   name = rhs.name;
   for (Territory* t : territories) delete t;
   territories.clear();
@@ -74,7 +74,7 @@ Continent& Continent::operator=(const Continent& rhs) {
 }
 
 ostream& operator<<(ostream& out, const Continent& continent) {
-  out << continent.name << " (" << continent.number << ")" << endl;
+  out << "Name: " << continent.name << " (" << continent.id << ")" << endl;
   out << "Army value: " << continent.armyValue << endl;
   out << "Territories: " << endl;
   for (Territory* t : continent.territories) {
