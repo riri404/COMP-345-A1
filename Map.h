@@ -1,55 +1,55 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include <utility>
 #include <vector>
 using namespace std;
 
 class Player;
 
-// x and y coordinate of the circle that will be put on a territory
-struct Point {
-  int x = 0;
-  int y = 0;
-}
-
 // territory class which contains info about the territory, and the player who owns it
 class Territory {
-  int territoryNumber = 0;
-  int continentNumber = 0;
-  string continentName = "";
-  string territoryName = "";
-  Point coords = {0, 0};
-  Player* player = nullptr;
+  int playerId = -1; 
+  int armies = 0;
+  int number = 0;
+  string name = "";
+  vector<Territory*> adjacentTerritories = {};
 public:
-  Territory();
-  Territory(int, string, string, int);
+  ~Territory();
+  Territory(int, int, sring);
   Territory(const Territory&);
   Territory& operator=(const Territory&);
+  friend ostream& operator<<(ostream&, const Territory&);
 };
 
 class Continent {
-  int continentNumber = 0;
   int armyValue = 0;
+  int number = 0;
+  string name = "";
   vector<Territory*> territories = {};
+public:
+  ~Continent();
+  Continent(int, int, string);
+  Continent(const Continent&);
+  Continent& operator=(const Continent&);
+  friend ostream& operator<<(ostream&, const Continent&);
 }
 
 // map is implemented as a graph, using adjacency list
 class Map {
-  vector<pair<int, vector<Territory*>>> adjList = {}; // adjacency list, key is the territory number and the value is a vector of adjacent territory numbers
-  vector<Territory*> territories = {};
   vector<Continent*> continents = {};
+  vector<Territory*> territories = {};
   int numTerritories = 0;
 public:
   Map();
   ~Map();
   Map(const Map&);
   Map& operator=(const Map&);
+  void addTerritory(Territory* territory);
+  void addBorder(Territory* from, Territory* to);
   bool validate() const; // TODO: validate by going through the graph, counting each nodes that has not been visited before and comparing with total number of nodes, if equal, graph is connected, otherwise no
 };
 
 class MapLoader {
-  pair<int, vector<int>> readBorder(string);
 public:
   MapLoader();
   Map* loadMap(const string&);
