@@ -26,6 +26,7 @@ public:
 
 private:
 	//attributes/ variables
+	Player playerID;
 	//vector<Territory> territoryList; 
 	//OrdersList orderList; OR vector<OrdersList> orderList
 	//Hand hand; OR vector<Hand> hand;
