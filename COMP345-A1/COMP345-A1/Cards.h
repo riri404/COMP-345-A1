@@ -1,15 +1,15 @@
 #pragma once
 
-#include <list>
+//#include <list>
+#include <vector>
+#include <string>
 #include <iostream>
 // Need to include Orders.h
 //#include "Orders.h"
+using namespace std;
 
 #ifndef CARDS_H
 #define CARDS_H
-
-// All card types 
-enum CardType { Bomb, Reingorcement, Blockage, Airlift, Diplomacy };
 
 class Hand;
 class Deck; 
@@ -17,16 +17,17 @@ class Player; // Needed for when play
 
 class Cards 
 {
+	string type;
 public:
 
-	CardType* type; // Type of card
+	//CardType* type; // Type of card
 
 	Cards();
 	Cards(const Cards& card); // Copy constructor
 
 	Cards& operator =(const Cards& card); // Assignment operatpr
 
-	Cards(CardType type); // Create card of a certain type
+	//Cards(CardType type); // Create card of a certain type
 
 	std::string toString() const; // Output the cards into a string format.
 
@@ -52,16 +53,16 @@ public:
 
 	Deck& operator=(const Deck& deck); // Assignment Constructor
 
+	void create_deck(); // Creates deck with each type of cards
+
 	// Draw method that allows player to draw a card at random from the cards remaining in the deck
 	// and place it in their hand
-	void draw(Hand* hand); 
+	Cards* draw(); 
+	std::vector<Cards*> getDeck();
 
-	int remainingCards(); // Output remaining number of cards in the deck.
+	int getMaxSize();
 
-	void addCard(CardType& type); // Add new card into deck
-	void addCard(Cards& card); // Add specific card to deck
-
-	void reset(); // Reset deck of cards to maximum capacity
+	void addCard(Cards* card); // Add specific card to deck
 
 	// Stream insertion operators
 	friend std::istream& operator>>(std::istream& in, const Deck& deck);
@@ -74,7 +75,7 @@ public:
 class Hand: public Cards
 {
 public:
-	std::list<Cards>* cards; // Collection of cards
+	std::vector<Cards*> cards; // Collection of cards
 
 	Hand();
 	Hand(const Hand& hand); // Copy constructor
@@ -85,11 +86,11 @@ public:
 
 	std::string* listAllCards();  // Lists all cards in the hand by outputting their type
 
-	void addCard(CardType& type); // Adds new card into deck
+	//void addCard(CardType& type); // Adds new card into deck
 	void addCard(Cards& card); // Add specific card to deck
 	
 	// Removes card of specified type from the hand. Card chosen is the first card found of its type.
-	void removeCard(CardType& type); 
+	//void removeCard(CardType& type); 
 
 	~Hand(); // Destructor
 };
