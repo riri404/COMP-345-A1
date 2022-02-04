@@ -1,11 +1,14 @@
 #pragma once
 
-//#include <list>
+#include <list>
 #include <vector>
 #include <string>
 #include <iostream>
-// Need to include Orders.h
-//#include "Orders.h"
+#include <cstdlib>
+#include <cassert>
+// Need to include Player.h, Orders.h
+//#include "Order.h"
+//#include "Player.h"
 using namespace std;
 
 #ifndef CARDS_H
@@ -17,80 +20,85 @@ class Player; // Needed for when play
 
 class Cards 
 {
+	vector<string> cardTypes = { "Bomb", "Reinforcement", "Blockage", "Airlift", "Diplomacy" };
+	string* cardType;
 	string type;
 public:
-
-	//CardType* type; // Type of card
-
+	
+	Player* player;
+	Deck* theDeck;
+	Hand* theHand;
+	
 	Cards();
-	Cards(const Cards& card); // Copy constructor
+	Cards(string type);
 
-	Cards& operator =(const Cards& card); // Assignment operatpr
+	Cards(const Cards& c); // Copy constructor
 
-	//Cards(CardType type); // Create card of a certain type
+	Cards& operator=(const Cards& c); // Assignment operator
 
-	std::string toString() const; // Output the cards into a string format.
+
+	string getCardType(); // Show the name of the type of card
 
 	// Creates an Order object & places it in the Players' list of orders, removes card from Hand
-	void play(Player* player, Deck* deck);
-
-	// Stream insertion operators
-	friend std::istream& operator>>(std::istream& in, const Cards& card);
-	friend std::ostream& operator<<(std::ostream& out, const Cards& card);
-
-	~Cards();
+	string play();
+	//void play(Cards* card, Deck* deck, Hand* hand);
+	
+	virtual ~Cards();
 };
 
 // Deck class
 class Deck : public Cards 
 {
-private:
-	std::list<Cards>* cards; // Collection of cards
+	int maxSize; // Limit deck size
+	vector<Cards*> myDeck; // Collection of cards
+	Cards* cardPtr; // pointer to card
+	Cards* tempCard; // for draw & remove element of vector
 
 public:
+	
 	Deck();
-	Deck(const Deck& deck); // Copy constructor
+	Deck(const Deck& deck); // Assignment operator
 
-	Deck& operator=(const Deck& deck); // Assignment Constructor
+	Deck& operator=(const Deck& deck); // Copy constructor
 
 	void create_deck(); // Creates deck with each type of cards
 
 	// Draw method that allows player to draw a card at random from the cards remaining in the deck
 	// and place it in their hand
 	Cards* draw(); 
-	std::vector<Cards*> getDeck();
+	vector<Cards*> getDeck();
 
 	int getMaxSize();
 
-	void addCard(Cards* card); // Add specific card to deck
-
-	// Stream insertion operators
-	friend std::istream& operator>>(std::istream& in, const Deck& deck);
-	friend std::ostream& operator<<(std::ostream& out, const Deck& deck);
+	void addCardDeck(Cards* card); // Add specific card to deck
 
 	~Deck(); // Destructor
 };
 
 
-class Hand: public Cards
+class Hand : public Cards
 {
+	vector<Cards*> myHand; // Collection of cards
+	vector<Cards*> playCard; // For store play cards
+	int size;
+
 public:
-	std::vector<Cards*> cards; // Collection of cards
 
 	Hand();
-	Hand(const Hand& hand); // Copy constructor
+	Hand(const Hand& hand); // Assignment Constructor
 
-	Hand& operator=(const Hand& hand); // Assignment Constructor
+	Hand& operator=(const Hand& hand);  // Copy constructor
 
-	int remainingCards(); // Output remaining number of cards in the hand
+	vector<Cards*> getHand();
 
-	std::string* listAllCards();  // Lists all cards in the hand by outputting their type
 
-	//void addCard(CardType& type); // Adds new card into deck
-	void addCard(Cards& card); // Add specific card to deck
 	
-	// Removes card of specified type from the hand. Card chosen is the first card found of its type.
-	//void removeCard(CardType& type); 
+	// If false, means have more than 6 cards. Else, have 6 cards or less
+	bool checkSize(); 
+
+	void addCardHand(Cards* card); // Add specific card to deck
+	
+	Cards* remove(Cards* card);
 
 	~Hand(); // Destructor
 };
