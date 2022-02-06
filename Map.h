@@ -11,6 +11,7 @@ class Territory {
   int id;                   // territorys ID.
   int playerId;             // territory owned by player with this id
   int armies;               // # of armies
+	vector<Territory*> adjTerritories;
   /* constructors */
 public:
   ~Territory();					        // Destructor
@@ -47,17 +48,10 @@ public:
 					 //https://www.youtube.com/watch?v=2972LRdyquk
 };
 
-// an adjacency list is used to represent the graph, 
 //-----------------------------Map---------------------------
 class Map {
 	vector<Continent*> continents; // sub graphs
-	// continents[continentId - 1] to access continent of that id
-	vector<vector<Territory*>> adjList; // adjacency list
-	// we are going to use the id of the territory as index
-	// territories[0] === adj territories of territory with id 1
-	// so, territories[territoryId - 1] used to access ajd territories
 	vector<Territory*> territories;
-	// all territories stored, for now to have a map from territoryId to its name
 	int numTerritories;
 public:
 	~Map();                      // Destructor

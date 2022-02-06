@@ -6,7 +6,7 @@ using namespace std;
 //---------------------Territory-----------------------
 // **Destructor**
 Territory::~Territory() {
-  // no delete needed
+  // map will handle delete
 }
 
 Territory::Territory() {
@@ -18,8 +18,8 @@ Territory::Territory() {
 
 // **Constructor**
 Territory::Territory(int id, string name) {
-  this->playerId = -1;
-  this->armies = 0; // idk whats the starting value
+  playerId = -1;
+  armies = 0; // idk whats the starting value
   this->id = id;
   this->name = name;
 }
@@ -30,6 +30,9 @@ Territory::Territory(const Territory& other) {
   armies = other.armies;
   id = other.id;
   name = other.name;
+  for (Territory* t : other.adjTerritories) {
+    adjTerritories.push_back(t); // shallow copy
+  }
 }// because we have pointers to atributrs for this class ==>
 // https://www.youtube.com/watch?v=PXcRe-W2w7s
 // the function operator= is a member of the class Territory we have
@@ -40,6 +43,10 @@ Territory& Territory::operator=(const Territory& rhs) {
   armies = rhs.armies;
   id = rhs.id;
   name = rhs.name;
+  adjTerritories.clear();
+  for (Territory* t : rhs.adjTerritories) {
+    adjTerritories.push_back(t);
+  }
   return *this;
 }
 // **Assignment operator << to print Territory object.**
@@ -53,7 +60,7 @@ ostream& operator<<(ostream& out, const Territory& territory) {
 //----------------------Continent--------------------------
 // **destructor**
 Continent::~Continent() {
-  for (Territory* t : territories) delete t;
+  // map will handle delete
 }
 
 Continent::Continent() {
@@ -74,9 +81,8 @@ Continent::Continent(const Continent& other) {
   armyValue = other.armyValue;
   id = other.id;
   name = other.name;
-
   for (Territory* t : other.territories) {
-    territories.push_back(new Territory(*t));
+    territories.push_back(t);
   }
 }// because we have pointers to atributrs for this class ==>
 // **overload Assignment (operator=) for Continent**
@@ -84,10 +90,8 @@ Continent& Continent::operator=(const Continent& rhs) {
     armyValue = rhs.armyValue;
     id = rhs.id;
     name = rhs.name;
-
-    for (Territory* t : territories) delete t;
     for (Territory* t : rhs.territories) {
-        territories.push_back(new Territory(*t));
+        territories.push_back(t);
     }
     return *this;
 }
@@ -104,21 +108,22 @@ ostream& operator<<(ostream& out, const Continent& continent) {
 
 //-----------------------------Map---------------------------
 Map::~Map() {
-  for (Continent* c : continents) delete c;
+  // map will store only one address for each territory, for the whole game and delete them all after the end of the game
   for (Territory* t : territories) delete t;
-  for (auto list : adjList) {
-    for (Territory* t : list) delete t;
-  }
 }
 
 Map::Map() {
-
+  numTerritories = 0;
 }
 //---------------------------Map loader----------------------
 
-void Map::readMap(const string& file) {
+void MapLoader::readMap(const string& file) {
   // you can work here
   // open file, google std::getline, std::istream for this part
   // https://stackoverflow.com/questions/29097127/c-reading-file-line-by-line
   // for help
+}
+
+void MapLoader::processData() {
+  
 }
