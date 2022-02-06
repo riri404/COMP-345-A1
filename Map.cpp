@@ -19,12 +19,12 @@ Territory::Territory() {
 // **Constructor**
 Territory::Territory(int id, string name) {
   playerId = -1;
-  armies = 0; // idk whats the starting value
+  armies = 0;
   this->id = id;
   this->name = name;
 }
+
 //  **Copy Constructor** 
-//( other is the obj that we want to copy from).
 Territory::Territory(const Territory& other) {
   playerId = other.playerId;
   armies = other.armies;
@@ -33,11 +33,9 @@ Territory::Territory(const Territory& other) {
   for (Territory* t : other.adjTerritories) {
     adjTerritories.push_back(t); // shallow copy
   }
-}// because we have pointers to atributrs for this class ==>
+}
+
 // https://www.youtube.com/watch?v=PXcRe-W2w7s
-// the function operator= is a member of the class Territory we have
-//  to add the class name and scoop operator like that (Territory::)
-// **overload Assignment (operator = ) for Territory**
 Territory& Territory::operator=(const Territory& rhs) {
   playerId = rhs.playerId;
   armies = rhs.armies;
@@ -49,12 +47,17 @@ Territory& Territory::operator=(const Territory& rhs) {
   }
   return *this;
 }
-// **Assignment operator << to print Territory object.**
+
 ostream& operator<<(ostream& out, const Territory& territory) {
   out << "Name: " << territory.name << " (" << territory.id << ")" << endl;
   out << "Armies: " << territory.armies << endl;
   out << "Owned by player " << territory.playerId << endl;
   return out;
+}
+
+void Territory::addAdjTerritory(Territory* t) {
+  if (!t) return;
+  adjTerritories.push_back(t);
 }
 
 //----------------------Continent--------------------------
@@ -84,8 +87,8 @@ Continent::Continent(const Continent& other) {
   for (Territory* t : other.territories) {
     territories.push_back(t);
   }
-}// because we have pointers to atributrs for this class ==>
-// **overload Assignment (operator=) for Continent**
+}
+
 Continent& Continent::operator=(const Continent& rhs) {
     armyValue = rhs.armyValue;
     id = rhs.id;
@@ -95,7 +98,7 @@ Continent& Continent::operator=(const Continent& rhs) {
     }
     return *this;
 }
-//**Assignment operator << to print Continent object.**
+
 ostream& operator<<(ostream& out, const Continent& continent) {
   out << "Name: " << continent.name << " (" << continent.id << ")" << endl;
   out << "Army value: " << continent.armyValue << endl;
@@ -106,6 +109,11 @@ ostream& operator<<(ostream& out, const Continent& continent) {
   return out;
 }
 
+void Continent::addTerritory(Territory* t) {
+  if (!t) return;
+  territories.push_back(t);
+}
+
 //-----------------------------Map---------------------------
 Map::~Map() {
   // map will store only one address for each territory, for the whole game and delete them all after the end of the game
@@ -114,16 +122,35 @@ Map::~Map() {
 
 Map::Map() {
   numTerritories = 0;
+  isValid = false;
 }
+
+void Map::addTerritory(Territory* t) {
+  if (!t) return;
+  territories.push_back(t);
+}
+
+void Map::addContinent(Continent* t) {
+  if (!t) return;
+  continents.push_back(t);
+}
+
 //---------------------------Map loader----------------------
 
-void MapLoader::readMap(const string& file) {
+void MapLoader::MapLoader(const string& file) {
+  fileName = file;
+}
+
+void MapLoader::readMap() {
   // you can work here
   // open file, google std::getline, std::istream for this part
   // https://stackoverflow.com/questions/29097127/c-reading-file-line-by-line
   // for help
 }
 
-void MapLoader::processData() {
-  
+void MapLoader::initializeMap(Map* map) {
+  readMap();
+  for (int i = 0; i < borders.size(); ++i) {
+    // initialize territory, continent, add territory to continent
+  }
 }

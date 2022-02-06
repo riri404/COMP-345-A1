@@ -4,11 +4,17 @@
 #include <vector>
 using namespace std;
 
+class Territory;
+class Continent;
+class Map;
+class MapLoader;
 class Player;
+
 //---------------------Territory-----------------------
 class Territory {
-  string name;             // territorys name.
-  int id;                   // territorys ID.
+	friend class MapLoader;
+  string name;             	// territory name.
+  int id;                   // territory ID.
   int playerId;             // territory owned by player with this id
   int armies;               // # of armies
 	vector<Territory*> adjTerritories;
@@ -16,15 +22,11 @@ class Territory {
 public:
   ~Territory();					        // Destructor
 	Territory(); 									// Default Constructor
-  Territory(int, string);  // Constructor
+  Territory(int, string);  			// Constructor
   Territory(const Territory&);  // Copy Constructor
-  Territory& operator=(const Territory&);//!! // Assignment operator Overloading 
-	                 // when data members are type pointer and we need deep copies
-	                 // and we have a copy constructor.
-	                 // https://www.youtube.com/watch?v=ieD3l--qgK4
-  friend ostream& operator<<(ostream&, const Territory&);//!!// we use this when
-                     //we want to print a user defined class object using COUT.
-					 //https://www.youtube.com/watch?v=2972LRdyquk
+  Territory& operator=(const Territory&); // https://www.youtube.com/watch?v=ieD3l--qgK4
+  friend ostream& operator<<(ostream&, const Territory&); // https://www.youtube.com/watch?v=2972LRdyquk
+	void addAdjTerritory(Territory*);
 };
 
 //----------------------Continent--------------------------
@@ -39,55 +41,41 @@ public:
 	Continent(); // added              // Default Constructor
 	Continent(int, int, string);       // Constructor
 	Continent(const Continent&);       // Copy Constructor
-	Continent& operator=(const Continent&); // Assignment operator Overloading 
-	                 // when data members are type pointer and we need deep copies
-	                 // and we have a copy constructor.
-	                 // https://www.youtube.com/watch?v=ieD3l--qgK4
-	friend ostream& operator<<(ostream&, const Continent&);//!! // we use this when
-                     //we want to print a user defined class object using COUT.
-					 //https://www.youtube.com/watch?v=2972LRdyquk
+	Continent& operator=(const Continent&);
+	friend ostream& operator<<(ostream&, const Continent&);
+	void addTerritory(Territory*);
 };
 
 //-----------------------------Map---------------------------
 class Map {
+	friend class MapLoader;
 	vector<Continent*> continents; // sub graphs
 	vector<Territory*> territories;
 	int numTerritories;
+	bool isValid;
 public:
 	~Map();                      // Destructor
 	Map();                       // Default Constructor
 	Map(const Map&);             // Copy Constructor 
 	Map& operator=(const Map&);  // Assignment operator Overloading
-	friend ostream& operator << (ostream& out, const Map& );//added//
-	void addContinentToMap(Continent* continent);  //added//
+	friend ostream& operator << (ostream& out, const Map& );
+	void addContinent(Continent* continent);
 	void addTerritory(Territory* territory);
-	void addBorder(Territory* t1, Territory* t2);
-	
-	bool validate() const; // TODO: validate by going through the graph, 
-	                       //counting each nodes that has not been visited 
-	                       //before and comparing with total number of nodes
-	                       //, if equal, graph is connected, otherwise no, 
-	                       //do this for territories and continents, 
-		                  	 //and finally check that continents contains 
-	                       //no duplicate territories.
+	void setNumOfTerritories(int num);
+	bool validate() const;
 };
+
 //---------------------------Map loader--------------------------
+// maploader will first extract the 3 sections (borders, continents and countries) of the file into 3 vectors of string which is then processed and used to initialize the map
 class MapLoader {
-	string fileName; // to read the file name???
-	vector<string> borders; // store each line of the border section in the vector
-	// ex. ["1 2 3 4", "2 12 10 5", ...]
-	vector<string> continents; // same as borders
-	vector<string> countries;  // same as borders
-	// check source_maps folder for an example file
-	// we will obtain all the data first, then we will process the data and create the objects
+	string fileName;
+	vector<string> borders;
+	vector<string> continents;
+	vector<string> countries;
 public:
-  ~MapLoader();//do we need this?? 
-  MapLoader();
-  MapLoader(const MapLoader&);// do we need this??
-  MapLoader& operator = (const MapLoader& );// do we need this??
-  friend ostream& operator<<(ostream& out, const MapLoader&); //added//ostream operator
-  void readMap(const string&); // TODO: open any .map file and fill up the 3 vectors (borders, continents and countries)
-	void processData(); // not completed yet
+  MapLoader(const string&);
+  void readMap(); // TODO: open any .map file and fill up the 3 vectors (borders, continents and countries)
+	void initializeMap(Map* map) const;
 };
 
 #endif
