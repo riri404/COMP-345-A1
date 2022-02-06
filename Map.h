@@ -26,8 +26,12 @@ public:
   Territory& operator=(const Territory&); // https://www.youtube.com/watch?v=ieD3l--qgK4
   friend ostream& operator<<(ostream&, const Territory&); // https://www.youtube.com/watch?v=2972LRdyquk
 	void addAdjTerritory(Territory*);
-	void setPlayerOwnership(int);
+	void setPlayerId(int);
 	int getId() const;
+	int getPlayerId() const;
+	int getArmies() const;
+	string getName() const;
+	vector<Territory*> getAdjTerritories() const;
 };
 
 //----------------------Continent--------------------------
@@ -46,38 +50,46 @@ public:
 	friend ostream& operator<<(ostream&, const Continent&);
 	void addTerritory(Territory*);
 	int getId() const;
+	int getArmyValue() const;
+	int getName() const;
+	vector<Territory*> getTerritories() const;
 };
 
 //-----------------------------Map---------------------------
 class Map {
+	friend class MapLoader;
 	vector<Continent*> continents; // sub graphs
 	vector<Territory*> territories;
+	string name;
 	int numTerritories;
+	bool isConnected;
+	void addTerritoryToContinent(int, Territory*) const;
+	void addContinent(Continent*);
+	void addTerritory(Territory*);
+	bool validateContinents() const; // check if each continent is a connected subgraph (store all territoryid of a continent, check if each adj territory of all the territories are in the list, if one is not then it is invalid)
+	bool validateTerritories() const; // check if each territory belong to only one continent
 public:
 	~Map();                      // Destructor
 	Map();                       // Default Constructor
 	Map(const Map&);             // Copy Constructor 
 	Map& operator=(const Map&);  // Assignment operator Overloading
-	friend ostream& operator << (ostream&, const Map& );
-	void addTerritoryToContinent(int continentId, Territory*) const;
-	void addContinent(Continent*);
-	void addTerritory(Territory*);
-	void setNumberOfTerritories(int);
-	Territory* findTerritory(int id) const;
+	friend ostream& operator<<(ostream&, const Map& );
+	Territory* findTerritory(int) const;
+	Territory* findTerritory(const string&) const;
 	bool validate() const;
 };
 
 //---------------------------Map loader--------------------------
 // maploader will first extract the 3 sections (borders, continents and territories) of the file into 3 vectors of string which is then processed and used to initialize the map
 class MapLoader {
-	string fileName;
+	string mapName;
 	vector<string> borders;
 	vector<string> continents;
 	vector<string> territories;
+	void readMap(const string&); // TODO: open any .map file and fill up the 3 vectors (borders, continents and countries) and mapName
 public:
-  MapLoader(const string& fileName);
-  void readMap(); // TODO: open any .map file and fill up the 3 vectors (borders, continents and countries)
-	void initializeMap(Map*) const;
+  MapLoader();
+	Map* getMap(const string&) const;
 };
 
 #endif

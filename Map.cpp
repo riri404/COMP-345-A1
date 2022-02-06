@@ -5,10 +5,7 @@
 
 using namespace std;
 //---------------------Territory-----------------------
-// **Destructor**
-Territory::~Territory() {
-  // map will handle delete
-}
+Territory::~Territory() { } // map will handle memory
 
 Territory::Territory() {
   playerId = -1;
@@ -17,7 +14,6 @@ Territory::Territory() {
   name = "";
 }
 
-// **Constructor**
 Territory::Territory(int id, string name) {
   playerId = -1;
   armies = 0;
@@ -25,7 +21,6 @@ Territory::Territory(int id, string name) {
   this->name = name;
 }
 
-//  **Copy Constructor** 
 Territory::Territory(const Territory& other) {
   playerId = other.playerId;
   armies = other.armies;
@@ -36,7 +31,6 @@ Territory::Territory(const Territory& other) {
   }
 }
 
-// https://www.youtube.com/watch?v=PXcRe-W2w7s
 Territory& Territory::operator=(const Territory& rhs) {
   playerId = rhs.playerId;
   armies = rhs.armies;
@@ -57,23 +51,19 @@ ostream& operator<<(ostream& out, const Territory& territory) {
 }
 
 void Territory::addAdjTerritory(Territory* t) {
-  if (!t) return;
   adjTerritories.push_back(t);
 }
 
-void Territory::setPlayerOwnership(int playerId) {
-  this->playerId = playerId;
-}
-
-int Territory::getId() {
-  return id;
-}
+// getter and setters
+void Territory::setPlayerId(int playerId) { this->playerId = playerId; }
+int Territory::getId() { return id; }
+int Territory::getPlayerId() { return playerId; }
+int Territory::getArmies() { return armies; }
+string Territory::getName() { return name; }
+vector<Territory*> Territory::getAdjTerritories() { return adjTerritories; }
 
 //----------------------Continent--------------------------
-// **destructor**
-Continent::~Continent() {
-  // map will handle delete
-}
+Continent::~Continent() { } // map will handle memory
 
 Continent::Continent() {
   this->armyValue = -1;
@@ -81,14 +71,12 @@ Continent::Continent() {
   this->name = "";
 }
 
-// **Constructor**
 Continent::Continent(int armyValue, int id, string name) {
   this->armyValue = armyValue;
   this->id = id;
   this->name = name;
 }
 
-//  **Copy Constructor**
 Continent::Continent(const Continent& other) {
   armyValue = other.armyValue;
   id = other.id;
@@ -118,14 +106,15 @@ ostream& operator<<(ostream& out, const Continent& continent) {
   return out;
 }
 
-void Continent::addTerritory(Territory* t) {
-  if (!t) return;
-  territories.push_back(t);
+void Continent::addTerritory(Territory* t) { 
+  territories.push_back(t); 
 }
 
-int Continent::getId() {
-  return id;
-}
+// getters and setters
+int Continent::getId() { return id; }
+int Continent::getArmyValue() { return armyValue; }
+string Continent::getName() { return name; }
+vector<Territory*> Continent::getTerritories() { return territories; }
 
 //-----------------------------Map---------------------------
 Map::~Map() {
@@ -137,7 +126,7 @@ Map::~Map() {
 
 Map::Map() {
   numTerritories = 0;
-  isValid = false;
+  isConnected = false;
 }
 
 void Map::addTerritoryToContinent(int continentId, Territory* t) {
@@ -150,17 +139,11 @@ void Map::addTerritoryToContinent(int continentId, Territory* t) {
 }
 
 void Map::addTerritory(Territory* t) {
-  if (!t) return;
   territories.push_back(t);
 }
 
 void Map::addContinent(Continent* t) {
-  if (!t) return;
   continents.push_back(t);
-}
-
-void Map::setNumberOfTerritories(int n) {
-  numTerritories = n;
 }
 
 Territory* Map::findTerritory(int id) {
@@ -170,25 +153,41 @@ Territory* Map::findTerritory(int id) {
   return nullptr;
 }
 
+Territory* Map::findTerritory(const string& name) {
+  for (Territory* t : territories) {
+    if (t->getName() == name) return t;
+  }
+  return nullptr;
+}
+
+bool Map::validateContinents() {
+  for (Continent* c : continents) {
+    
+  }
+}
+
 bool Map::validate() {
   // TODO
 }
 
 //---------------------------Map loader----------------------
-void MapLoader::MapLoader(const string& fileName) {
-  this->fileName = fileName;
+void MapLoader::MapLoader() {
+  mapName = "Map"; // default name
 }
 
-void MapLoader::readMap() {
+void MapLoader::readMap(const string& fileName) {
   // you can work here
   // open file, google std::getline, std::istream for this part
   // https://stackoverflow.com/questions/29097127/c-reading-file-line-by-line
   // for help
+  // get the map name too just in case
 }
 
-void MapLoader::initializeMap(Map* map) {
+void MapLoader::getMap() {
+  Map* map = new Map();
   readMap();
-  map->setNumberOfTerritories(territories.size());
+  map->name = mapName;
+  map->numTerritories = territories.size();
   for (int i = 0; i < continents.size(); ++i) {
     // initializing continents
     istringstream iss(continents[i]);
@@ -216,9 +215,15 @@ void MapLoader::initializeMap(Map* map) {
     int adjId = 0; // adj territory
     iss >> id; 
     Territory* t = map->findTerritory(id);
+    bool isConnected = false;
     while (iss >> adjId) {
       Territory* adjT = map->findTerritory(adjId);
       t->addAdjTerritory(adjT);
+      isConnected = true;;
     }
+    // if theres no adj territories for one territory,
+    // then graph is not connected
+    map->isConnected = isConnected;
+    return map;
   }
 }
