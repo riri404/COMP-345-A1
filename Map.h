@@ -12,7 +12,6 @@ class Player;
 
 //---------------------Territory-----------------------
 class Territory {
-	friend class MapLoader;
   string name;             	// territory name.
   int id;                   // territory ID.
   int playerId;             // territory owned by player with this id
@@ -27,6 +26,8 @@ public:
   Territory& operator=(const Territory&); // https://www.youtube.com/watch?v=ieD3l--qgK4
   friend ostream& operator<<(ostream&, const Territory&); // https://www.youtube.com/watch?v=2972LRdyquk
 	void addAdjTerritory(Territory*);
+	void setPlayerOwnership(int);
+	int getId() const;
 };
 
 //----------------------Continent--------------------------
@@ -44,38 +45,39 @@ public:
 	Continent& operator=(const Continent&);
 	friend ostream& operator<<(ostream&, const Continent&);
 	void addTerritory(Territory*);
+	int getId() const;
 };
 
 //-----------------------------Map---------------------------
 class Map {
-	friend class MapLoader;
 	vector<Continent*> continents; // sub graphs
 	vector<Territory*> territories;
 	int numTerritories;
-	bool isValid;
 public:
 	~Map();                      // Destructor
 	Map();                       // Default Constructor
 	Map(const Map&);             // Copy Constructor 
 	Map& operator=(const Map&);  // Assignment operator Overloading
-	friend ostream& operator << (ostream& out, const Map& );
-	void addContinent(Continent* continent);
-	void addTerritory(Territory* territory);
-	void setNumOfTerritories(int num);
+	friend ostream& operator << (ostream&, const Map& );
+	void addTerritoryToContinent(int continentId, Territory*) const;
+	void addContinent(Continent*);
+	void addTerritory(Territory*);
+	void setNumberOfTerritories(int);
+	Territory* findTerritory(int id) const;
 	bool validate() const;
 };
 
 //---------------------------Map loader--------------------------
-// maploader will first extract the 3 sections (borders, continents and countries) of the file into 3 vectors of string which is then processed and used to initialize the map
+// maploader will first extract the 3 sections (borders, continents and territories) of the file into 3 vectors of string which is then processed and used to initialize the map
 class MapLoader {
 	string fileName;
 	vector<string> borders;
 	vector<string> continents;
-	vector<string> countries;
+	vector<string> territories;
 public:
-  MapLoader(const string&);
+  MapLoader(const string& fileName);
   void readMap(); // TODO: open any .map file and fill up the 3 vectors (borders, continents and countries)
-	void initializeMap(Map* map) const;
+	void initializeMap(Map*) const;
 };
 
 #endif

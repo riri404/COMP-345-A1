@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 #include "Map.h"
 
 using namespace std;
@@ -60,6 +61,14 @@ void Territory::addAdjTerritory(Territory* t) {
   adjTerritories.push_back(t);
 }
 
+void Territory::setPlayerOwnership(int playerId) {
+  this->playerId = playerId;
+}
+
+int Territory::getId() {
+  return id;
+}
+
 //----------------------Continent--------------------------
 // **destructor**
 Continent::~Continent() {
@@ -114,15 +123,30 @@ void Continent::addTerritory(Territory* t) {
   territories.push_back(t);
 }
 
+int Continent::getId() {
+  return id;
+}
+
 //-----------------------------Map---------------------------
 Map::~Map() {
   // map will store only one address for each territory, for the whole game and delete them all after the end of the game
+  // and delete all the continents also
   for (Territory* t : territories) delete t;
+  for (Continent* c : continents) delete c;
 }
 
 Map::Map() {
   numTerritories = 0;
   isValid = false;
+}
+
+void Map::addTerritoryToContinent(int continentId, Territory* t) {
+  for (Continent* c : continents) {
+    if (c->getId() == continentId) {
+      c->addTerritory(t);
+      break;
+    }
+  }
 }
 
 void Map::addTerritory(Territory* t) {
@@ -135,10 +159,24 @@ void Map::addContinent(Continent* t) {
   continents.push_back(t);
 }
 
-//---------------------------Map loader----------------------
+void Map::setNumberOfTerritories(int n) {
+  numTerritories = n;
+}
 
-void MapLoader::MapLoader(const string& file) {
-  fileName = file;
+Territory* Map::findTerritory(int id) {
+  for (Territory* t : territories) {
+    if (t->getId() == id) return t;
+  }
+  return nullptr;
+}
+
+bool Map::validate() {
+  // TODO
+}
+
+//---------------------------Map loader----------------------
+void MapLoader::MapLoader(const string& fileName) {
+  this->fileName = fileName;
 }
 
 void MapLoader::readMap() {
@@ -150,7 +188,37 @@ void MapLoader::readMap() {
 
 void MapLoader::initializeMap(Map* map) {
   readMap();
-  for (int i = 0; i < borders.size(); ++i) {
-    // initialize territory, continent, add territory to continent
+  map->setNumberOfTerritories(territories.size());
+  for (int i = 0; i < continents.size(); ++i) {
+    // initializing continents
+    istringstream iss(continents[i]);
+    string name = "";
+    int armyValue = 0;
+    int id = i + 1;
+    iss >> name >> armyValue;
+    map->addContinent(new Continent(armyValue, id, name));
+  }
+  for (const string& territory : territories) {
+    // initializing territories, and adding territories to continents
+    istringstream iss(territory);
+    int id = 0;
+    string name = "";
+    int continentId = 0;
+    iss >> id >> name >> continentId;
+    Territory* t = new Territory(id, name);
+    map->addTerritory(t);
+    map->addTerritoryToContinent(continentId, t);
+  }
+  for (const string& border : borders) {
+    // adding all the adj territories to each territory
+    istringstream iss(border);
+    int id = 0; // territory;
+    int adjId = 0; // adj territory
+    iss >> id; 
+    Territory* t = map->findTerritory(id);
+    while (iss >> adjId) {
+      Territory* adjT = map->findTerritory(adjId);
+      t->addAdjTerritory(adjT);
+    }
   }
 }
