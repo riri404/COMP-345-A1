@@ -227,7 +227,8 @@ void MapLoader::readMap(const string& fileName) {
   fileObj.close();
 }
 
-Map* MapLoader::getMap() const {
+Map* MapLoader::getMap(const string& fileName) const {
+  readMap(fileName);
   Map* map = new Map();
   map->name = mapName;
   map->numTerritories = territories.size();

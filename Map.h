@@ -89,7 +89,7 @@ class MapLoader {
 public:
   MapLoader();
 	void readMap(const string&);
-	Map* getMap() const;
+	Map* getMap(const string&) const;
 };
 
 #endif
