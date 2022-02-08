@@ -134,6 +134,10 @@ void Continent::addTerritory(Territory* t) {
   territories.push_back(t); 
 }
 
+bool Continent::contains(Territory* t) const {
+  return find(territories.begin(), territories.end(), t) != territories.end();
+}
+
 // getters and setters
 int Continent::getId() const { return id; }
 int Continent::getArmyValue() const { return armyValue; }
@@ -151,6 +155,12 @@ Map::~Map() {
 Map::Map() {
   numTerritories = 0;
   isConnected = false;
+}
+
+bool contains(vector<Territory*>& territories, Territory* t) {
+  auto begin = territories.begin();
+  auto end = territories.end();
+  return find(begin, end, t) != end;
 }
 
 void Map::addTerritoryToContinent(int continentId, Territory* t) const {
@@ -189,16 +199,17 @@ void Map::validateGraph(vector<Territory*>& visited, Territory* t) const {
   visited.push_back(t);
   auto adjTerritories = t->getAdjTerritories();
   for (auto adjTerritory : adjTerritories) {
-    validateMap(visited, adjTerritory);
+    validateGraph(visited, adjTerritory);
   }
 }
 
-bool Map::validateContinents() const {
-  bool isValid = false;
-  for (Continent* c : continents) {
-    if (!(c->isValid())) return false;
+void Map::validateContinents(vector<Territory*>& visited, Territory* t, Continent* c) const {
+  if (contains(visited, t) || !(c->contains(t)) ) return;
+  visited.push_back(t);
+  auto adjTerritories = t->getAdjTerritories();
+  for (auto adjTerritory : adjTerritories) {
+    validateContinents(visited, adjTerritory, c);
   }
-  return true;
 }
 
 bool Map::validateTerritories() const {
@@ -208,17 +219,19 @@ bool Map::validateTerritories() const {
 bool Map::validate() const {
   bool isGraphConnected = false;
   bool areContinentsValid = false;
-  bool areTerritoriesValid = false;
+  bool areTerritoriesValid = true;
   vector<Territory*> visited;
   validateGraph(visited, territories[0]);
-  if (visited == numTerritories) isGraphConnected = true;
+  if (visited.size() == numTerritories) isGraphConnected = true;
+  visited.clear();
+  for (Continent* c : continents) {
+    auto t = c->getTerritories()[0];
+    validateContinents(visited, t, c);
+    if (visited.size() == c->getTerritories().size()) areContinentsValid = true;
+    else return false;
+    visited.clear();
+  }
   return isGraphConnected && areContinentsValid && areTerritoriesValid;
-}
-
-bool contains(vector<Territory*>& territories, Territory* t) {
-  auto begin = territories.begin();
-  auto end = territories.end();
-  return find(begin, end, t) != end;
 }
 
 //---------------------------Map loader----------------------
