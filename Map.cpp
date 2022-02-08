@@ -269,12 +269,12 @@ MapLoader::MapLoader() {
   mapName = "Map"; // default name
 }
 
-void MapLoader::readMap(const string& fileName) {
+bool MapLoader::readMap(const string& fileName) {
   string line = "";
   fstream fileObj(fileName);
   if (!fileObj.is_open()) {
     cerr << "Error opening file" << endl;;
-    return;
+    return false;
   }
   // flags to keep track of which section we are reading
   bool isContinent = false;
@@ -312,6 +312,7 @@ void MapLoader::readMap(const string& fileName) {
     if (isBorder) borders.push_back(line);
   }
   fileObj.close();
+  return true;
 }
 
 void MapLoader::loadMap(Map* map) {
@@ -356,7 +357,10 @@ void MapLoader::loadMap(Map* map) {
 
 void MapLoader::loadMap(Map* map, const string& fileName) {
   // data is extracted from each line of each section (continents, countries and borders) and used to create the map
-  readMap(fileName);
+  if (!readMap(fileName)) {
+    map->isLoaded = false;
+    return;
+  }
   map->name = mapName;
   map->numTerritories = territories.size();
   for (int i = 0; i < continents.size(); ++i) {

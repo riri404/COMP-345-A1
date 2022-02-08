@@ -99,7 +99,7 @@ class MapLoader {
 	MapLoader(const MapLoader&);
 	MapLoader& operator=(const MapLoader&);
 	friend ostream& operator<<(ostream&, const MapLoader&);
-	void readMap(const string&);
+	bool readMap(const string&);
 	void loadMap(Map*, const string&);
 	void loadMap(Map*); // loading map from existing maploader
 	string mapName;
