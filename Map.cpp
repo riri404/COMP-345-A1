@@ -136,13 +136,6 @@ Map::~Map() {
   delete mapLoader;
 }
 
-Map::Map() {
-  mapLoader = new MapLoader();
-  isLoaded = false;
-  name = "N/A";
-  numTerritories = 0;
-}
-
 Map::Map(const string& fileName) {
   mapLoader = new MapLoader();
   load(fileName);
@@ -150,7 +143,7 @@ Map::Map(const string& fileName) {
 
 Map::Map(const Map& other) {
   mapLoader = new MapLoader(*(other.mapLoader));
-  mapLoader->loadMap(this);
+  load();
 }
 
 Map& Map::operator=(const Map& rhs) {
@@ -171,13 +164,15 @@ bool contains(vector<Territory*>& territories, Territory* t) {
   return find(begin, end, t) != end;
 }
 
-void Map::addTerritoryToContinent(int continentId, Territory* t) const {
+bool Map::addTerritoryToContinent(int continentId, Territory* t) const {
   for (Continent* c : continents) {
     if (c->getId() == continentId) {
       c->addTerritory(t);
-      break;
+      return true;
     }
   }
+  // territory's continent does not exist, map file is invalid
+  return false;
 }
 
 void Map::addTerritory(Territory* t) {
@@ -317,47 +312,8 @@ bool MapLoader::readMap(const string& fileName) {
 
 void MapLoader::loadMap(Map* map) {
   // data is extracted from each line of each section (continents, countries and borders) and used to create the map
-  map->name = mapName;
-  map->numTerritories = territories.size();
-  for (int i = 0; i < continents.size(); ++i) {
-    // initializing continents
-    istringstream iss(continents[i]);
-    string name = "";
-    int armyValue = 0;
-    int id = i + 1;
-    iss >> name >> armyValue; // reading the first 2 tokens in the string
-    map->addContinent(new Continent(armyValue, id, name));
-  }
-  for (const string& territory : territories) {
-    // initializing territories, and adding territories to continents
-    istringstream iss(territory);
-    int id = 0;
-    string name = "";
-    int continentId = 0;
-    iss >> id >> name >> continentId; // reading first 3 tokens
-    Territory* t = new Territory(id, name);
-    map->addTerritory(t);
-    map->addTerritoryToContinent(continentId, t);
-  }
-  for (const string& border : borders) {
-    // adding all the adj territories to each territory
-    istringstream iss(border);
-    int id = 0;
-    int adjId = 0;
-    iss >> id; // reading first token
-    Territory* t = map->findTerritory(id);
-    // reading the rest
-    while (iss >> adjId) {
-      Territory* adjT = map->findTerritory(adjId);
-      t->addAdjTerritory(adjT);
-    }
-  }
-  map->isLoaded = true;
-}
-
-void MapLoader::loadMap(Map* map, const string& fileName) {
-  // data is extracted from each line of each section (continents, countries and borders) and used to create the map
-  if (!readMap(fileName)) {
+   // check if map contnet is valid
+  if (continents.size() == 0 || territories.size() == 0 || borders.size() == 0 || borders.size() != territories.size()) {
     map->isLoaded = false;
     return;
   }
@@ -381,7 +337,10 @@ void MapLoader::loadMap(Map* map, const string& fileName) {
     iss >> id >> name >> continentId; // reading first 3 tokens
     Territory* t = new Territory(id, name);
     map->addTerritory(t);
-    map->addTerritoryToContinent(continentId, t);
+    if (!map->addTerritoryToContinent(continentId, t)) {
+      map->isLoaded = false;
+      return;
+    }
   }
   for (const string& border : borders) {
     // adding all the adj territories to each territory
@@ -396,6 +355,61 @@ void MapLoader::loadMap(Map* map, const string& fileName) {
       t->addAdjTerritory(adjT);
     }
   }
+  map->isLoaded = true;
+}
+
+void MapLoader::loadMap(Map* map, const string& fileName) {
+  // data is extracted from each line of each section (continents, countries and borders) and used to create the map
+  // check if map can be opened
+  if (!readMap(fileName)) {
+    map->isLoaded = false;
+    return;
+  }
+  // check if map contnet is valid
+  if (continents.size() == 0 || territories.size() == 0 || borders.size() == 0 || borders.size() != territories.size()) {
+    map->isLoaded = false;
+    return;
+  }
+  map->name = mapName;
+  map->numTerritories = territories.size();
+  for (int i = 0; i < continents.size(); ++i) {
+    // initializing continents
+    istringstream iss(continents[i]);
+    string name = "";
+    int armyValue = 0;
+    int id = i + 1;
+    iss >> name >> armyValue; // reading the first 2 tokens in the string
+    map->addContinent(new Continent(armyValue, id, name));
+  }
+  for (const string& territory : territories) {
+    // initializing territories, and adding territories to continents
+    istringstream iss(territory);
+    int id = 0;
+    string name = "";
+    int continentId = 0;
+    iss >> id >> name >> continentId; // reading first 3 tokens
+    Territory* t = new Territory(id, name);
+    map->addTerritory(t);
+    // if territory's continent does not exist, invalid map
+    if (!map->addTerritoryToContinent(continentId, t)) {
+      map->isLoaded = false;
+      return;
+    }
+  }
+  for (const string& border : borders) {
+    // adding all the adj territories to each territory
+    istringstream iss(border);
+    int id = 0;
+    int adjId = 0;
+    iss >> id; // reading first token
+    Territory* t = map->findTerritory(id);
+    // reading the rest
+    while (iss >> adjId) {
+      Territory* adjT = map->findTerritory(adjId);
+      t->addAdjTerritory(adjT);
+    }
+  }
+
   map->isLoaded = true;
 }
 

@@ -70,7 +70,7 @@ class Map {
 	string name;
 	int numTerritories;
 	bool isLoaded;
-	void addTerritoryToContinent(int, Territory*) const;
+	bool addTerritoryToContinent(int, Territory*) const;
 	void addContinent(Continent*);
 	void addTerritory(Territory*);
 	void validateGraph(vector<Territory*>&, Territory*) const;
@@ -81,7 +81,6 @@ class Map {
 	void load(); // load from existing maploader
 public:
 	~Map();                      // Destructor
-	Map();
 	Map(const string&);                      
 	Map(const Map&);             // Copy Constructor 
 	Map& operator=(const Map&);  // Assignment operator Overloading
