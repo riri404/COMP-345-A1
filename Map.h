@@ -77,8 +77,8 @@ class Map {
 	void validateContinents(vector<Territory*>&, Territory*, Continent*) const;
 	bool validateTerritories() const; // check if each territory belong to only one continent
 	friend bool contains(vector<Territory*>&, Territory*); // helper function for validating
-	void load(const string&);
 	void load(); // load from existing maploader
+	void clear(); // delete everything
 public:
 	~Map();                      // Destructor
 	Map(const string&);                      
@@ -88,6 +88,7 @@ public:
 	Territory* findTerritory(int) const;
 	Territory* findTerritory(const string&) const;
 	bool validate() const;
+	void load(const string&);
 };
 
 //---------------------------Map loader--------------------------
@@ -101,6 +102,7 @@ class MapLoader {
 	bool readMap(const string&);
 	void loadMap(Map*, const string&);
 	void loadMap(Map*); // loading map from existing maploader
+	void clear();
 	string mapName;
 	vector<string> borders;
 	vector<string> continents;

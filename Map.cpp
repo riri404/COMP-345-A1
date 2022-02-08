@@ -50,7 +50,7 @@ bool operator==(const Territory& t1, const Territory& t2) {
 }
 
 ostream& operator<<(ostream& out, const Territory& territory) {
-  out << "Name: " << territory.name << " (" << territory.id << ")" << endl;
+  out << "Territory: " << territory.name << " (" << territory.id << ")" << endl;
   out << "Armies: " << territory.armies << endl;
   out << "Owned by player " << territory.playerId;
   return out;
@@ -105,9 +105,9 @@ Continent& Continent::operator=(const Continent& rhs) {
 }
 
 ostream& operator<<(ostream& out, const Continent& continent) {
-  out << "Name: " << continent.name << " (" << continent.id << ")" << endl;
+  out << "Continent: " << continent.name << " (" << continent.id << ")" << endl;
   out << "Army value: " << continent.armyValue << endl;
-  out << "Territories: " << endl;
+  out << "Territories: " << endl << endl;
   for (int i = 0; i < continent.territories.size(); ++i) {
     if (i == continent.territories.size() - 1) out << *(continent.territories[i]);
     else out << *(continent.territories[i]) << endl << endl;
@@ -130,6 +130,17 @@ string Continent::getName() const { return name; }
 vector<Territory*> Continent::getTerritories() const { return territories; }
 
 //-----------------------------Map---------------------------
+void Map::clear() {
+  for (Territory* t : territories) delete t;
+  for (Continent* c : continents) delete c;
+  territories.clear();
+  continents.clear();
+  mapLoader->clear();
+  numTerritories = 0;
+  name = "N/A";
+  isLoaded = false;
+}
+
 Map::~Map() {
   for (Territory* t : territories) delete t;
   for (Continent* c : continents) delete c;
@@ -142,19 +153,27 @@ Map::Map(const string& fileName) {
 }
 
 Map::Map(const Map& other) {
+  if (!other.isLoaded) {
+    numTerritories = 0;
+    name = "N/A";
+    isLoaded = false;
+    mapLoader = new MapLoader();
+    return;
+  }
   mapLoader = new MapLoader(*(other.mapLoader));
   load();
 }
 
 Map& Map::operator=(const Map& rhs) {
   // clearing memory
-  for (Territory* t : territories) delete t;
-  for (Continent* c : continents) delete c;
+  clear();
   delete mapLoader;
-  territories.clear();
-  continents.clear();
+  if (!rhs.isLoaded) {
+    mapLoader = new MapLoader();
+    return *this;
+  }
   mapLoader = new MapLoader(*(rhs.mapLoader));
-  mapLoader->loadMap(this);
+  load();
   return *this;
 }
 
@@ -261,14 +280,14 @@ void Map::load() {
 
 //---------------------------Map loader----------------------
 MapLoader::MapLoader() {
-  mapName = "Map"; // default name
+  mapName = "N/A"; // default name
 }
 
 bool MapLoader::readMap(const string& fileName) {
   string line = "";
   fstream fileObj(fileName);
   if (!fileObj.is_open()) {
-    cerr << "Error opening file" << endl;;
+    cerr << "Could not open " << fileName << endl;
     return false;
   }
   // flags to keep track of which section we are reading
@@ -310,11 +329,18 @@ bool MapLoader::readMap(const string& fileName) {
   return true;
 }
 
+void MapLoader::clear() {
+  mapName = "N/A";
+  borders.clear();
+  continents.clear();
+  territories.clear();
+}
+
 void MapLoader::loadMap(Map* map) {
   // data is extracted from each line of each section (continents, countries and borders) and used to create the map
    // check if map contnet is valid
   if (continents.size() == 0 || territories.size() == 0 || borders.size() == 0 || borders.size() != territories.size()) {
-    map->isLoaded = false;
+    map->clear();
     return;
   }
   map->name = mapName;
@@ -338,7 +364,7 @@ void MapLoader::loadMap(Map* map) {
     Territory* t = new Territory(id, name);
     map->addTerritory(t);
     if (!map->addTerritoryToContinent(continentId, t)) {
-      map->isLoaded = false;
+      map->clear();
       return;
     }
   }
@@ -362,12 +388,12 @@ void MapLoader::loadMap(Map* map, const string& fileName) {
   // data is extracted from each line of each section (continents, countries and borders) and used to create the map
   // check if map can be opened
   if (!readMap(fileName)) {
-    map->isLoaded = false;
-    return;
+    map->clear();
+    return; 
   }
-  // check if map contnet is valid
+  // check if map content is valid
   if (continents.size() == 0 || territories.size() == 0 || borders.size() == 0 || borders.size() != territories.size()) {
-    map->isLoaded = false;
+    map->clear();
     return;
   }
   map->name = mapName;
@@ -392,7 +418,7 @@ void MapLoader::loadMap(Map* map, const string& fileName) {
     map->addTerritory(t);
     // if territory's continent does not exist, invalid map
     if (!map->addTerritoryToContinent(continentId, t)) {
-      map->isLoaded = false;
+      map->clear();
       return;
     }
   }
@@ -409,7 +435,6 @@ void MapLoader::loadMap(Map* map, const string& fileName) {
       t->addAdjTerritory(adjT);
     }
   }
-
   map->isLoaded = true;
 }
 
@@ -439,12 +464,7 @@ ostream& operator<<(ostream& out, const MapLoader& mapLoader) {
 ostream& operator<<(ostream& out, const Map& map) {
   for (int i = 0; i < map.continents.size(); ++i) {
     if (i == map.continents.size() - 1) out << *(map.continents[i]);
-    else out << *(map.continents[i]) << endl << endl << "-------------------------" << endl << endl;
+    else out << *(map.continents[i]) << endl << "-------------------------" << endl;
   }
-  // testing
-  // out << map.continents.size() << endl;
-  // out << map.territories.size() << endl;
-  // out << map.continents[0] << endl;
-  // out << map.territories[0] << endl;
   return out;
 }
