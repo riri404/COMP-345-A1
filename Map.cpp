@@ -258,6 +258,7 @@ bool Map::validate() const {
   // checking if map is a connected graph
   validateGraph(visited, territories[0]);
   if (visited.size() == numTerritories) isGraphConnected = true;
+  else return false;
   visited.clear();
   // checking if continents are connected subgraphs
   for (Continent* c : continents) {
