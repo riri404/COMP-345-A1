@@ -68,8 +68,10 @@ class Map {
 	void addTerritoryToContinent(int, Territory*) const;
 	void addContinent(Continent*);
 	void addTerritory(Territory*);
+	bool validateGraph() const;
 	bool validateContinents() const; // check if each continent is a connected subgraph (store all territoryid of a continent, check if each adj territory of all the territories are in the list, if one is not then it is invalid)
 	bool validateTerritories() const; // check if each territory belong to only one continent
+	friend bool contains(vector<Territory*>&, Territory*); // helper function for validating
 public:
 	~Map();                      // Destructor
 	Map();                       // Default Constructor

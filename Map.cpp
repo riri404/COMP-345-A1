@@ -184,6 +184,15 @@ Territory* Map::findTerritory(const string& name) const {
   return nullptr;
 }
 
+void Map::validateGraph(vector<Territory*>& visited, Territory* t) const {
+  if (contains(visited, t)) return;
+  visited.push_back(t);
+  auto adjTerritories = t->getAdjTerritories();
+  for (auto adjTerritory : adjTerritories) {
+    validateMap(visited, adjTerritory);
+  }
+}
+
 bool Map::validateContinents() const {
   bool isValid = false;
   for (Continent* c : continents) {
@@ -197,7 +206,19 @@ bool Map::validateTerritories() const {
 }
 
 bool Map::validate() const {
-  return isConnected && validateContinents() && validateTerritories();
+  bool isGraphConnected = false;
+  bool areContinentsValid = false;
+  bool areTerritoriesValid = false;
+  vector<Territory*> visited;
+  validateGraph(visited, territories[0]);
+  if (visited == numTerritories) isGraphConnected = true;
+  return isGraphConnected && areContinentsValid && areTerritoriesValid;
+}
+
+bool contains(vector<Territory*>& territories, Territory* t) {
+  auto begin = territories.begin();
+  auto end = territories.end();
+  return find(begin, end, t) != end;
 }
 
 //---------------------------Map loader----------------------
@@ -272,7 +293,6 @@ Map* MapLoader::getMap(const string& fileName) {
     map->addTerritory(t);
     map->addTerritoryToContinent(continentId, t);
   }
-  bool isConnected = true;
   for (const string& border : borders) {
     // adding all the adj territories to each territory
     istringstream iss(border);
@@ -280,14 +300,10 @@ Map* MapLoader::getMap(const string& fileName) {
     int adjId = 0; // adj territory
     iss >> id; 
     Territory* t = map->findTerritory(id);
-    int count = 0;
     while (iss >> adjId) {
       Territory* adjT = map->findTerritory(adjId);
       t->addAdjTerritory(adjT);
-      ++count;
     }
-    if (count == 0) isConnected = false;
   }
-  map->isConnected = isConnected;
   return map;
 }
