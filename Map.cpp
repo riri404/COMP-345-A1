@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include "Map.h"
 
 using namespace std;
@@ -56,11 +57,13 @@ void Territory::addAdjTerritory(Territory* t) {
 
 // getter and setters
 void Territory::setPlayerId(int playerId) { this->playerId = playerId; }
-int Territory::getId() { return id; }
-int Territory::getPlayerId() { return playerId; }
-int Territory::getArmies() { return armies; }
-string Territory::getName() { return name; }
-vector<Territory*> Territory::getAdjTerritories() { return adjTerritories; }
+int Territory::getId() const { return id; }
+int Territory::getPlayerId() const { return playerId; }
+int Territory::getArmies() const { return armies; }
+string Territory::getName() const { return name; }
+vector<Territory*> Territory::getAdjTerritories() const { 
+  return adjTerritories; 
+}
 
 //----------------------Continent--------------------------
 Continent::~Continent() { } // map will handle memory
@@ -111,10 +114,10 @@ void Continent::addTerritory(Territory* t) {
 }
 
 // getters and setters
-int Continent::getId() { return id; }
-int Continent::getArmyValue() { return armyValue; }
-string Continent::getName() { return name; }
-vector<Territory*> Continent::getTerritories() { return territories; }
+int Continent::getId() const { return id; }
+int Continent::getArmyValue() const { return armyValue; }
+string Continent::getName() const { return name; }
+vector<Territory*> Continent::getTerritories() const { return territories; }
 
 //-----------------------------Map---------------------------
 Map::~Map() {
@@ -129,7 +132,7 @@ Map::Map() {
   isConnected = false;
 }
 
-void Map::addTerritoryToContinent(int continentId, Territory* t) {
+void Map::addTerritoryToContinent(int continentId, Territory* t) const {
   for (Continent* c : continents) {
     if (c->getId() == continentId) {
       c->addTerritory(t);
@@ -146,46 +149,85 @@ void Map::addContinent(Continent* t) {
   continents.push_back(t);
 }
 
-Territory* Map::findTerritory(int id) {
+Territory* Map::findTerritory(int id) const {
   for (Territory* t : territories) {
     if (t->getId() == id) return t;
   }
   return nullptr;
 }
 
-Territory* Map::findTerritory(const string& name) {
+Territory* Map::findTerritory(const string& name) const {
   for (Territory* t : territories) {
     if (t->getName() == name) return t;
   }
   return nullptr;
 }
 
-bool Map::validateContinents() {
+bool Map::validateContinents() const {
   for (Continent* c : continents) {
     
   }
+  return false;
 }
 
-bool Map::validate() {
+bool Map::validate() const {
   // TODO
+  return false;
 }
 
 //---------------------------Map loader----------------------
-void MapLoader::MapLoader() {
+MapLoader::MapLoader() {
   mapName = "Map"; // default name
 }
 
 void MapLoader::readMap(const string& fileName) {
-  // you can work here
-  // open file, google std::getline, std::istream for this part
-  // https://stackoverflow.com/questions/29097127/c-reading-file-line-by-line
-  // for help
-  // get the map name too just in case
+  string line = "";
+  fstream fileObj(fileName);
+  if (!fileObj.is_open()) {
+    cerr << "Error opening file" << endl;;
+    return;
+  }
+  bool isContinent = false;
+  bool isCountry = false;
+  bool isBorder = false;
+  while (getline(fileObj, line)) {
+    if (line[0] == ';') continue; // ignore comments
+    if (line.find("name") == 0) {
+      mapName = line;
+      continue;
+    }
+    if (line.find("[continents]") == 0) {
+      isContinent = true;
+      isCountry = false;
+      isBorder = false;
+      continue;
+    }
+    if (line.find("[countries]") == 0) {
+      isCountry = true;    
+      isContinent = false;
+      isBorder = false;
+      continue;
+    }
+    if (line.find("[borders]") == 0) {
+      isBorder = true;
+      isCountry = false;
+      isContinent = false;
+      continue;
+    }
+    if (line == "") continue;
+    if (isContinent) continents.push_back(line);
+    if (isCountry) territories.push_back(line);
+    if (isBorder) borders.push_back(line);
+  }
+  // test
+  for (const auto& i : continents) cout << i << endl;
+  for (const auto& i : territories) cout << i << endl;
+  for (const auto& i : borders) cout << i << endl;
+  fileObj.close();
 }
 
-void MapLoader::getMap() {
+Map* MapLoader::getMap() const {
   Map* map = new Map();
-  readMap();
   map->name = mapName;
   map->numTerritories = territories.size();
   for (int i = 0; i < continents.size(); ++i) {
@@ -208,6 +250,7 @@ void MapLoader::getMap() {
     map->addTerritory(t);
     map->addTerritoryToContinent(continentId, t);
   }
+  bool isConnected = true;
   for (const string& border : borders) {
     // adding all the adj territories to each territory
     istringstream iss(border);
@@ -215,15 +258,14 @@ void MapLoader::getMap() {
     int adjId = 0; // adj territory
     iss >> id; 
     Territory* t = map->findTerritory(id);
-    bool isConnected = false;
+    int count = 0;
     while (iss >> adjId) {
       Territory* adjT = map->findTerritory(adjId);
       t->addAdjTerritory(adjT);
-      isConnected = true;;
+      ++count;
     }
-    // if theres no adj territories for one territory,
-    // then graph is not connected
-    map->isConnected = isConnected;
-    return map;
+    if (count == 0) isConnected = false;
   }
+  map->isConnected = isConnected;
+  return map;
 }

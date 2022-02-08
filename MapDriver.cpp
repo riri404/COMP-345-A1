@@ -2,7 +2,8 @@
 #include "Map.h"
 
 int main() {
-  std::cout << "hello world" << std::endl;
+  MapLoader m{};
+  m.readMap("source_maps/bigeurope.map");
   return 0;
 }
 

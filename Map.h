@@ -51,7 +51,7 @@ public:
 	void addTerritory(Territory*);
 	int getId() const;
 	int getArmyValue() const;
-	int getName() const;
+	string getName() const;
 	vector<Territory*> getTerritories() const;
 };
 
@@ -86,10 +86,10 @@ class MapLoader {
 	vector<string> borders;
 	vector<string> continents;
 	vector<string> territories;
-	void readMap(const string&); // TODO: open any .map file and fill up the 3 vectors (borders, continents and countries) and mapName
 public:
   MapLoader();
-	Map* getMap(const string&) const;
+	void readMap(const string&);
+	Map* getMap() const;
 };
 
 #endif
