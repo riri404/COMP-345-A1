@@ -52,7 +52,7 @@ bool operator==(const Territory& t1, const Territory& t2) {
 ostream& operator<<(ostream& out, const Territory& territory) {
   out << "Name: " << territory.name << " (" << territory.id << ")" << endl;
   out << "Armies: " << territory.armies << endl;
-  out << "Owned by player " << territory.playerId << endl;
+  out << "Owned by player " << territory.playerId;
   return out;
 }
 
@@ -94,22 +94,6 @@ Continent::Continent(const Continent& other) {
   }
 }
 
-bool Continent::isValid() const {
-  for (Territory* t : territories) {
-    auto adjTerritories = t->getAdjTerritories();
-    bool isConnected = false;
-    for (Territory* adjT : adjTerritories) {
-      auto begin = territories.begin();
-      auto end = territories.end();
-      if (find(begin, end, adjT) != territories.end()) {
-        isConnected = true;
-      }
-    }
-    if (!isConnected) return false;
-  }
-  return true;
-}
-
 Continent& Continent::operator=(const Continent& rhs) {
     armyValue = rhs.armyValue;
     id = rhs.id;
@@ -124,8 +108,9 @@ ostream& operator<<(ostream& out, const Continent& continent) {
   out << "Name: " << continent.name << " (" << continent.id << ")" << endl;
   out << "Army value: " << continent.armyValue << endl;
   out << "Territories: " << endl;
-  for (Territory* t : continent.territories) {
-    out << *t << endl;
+  for (int i = 0; i < continent.territories.size(); ++i) {
+    if (i == continent.territories.size() - 1) out << *(continent.territories[i]);
+    else out << *(continent.territories[i]) << endl << endl;
   }
   return out;
 }
@@ -146,15 +131,38 @@ vector<Territory*> Continent::getTerritories() const { return territories; }
 
 //-----------------------------Map---------------------------
 Map::~Map() {
-  // map will store only one address for each territory, for the whole game and delete them all after the end of the game
-  // and delete all the continents also
   for (Territory* t : territories) delete t;
   for (Continent* c : continents) delete c;
+  delete mapLoader;
 }
 
 Map::Map() {
+  mapLoader = new MapLoader();
+  isLoaded = false;
+  name = "N/A";
   numTerritories = 0;
-  isConnected = false;
+}
+
+Map::Map(const string& fileName) {
+  mapLoader = new MapLoader();
+  load(fileName);
+}
+
+Map::Map(const Map& other) {
+  mapLoader = new MapLoader(*(other.mapLoader));
+  mapLoader->loadMap(this);
+}
+
+Map& Map::operator=(const Map& rhs) {
+  // clearing memory
+  for (Territory* t : territories) delete t;
+  for (Continent* c : continents) delete c;
+  delete mapLoader;
+  territories.clear();
+  continents.clear();
+  mapLoader = new MapLoader(*(rhs.mapLoader));
+  mapLoader->loadMap(this);
+  return *this;
 }
 
 bool contains(vector<Territory*>& territories, Territory* t) {
@@ -195,6 +203,7 @@ Territory* Map::findTerritory(const string& name) const {
 }
 
 void Map::validateGraph(vector<Territory*>& visited, Territory* t) const {
+  // DFS graph traversal
   if (contains(visited, t)) return;
   visited.push_back(t);
   auto adjTerritories = t->getAdjTerritories();
@@ -204,6 +213,7 @@ void Map::validateGraph(vector<Territory*>& visited, Territory* t) const {
 }
 
 void Map::validateContinents(vector<Territory*>& visited, Territory* t, Continent* c) const {
+  // DFS graph traversal limited within the continent subgraph
   if (contains(visited, t) || !(c->contains(t)) ) return;
   visited.push_back(t);
   auto adjTerritories = t->getAdjTerritories();
@@ -213,17 +223,29 @@ void Map::validateContinents(vector<Territory*>& visited, Territory* t, Continen
 }
 
 bool Map::validateTerritories() const {
+  // for each continent, we visit all territories
+  // if one territory is already visited, that means there is a duplicate territory meaning there is not a one-one relationship
+  vector<Territory*> visited;
+  for (Continent* c : continents) {
+    auto territories = c->getTerritories();
+    for (auto t : territories) {
+      if (contains(visited, t)) return false;
+      visited.push_back(t);
+    }
+  }
   return true;
 }
 
 bool Map::validate() const {
+  if (!isLoaded) return false;
   bool isGraphConnected = false;
   bool areContinentsValid = false;
-  bool areTerritoriesValid = true;
   vector<Territory*> visited;
+  // checking if map is a connected graph
   validateGraph(visited, territories[0]);
   if (visited.size() == numTerritories) isGraphConnected = true;
   visited.clear();
+  // checking if continents are connected subgraphs
   for (Continent* c : continents) {
     auto t = c->getTerritories()[0];
     validateContinents(visited, t, c);
@@ -231,7 +253,15 @@ bool Map::validate() const {
     else return false;
     visited.clear();
   }
-  return isGraphConnected && areContinentsValid && areTerritoriesValid;
+  return isGraphConnected && areContinentsValid && validateTerritories();
+}
+
+void Map::load(const string& fileName) {
+  mapLoader->loadMap(this, fileName);
+}
+
+void Map::load() {
+  mapLoader->loadMap(this);
 }
 
 //---------------------------Map loader----------------------
@@ -246,12 +276,14 @@ void MapLoader::readMap(const string& fileName) {
     cerr << "Error opening file" << endl;;
     return;
   }
+  // flags to keep track of which section we are reading
   bool isContinent = false;
   bool isCountry = false;
   bool isBorder = false;
   while (getline(fileObj, line)) {
     if (line[0] == ';') continue; // ignore comments
     if (line.find("name") == 0) {
+      // name of the map (optional)
       mapName = line;
       continue;
     }
@@ -273,6 +305,7 @@ void MapLoader::readMap(const string& fileName) {
       isContinent = false;
       continue;
     }
+    // ignore whitespaces
     if (line == "\r" || line == "") continue;
     if (isContinent) continents.push_back(line);
     if (isCountry) territories.push_back(line);
@@ -281,9 +314,8 @@ void MapLoader::readMap(const string& fileName) {
   fileObj.close();
 }
 
-Map* MapLoader::getMap(const string& fileName) {
-  readMap(fileName);
-  Map* map = new Map();
+void MapLoader::loadMap(Map* map) {
+  // data is extracted from each line of each section (continents, countries and borders) and used to create the map
   map->name = mapName;
   map->numTerritories = territories.size();
   for (int i = 0; i < continents.size(); ++i) {
@@ -292,7 +324,7 @@ Map* MapLoader::getMap(const string& fileName) {
     string name = "";
     int armyValue = 0;
     int id = i + 1;
-    iss >> name >> armyValue;
+    iss >> name >> armyValue; // reading the first 2 tokens in the string
     map->addContinent(new Continent(armyValue, id, name));
   }
   for (const string& territory : territories) {
@@ -301,7 +333,7 @@ Map* MapLoader::getMap(const string& fileName) {
     int id = 0;
     string name = "";
     int continentId = 0;
-    iss >> id >> name >> continentId;
+    iss >> id >> name >> continentId; // reading first 3 tokens
     Territory* t = new Territory(id, name);
     map->addTerritory(t);
     map->addTerritoryToContinent(continentId, t);
@@ -309,14 +341,92 @@ Map* MapLoader::getMap(const string& fileName) {
   for (const string& border : borders) {
     // adding all the adj territories to each territory
     istringstream iss(border);
-    int id = 0; // territory;
-    int adjId = 0; // adj territory
-    iss >> id; 
+    int id = 0;
+    int adjId = 0;
+    iss >> id; // reading first token
     Territory* t = map->findTerritory(id);
+    // reading the rest
     while (iss >> adjId) {
       Territory* adjT = map->findTerritory(adjId);
       t->addAdjTerritory(adjT);
     }
   }
-  return map;
+  map->isLoaded = true;
+}
+
+void MapLoader::loadMap(Map* map, const string& fileName) {
+  // data is extracted from each line of each section (continents, countries and borders) and used to create the map
+  readMap(fileName);
+  map->name = mapName;
+  map->numTerritories = territories.size();
+  for (int i = 0; i < continents.size(); ++i) {
+    // initializing continents
+    istringstream iss(continents[i]);
+    string name = "";
+    int armyValue = 0;
+    int id = i + 1;
+    iss >> name >> armyValue; // reading the first 2 tokens in the string
+    map->addContinent(new Continent(armyValue, id, name));
+  }
+  for (const string& territory : territories) {
+    // initializing territories, and adding territories to continents
+    istringstream iss(territory);
+    int id = 0;
+    string name = "";
+    int continentId = 0;
+    iss >> id >> name >> continentId; // reading first 3 tokens
+    Territory* t = new Territory(id, name);
+    map->addTerritory(t);
+    map->addTerritoryToContinent(continentId, t);
+  }
+  for (const string& border : borders) {
+    // adding all the adj territories to each territory
+    istringstream iss(border);
+    int id = 0;
+    int adjId = 0;
+    iss >> id; // reading first token
+    Territory* t = map->findTerritory(id);
+    // reading the rest
+    while (iss >> adjId) {
+      Territory* adjT = map->findTerritory(adjId);
+      t->addAdjTerritory(adjT);
+    }
+  }
+  map->isLoaded = true;
+}
+
+MapLoader::MapLoader(const MapLoader& other) {
+  mapName = other.mapName;
+  for (auto i : other.borders) borders.push_back(i);
+  for (auto i : other.continents) continents.push_back(i);
+  for (auto i : other.territories) territories.push_back(i);
+}
+
+MapLoader& MapLoader::operator=(const MapLoader& rhs) {
+  mapName = rhs.mapName;
+  borders.clear();
+  continents.clear();
+  territories.clear();
+  for (auto i : rhs.borders) borders.push_back(i);
+  for (auto i : rhs.continents) continents.push_back(i);
+  for (auto i : rhs.territories) territories.push_back(i);
+  return *this;
+}
+
+ostream& operator<<(ostream& out, const MapLoader& mapLoader) {
+  out << mapLoader.mapName;
+  return out;
+}
+
+ostream& operator<<(ostream& out, const Map& map) {
+  for (int i = 0; i < map.continents.size(); ++i) {
+    if (i == map.continents.size() - 1) out << *(map.continents[i]);
+    else out << *(map.continents[i]) << endl << endl << "-------------------------" << endl << endl;
+  }
+  // testing
+  // out << map.continents.size() << endl;
+  // out << map.territories.size() << endl;
+  // out << map.continents[0] << endl;
+  // out << map.territories[0] << endl;
+  return out;
 }
