@@ -45,6 +45,10 @@ Territory& Territory::operator=(const Territory& rhs) {
   return *this;
 }
 
+bool operator==(const Territory& t1, const Territory& t2) {
+  return t1.id == t2.id;
+}
+
 ostream& operator<<(ostream& out, const Territory& territory) {
   out << "Name: " << territory.name << " (" << territory.id << ")" << endl;
   out << "Armies: " << territory.armies << endl;
@@ -88,6 +92,22 @@ Continent::Continent(const Continent& other) {
   for (Territory* t : other.territories) {
     territories.push_back(t);
   }
+}
+
+bool Continent::isValid() const {
+  for (Territory* t : territories) {
+    auto adjTerritories = t->getAdjTerritories();
+    bool isConnected = false;
+    for (Territory* adjT : adjTerritories) {
+      auto begin = territories.begin();
+      auto end = territories.end();
+      if (find(begin, end, adjT) != territories.end()) {
+        isConnected = true;
+      }
+    }
+    if (!isConnected) return false;
+  }
+  return true;
 }
 
 Continent& Continent::operator=(const Continent& rhs) {
@@ -165,15 +185,19 @@ Territory* Map::findTerritory(const string& name) const {
 }
 
 bool Map::validateContinents() const {
+  bool isValid = false;
   for (Continent* c : continents) {
-    
+    if (!(c->isValid())) return false;
   }
-  return false;
+  return true;
+}
+
+bool Map::validateTerritories() const {
+  return true;
 }
 
 bool Map::validate() const {
-  // TODO
-  return false;
+  return isConnected && validateContinents() && validateTerritories();
 }
 
 //---------------------------Map loader----------------------
@@ -220,14 +244,10 @@ void MapLoader::readMap(const string& fileName) {
     if (isCountry) territories.push_back(line);
     if (isBorder) borders.push_back(line);
   }
-  // test
-  for (const auto& i : continents) cout << i << endl;
-  for (const auto& i : territories) cout << i << endl;
-  for (const auto& i : borders) cout << i << endl;
   fileObj.close();
 }
 
-Map* MapLoader::getMap(const string& fileName) const {
+Map* MapLoader::getMap(const string& fileName) {
   readMap(fileName);
   Map* map = new Map();
   map->name = mapName;

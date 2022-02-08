@@ -23,8 +23,9 @@ public:
 	Territory(); 									// Default Constructor
   Territory(int, string);  			// Constructor
   Territory(const Territory&);  // Copy Constructor
-  Territory& operator=(const Territory&); // https://www.youtube.com/watch?v=ieD3l--qgK4
-  friend ostream& operator<<(ostream&, const Territory&); // https://www.youtube.com/watch?v=2972LRdyquk
+  Territory& operator=(const Territory&);
+	friend bool operator==(const Territory&, const Territory&);
+  friend ostream& operator<<(ostream&, const Territory&);
 	void addAdjTerritory(Territory*);
 	void setPlayerId(int);
 	int getId() const;
@@ -48,6 +49,7 @@ public:
 	Continent(const Continent&);       // Copy Constructor
 	Continent& operator=(const Continent&);
 	friend ostream& operator<<(ostream&, const Continent&);
+	bool isValid() const;
 	void addTerritory(Territory*);
 	int getId() const;
 	int getArmyValue() const;
@@ -89,7 +91,7 @@ class MapLoader {
 public:
   MapLoader();
 	void readMap(const string&);
-	Map* getMap(const string&) const;
+	Map* getMap(const string&);
 };
 
 #endif
