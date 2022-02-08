@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <ctype.h>
 #include "Map.h"
 
 using namespace std;
@@ -214,7 +215,7 @@ void MapLoader::readMap(const string& fileName) {
       isContinent = false;
       continue;
     }
-    if (line == "") continue;
+    if (line == "\r" || line == "") continue;
     if (isContinent) continents.push_back(line);
     if (isCountry) territories.push_back(line);
     if (isBorder) borders.push_back(line);
