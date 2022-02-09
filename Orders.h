@@ -1,3 +1,5 @@
+#ifndef ORDERS_H
+#define ORDERS_H
 #include <iostream>
 #include <string>
 #include <vector>
@@ -21,8 +23,12 @@ class Order{
         //Getters and setters
         string const getName();
         void setName(string);
+
+        //Member functions
+        bool validate();
+        void execute();
     private:
-        string* name;
+        string name;
 };
 
 
@@ -48,7 +54,7 @@ class Deploy : public Order{
         bool validate();
         void execute();
     private:
-        string* name;
+        string name;
 };
 
 class Advance : public Order{
@@ -70,7 +76,7 @@ class Advance : public Order{
         bool validate();
         void execute();
     private:
-        string* name;
+        string name;
 };
 
 class Bomb : public Order{
@@ -92,7 +98,7 @@ class Bomb : public Order{
         bool validate();
         void execute();
     private:
-        string* name;
+        string name;
 };
 
 class Blockade : public Order{
@@ -114,7 +120,7 @@ class Blockade : public Order{
         bool validate();
         void execute();  
     private:
-        string* name;  
+        string name;  
 };
 
 class Airlift : public Order{
@@ -136,7 +142,7 @@ class Airlift : public Order{
         bool validate();
         void execute();
     private:
-        string* name;
+        string name;
 };
 
 class Negotiate : public Order{
@@ -158,7 +164,7 @@ class Negotiate : public Order{
         bool validate();
         void execute(); 
     private:
-        string* name;       
+        string name;       
 };
 
 
@@ -179,10 +185,13 @@ class OrdersList{
 
         //Member functions
         void addToListOfOrders(Order*);
+        void addToListOfOrders2(Order&);
         void move(int, int);
         void remove(int);
 
-    private:
+    //private:
         //The OrdersList class contains a list of Order objects
         vector<Order*> listOfOrders;        //vector of pointers to Order object
 };
+
+#endif
