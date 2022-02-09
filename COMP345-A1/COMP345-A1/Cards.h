@@ -21,26 +21,34 @@ class Player; // Needed for when play
 class Cards 
 {
 	vector<string> cardTypes = { "Bomb", "Reinforcement", "Blockage", "Airlift", "Diplomacy" };
-	string* cardType;
-	string type;
-public:
+	//string* cardType;
+	string* type;
 	
+
+public:
+
 	Player* player;
 	Deck* theDeck;
 	Hand* theHand;
 	
 	Cards();
-	Cards(string type);
+	//Cards(string type);
 
 	Cards(const Cards& c); // Copy constructor
 
 	Cards& operator=(const Cards& c); // Assignment operator
 
+	
+	vector<string>* getTypePtr(); // get pointer to the type
+	void printType(); // To try print type
+	void setCardType(int n); // Set the type of card
+	string* getCardType(); // Show the name of the type of card
+	
 
-	string getCardType(); // Show the name of the type of card
 
 	// Creates an Order object & places it in the Players' list of orders, removes card from Hand
-	string play();
+	// & places it back in Deck
+	void play();
 	//void play(Cards* card, Deck* deck, Hand* hand);
 	
 	virtual ~Cards();
@@ -53,6 +61,7 @@ class Deck : public Cards
 	vector<Cards*> myDeck; // Collection of cards
 	Cards* cardPtr; // pointer to card
 	Cards* tempCard; // for draw & remove element of vector
+	string tempCardName;
 
 public:
 	
@@ -66,7 +75,9 @@ public:
 	// Draw method that allows player to draw a card at random from the cards remaining in the deck
 	// and place it in their hand
 	Cards* draw(); 
+	string getCardDrawn();
 	vector<Cards*> getDeck();
+	void printDeck();
 
 	int getMaxSize();
 
@@ -78,20 +89,20 @@ public:
 
 class Hand : public Cards
 {
+	vector<string> cardNames; // Names of cards in hand
 	vector<Cards*> myHand; // Collection of cards
 	vector<Cards*> playCard; // For store play cards
 	int size;
 
 public:
-
+		
 	Hand();
 	Hand(const Hand& hand); // Assignment Constructor
 
 	Hand& operator=(const Hand& hand);  // Copy constructor
 
 	vector<Cards*> getHand();
-
-
+	void printHand();
 	
 	// If false, means have more than 6 cards. Else, have 6 cards or less
 	bool checkSize(); 
