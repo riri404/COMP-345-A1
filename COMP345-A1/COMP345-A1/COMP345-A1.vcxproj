@@ -141,12 +141,9 @@
   <ItemGroup>
     <ClCompile Include="Cards.cpp" />
     <ClCompile Include="CardsDriver.cpp" />
-    <ClCompile Include="Orders.cpp" />
-    <ClCompile Include="OrdersDriver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cards.h" />
-    <ClInclude Include="Orders.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

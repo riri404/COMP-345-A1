@@ -1,5 +1,5 @@
-#ifndef ORDERS_H
-#define ORDERS_H
+#pragma once
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -18,10 +18,10 @@ public:
     Order(Order& anotherOrder);
     Order& operator =(const Order& anOrder);
     friend istream& operator>>(istream&, Order&);
-    friend ostream& operator<<(ostream&, const Order&);  //Lecture 3, p.7
+    friend ostream& operator<<(ostream&, const Order&);
 
     //Getters and setters
-    string const getName();
+    virtual string const getName();
     void setName(string);
 
     //Member functions
@@ -185,7 +185,6 @@ public:
 
     //Member functions
     void addToListOfOrders(Order*);
-    void addToListOfOrders2(Order&);
     void move(int, int);
     void remove(int);
 
@@ -193,5 +192,3 @@ public:
         //The OrdersList class contains a list of Order objects
     vector<Order*> listOfOrders;        //vector of pointers to Order object
 };
-
-#endif

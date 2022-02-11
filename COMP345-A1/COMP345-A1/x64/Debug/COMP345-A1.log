@@ -1,2 +1,11 @@
-﻿  CardsDriver.cpp
-  COMP345-A1.vcxproj -> C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\x64\Debug\COMP345-A1.exe
+﻿  Cards.cpp
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP345-A1\Cards.cpp(396,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP345-A1\Cards.cpp(398,30): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP345-A1\Cards.cpp(414,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  CardsDriver.cpp
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP345-A1\CardsDriver.cpp(11,9): warning C4101: 'cards': unreferenced local variable
+  Generating Code...
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP345-A1\Cards.cpp(183): error C4716: 'operator<<': must return a value
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP345-A1\Cards.cpp(188): error C4716: 'BlockageCard::operator=': must return a value
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP345-A1\Cards.cpp(233): error C4716: 'AirliftCard::operator=': must return a value
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP345-A1\Cards.cpp(421): error C4700: uninitialized local variable 'h' used

@@ -8,21 +8,19 @@ using namespace std;
 int main() 
 {
 	// Creating objects
-	Deck* deck = new Deck;
+	Cards* cards;
+	Deck* deck = new Deck();
 	Hand* hand = new Hand;
 
+	cout << "Creating Deck: " << endl;
 	// Create the deck
 	deck->create_deck();
 
 	// Display amount of cards
 	cout << "My deck size is " << deck->getDeck().size() << endl;
-	deck->printDeck();
+	//deck->printDeck();
 
-	/*Cards* firstDrawnCard = deck->draw();
-	cout << "Card drawn is " << deck->getCardDrawn() << endl;
-	cout << "My deck size is " << deck->getDeck().size() << endl;*/
-
-	// Assign 6 random 
+	// Assign 6 random cards to the hand
 	for (int i = 0; i < 6; i++) {
 		Cards* drawnCard = deck->draw();
 		hand->addCardHand(drawnCard);
@@ -31,8 +29,10 @@ int main()
 	cout << "My deck size is " << deck->getDeck().size() << endl;
 	hand->printHand();
 
-	Cards* card = new Cards();
-	card->play();
+	/*while (hand->getHand().size() > 0)
+	{
+		hand->play();
+	}*/
 	//cout << "Play " << card->play() << endl;
 	cout << "Deck size is " << deck->getDeck().size() << endl;
 	cout << "Hand size is " << hand->getHand().size() << endl;
