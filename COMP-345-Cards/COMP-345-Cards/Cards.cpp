@@ -10,17 +10,14 @@ Cards::Cards()
 	//type = "name";
 }
 
-//Cards::Cards(string type)
-//{
-//	type = type;
-//}
-
 // Copy constructor
 Cards::Cards(const Cards& c)
 {
 	//this->type = c.type;
 	this->cardTypes = *new vector<string>(c.cardTypes);
 	this->type = new string(*(c.type));
+	this->decks = *new vector<string*>(c.decks);
+	this->hands = *new vector<string*>(c.hands);
 }
 
 // Assignment operator
@@ -29,6 +26,8 @@ Cards& Cards::operator=(const Cards& c)
 	//this->type = c.type;
 	this->cardTypes = *new vector<string>(c.cardTypes);
 	this->type = new string(*(c.type));
+	this->decks = *new vector<string*>(c.decks);
+	this->hands = *new vector<string*>(c.hands);
 
 	return *this;
 }
@@ -59,20 +58,252 @@ string* Cards::getCardType()
 	return type;
 }
 
-// Creates an Order object & places it in the Players' list of orders, removes card from hand
-// & places it back in deck
-void Cards::play()
-{
-
-}
-
 Cards::~Cards()
 {
 }
+
+// Orders
+// -------------------------------------------------
+// BombCard
+// -------------------------------------------------
+BombCard::BombCard()
+{
+}
+
+BombCard& BombCard::operator =(const BombCard& c)
+{
+	if (&c != this)
+	{
+		this->Cards::operator=(c);
+	}
+	return *this;
+}
+
+void BombCard::play()
+{
+	//Player* p = this->player;
+
+	//Bomb* bOrder = new Bomb();
+
+	//p->getOrdersList()->addToListOfOrders(bOrder);
+	this->theDeck->addCardDeck(this);
+	cout << "Bomb has been added to deck" << endl;
+
+	//p = nullptr;
+	this->player = nullptr;
+}
+
+string BombCard::getType()
+{
+	return "Bomb card";
+}
+
+BombCard::~BombCard()
+{
+}
+
+// -------------------------------------------------
+// ReinforcementCard
+// -------------------------------------------------
+ReinforcementCard::ReinforcementCard()
+{
+}
+
+void ReinforcementCard::play()
+{
+	Player* p = this->player;
+
+	//ReinforcementCard* rOrder = new ReinforcementCard();
+	//p->getOrdersList()->addToListOfOrders(rOrder);
+
+	this->theDeck->addCardDeck(this);
+	cout << "Reinforcement added to deck" << endl;
+
+	p = nullptr;
+	this->player = nullptr;
+}
+
+string ReinforcementCard::getType()
+{
+	return "Reinforcement card";
+}
+
+
+ostream& operator<<(ostream& out, const ReinforcementCard& c)
+{
+	out << "Reinforcement Card";
+	return out;
+}
+
+
+ReinforcementCard& ReinforcementCard::operator=(const ReinforcementCard& c)
+{
+	if (&c != this)
+	{
+		this->Cards::operator=(c);
+	}
+	return *this;
+}
+
+ReinforcementCard::~ReinforcementCard()
+{
+}
+
+// -------------------------------------------------
+// BlockageCard
+// -------------------------------------------------
+BlockageCard::BlockageCard()
+{
+}
+
+ostream& operator << (ostream& out, const BlockageCard& c)
+{
+
+}
+
+BlockageCard& BlockageCard::operator=(const BlockageCard& c)
+{
+	// TODO: insert return statement here
+}
+
+void BlockageCard::play()
+{
+	Player* p = this->player;
+
+	//BlockageCard* blockOrder = new BlockageCard();
+	//p->getOrdersList()->addToListOfOrders(blockOrder);
+
+	this->theDeck->addCardDeck(this);
+	cout << "Blockage card has been added to the deck." << endl;
+
+	//blockOrder = nullptr;
+	p = nullptr;
+	this->player = nullptr;
+}
+
+string BlockageCard::getType()
+{
+	return "Blockage card";
+}
+
+BlockageCard::~BlockageCard()
+{
+}
+
+// -------------------------------------------------
+// AirliftCard
+// -------------------------------------------------
+ostream& operator << (ostream& out, const AirliftCard& c)
+{
+	out << "AirliftCard";
+	return out;
+}
+
+AirliftCard& AirliftCard::operator=(const AirliftCard& c)
+{
+	if (&c != this)
+	{
+		//this->Cards
+	}
+}
+
+void AirliftCard::play()
+{
+	Player* p = this->player;
+
+	//AirliftCard* aOrder = new AirliftCard();
+
+	//p->getOrdersList()->addToListOfOrders(aOrder);
+
+	this->theDeck->addCardDeck(this);
+	cout << "Airlift card has been added to the deck." << endl;
+
+	//aOrder = nullptr;
+	p = nullptr;
+	this->player = nullptr;
+}
+
+string AirliftCard::getType()
+{
+	return "Airlift card";
+}
+
+AirliftCard::~AirliftCard()
+{
+}
+
+// -------------------------------------------------
+// NegociateCard
+// -------------------------------------------------
+NegociateCard::NegociateCard()
+{
+	this->enemy = nullptr;
+}
+
+NegociateCard::NegociateCard(Player* e)
+{
+	this->enemy = e;
+}
+
+void NegociateCard::play()
+{
+	Player* p = this->player;
+
+	//NegociateCard* dOrder = new NegociateCard();
+	cout << "Negociation card has been played" << endl;
+	//p->getOrdersList()->addToListOfOrders(dOrder);
+	this->theDeck->addCardDeck(this);
+
+	//dOrder = nullptr;
+	p = nullptr;
+	this->theDeck = nullptr;
+}
+
+string NegociateCard::getType()
+{
+	return "Negociate card";
+}
+
+void NegociateCard::setEnemy(Player* e)
+{
+	this->enemy = e;
+}
+
+Player* NegociateCard::getEnemy()
+{
+	return this->enemy;
+}
+
+
+ostream& operator<<(ostream& out, const NegociateCard& c)
+{
+	out << "NegociateCard";
+	return out;
+}
+
+NegociateCard& NegociateCard::operator=(const NegociateCard& c)
+{
+	if (&c != this)
+	{
+		this->Cards::operator=(c);
+		this->enemy = c.enemy;
+	}
+
+	return *this;
+}
+
+NegociateCard::~NegociateCard()
+{
+}
+
+// ------------------------------------------------------
+// Deck
+// ------------------------------------------------------
 Deck::Deck()
 {
 	maxSize = 40;
 }
+
 // Assignment operator
 Deck::Deck(const Deck& deck) : Cards(deck)
 {
@@ -81,6 +312,7 @@ Deck::Deck(const Deck& deck) : Cards(deck)
 	this->cardPtr = new Cards(*(deck.cardPtr));
 	this->tempCard = new Cards(*(deck.tempCard));
 }
+
 // Copy constructor
 Deck& Deck::operator=(const Deck& deck)
 {
@@ -104,31 +336,36 @@ void Deck::create_deck()
 			if (j == 0)
 			{
 				cardPtr->setCardType(0);
-				myDeck.push_back(cardPtr);
+				//myDeck.push_back(cardPtr);
+				myDeck.push_back(new BombCard);
 			}
 			// Type 2 = Reinforcement
 			else if (j == 1)
 			{
 				cardPtr->setCardType(1);
-				myDeck.push_back(cardPtr);
+				//myDeck.push_back(cardPtr);
+				myDeck.push_back(new ReinforcementCard);
 			}
 			// Type 3 = Blockage
 			else if (j == 2)
 			{
 				cardPtr->setCardType(2);
-				myDeck.push_back(cardPtr);
+				//myDeck.push_back(cardPtr);
+				myDeck.push_back(new BlockageCard);
 			}
 			// Type 4 = Airlift
 			else if (j == 3)
 			{
 				cardPtr->setCardType(3);
-				myDeck.push_back(cardPtr);
+				//myDeck.push_back(cardPtr);
+				myDeck.push_back(new AirliftCard);
 			}
-			// Type 5 = Diplomacy
+			// Type 5 = Negociate
 			else if (j == 4)
 			{
 				cardPtr->setCardType(4);
-				myDeck.push_back(cardPtr);
+				//myDeck.push_back(cardPtr);
+				myDeck.push_back(new NegociateCard);
 			}
 		}
 	}
@@ -161,6 +398,7 @@ vector<Cards*> Deck::getDeck()
 {
 	return myDeck;
 }
+
 
 void Deck::printDeck()
 {
@@ -213,6 +451,15 @@ Hand& Hand::operator=(const Hand& hand)
 vector<Cards*> Hand::getHand()
 {
 	return myHand;
+}
+
+void Hand::play(int i)
+{
+	this->myHand.at(i)->play();
+	
+	auto removeCard = find(this->myHand.begin(), this->myHand.end(), this->myHand.at(i));
+	
+	this->myHand.erase(removeCard);
 }
 
 void Hand::printHand()

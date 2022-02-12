@@ -20,6 +20,8 @@ class Cards
 	vector<string> cardTypes = { "Bomb", "Reinforcement", "Blockage", "Airlift", "Diplomacy" };
 	//string* cardType;
 	string* type;
+	vector<string*> decks;
+	vector<string*> hands;
 
 public:
 
@@ -42,11 +44,93 @@ public:
 
 	// Creates an Order object & places it in the Players' list of orders, removes card from Hand
 	// & places it back in Deck
-	void play();
+	virtual void play();
 	//void play(Cards* card, Deck* deck, Hand* hand);
+	virtual string getType();
 
 	virtual ~Cards();
 };
+
+// Orders
+class BombCard : public Cards
+{
+public:
+	BombCard();
+
+	friend ostream& operator << (ostream& out, const BombCard& c);
+	BombCard& operator =(const BombCard& c);
+
+	void play();
+	string getType();
+
+	~BombCard();
+
+};
+
+class ReinforcementCard : public Cards
+{
+public:
+	ReinforcementCard();
+
+	void play();
+	string getType();
+
+	friend ostream& operator << (ostream& out, const ReinforcementCard& c);
+	ReinforcementCard& operator =(const ReinforcementCard& c);
+
+	~ReinforcementCard();
+};
+
+class BlockageCard : public Cards
+{
+public:
+	BlockageCard();
+
+	friend ostream& operator << (ostream& out, const BlockageCard& c);
+	BlockageCard& operator=(const BlockageCard& c);
+
+	void play();
+	string getType();
+
+	~BlockageCard();
+};
+
+class AirliftCard :public Cards
+{
+private:
+	//Territory* current;
+public:
+	AirliftCard();
+
+	friend ostream& operator << (ostream& out, const AirliftCard& c);
+	AirliftCard& operator=(const AirliftCard& c);
+
+	void play();
+	string getType();
+
+	~AirliftCard();
+};
+
+class NegociateCard :public Cards
+{
+private:
+	Player* enemy;
+public:
+	NegociateCard();
+	NegociateCard(Player* e);
+
+	friend ostream& operator << (ostream& out, const NegociateCard& c);
+	NegociateCard& operator =(const NegociateCard& c);
+
+	void play();
+	string getType();
+
+	void setEnemy(Player* e);
+	Player* getEnemy();
+
+	~NegociateCard();
+};
+
 
 // Deck class
 class Deck : public Cards
@@ -71,6 +155,7 @@ public:
 	Cards* draw();
 	string getCardDrawn();
 	vector<Cards*> getDeck();
+
 	void printDeck();
 
 	int getMaxSize();
@@ -96,6 +181,7 @@ public:
 
 	vector<Cards*> getHand();
 
+	void play(int i);
 
 	void printHand();
 

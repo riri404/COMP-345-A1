@@ -44,4 +44,7 @@ int main()
 	cout << "The deck size is now of " << deck->getDeck().size() << " cards." << endl;
 
 	// Show play
+	cout << "Testing play. " << endl;
+	
+
 }
