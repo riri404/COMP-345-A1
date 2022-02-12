@@ -1,0 +1,11 @@
+﻿  Cards.cpp
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP-345-Cards\Cards.h(28,10): error C2040: 'Cards::type': 'std::string *' differs in levels of indirection from 'std::string'
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP-345-Cards\Cards.cpp(46,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP-345-Cards\Cards.cpp(141,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP-345-Cards\Cards.cpp(168,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP-345-Cards\Cards.cpp(185,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP-345-Cards\Cards.cpp(221,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP-345-Cards\Cards.cpp(253,20): warning C4018: '<': signed/unsigned mismatch
+  CardsDriver.cpp
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP-345-Cards\Cards.h(28,10): error C2040: 'Cards::type': 'std::string *' differs in levels of indirection from 'std::string'
+  Generating Code...

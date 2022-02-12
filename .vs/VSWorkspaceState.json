@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\COMP345-A1",
+    "\\COMP345-A1\\COMP-345-Cards"
   ],
-  "SelectedNode": "\\COMP345-A1.sln",
+  "SelectedNode": "\\COMP345-A1\\COMP-345-Cards\\Cards.cpp",
   "PreviewInSolutionExplorer": false
 }
