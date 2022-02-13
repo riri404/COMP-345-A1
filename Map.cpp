@@ -469,3 +469,7 @@ ostream& operator<<(ostream& out, const Map& map) {
   }
   return out;
 }
+
+Map* MapLoader::loadMap(const string& filename) {
+  return new Map(filename);
+}

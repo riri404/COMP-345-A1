@@ -11,9 +11,11 @@
 #include <cstdlib>
 #include <cassert>
 // Need to include Player.h, Orders.h
-//#include "Orders.h"
-//#include "Player.h"
+#include "Orders.h"
+#include "Player.h"
 using namespace std;
+
+void CardsDriver();
 
 class Hand;
 class Deck;

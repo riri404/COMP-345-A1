@@ -1,7 +1,7 @@
 #include <iostream>
 #include "GameEngine.h"
 
-int main()
+void EngineDriver()
 {
     std::cout << "Starting main\n";
     Engine *engine;

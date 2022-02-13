@@ -1,7 +1,7 @@
 #pragma once
-#include <Orders.h>
-#include <Map.h>
-#include <Cards.h>
+#include "Orders.h"
+#include "Map.h"
+#include "Cards.h"
 #include <vector>
 #include <iostream>
 using namespace std;
@@ -10,6 +10,8 @@ class Orders;
 class OrderList;
 class Card;
 class Hand;
+
+void PlayerDriver();
 
 class Player
 {

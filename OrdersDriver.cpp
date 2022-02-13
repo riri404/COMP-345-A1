@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 
-int main() {
+void OrdersDriver() {
     //Driver that creates orders of every kind, places them in an OrdersList object, and demonstrates that the above features are available. 
 
     //Creating pointers for each object
@@ -51,6 +51,4 @@ int main() {
     list.remove(3);
     cout << list << endl;
     list.remove(9);
-
-    return 0;
 }
