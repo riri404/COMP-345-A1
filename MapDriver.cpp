@@ -8,6 +8,10 @@ void MapDriver() {
     string name2 = "source_maps/bigeurope.map";
     string name3 = "source_maps/invalid.txt";
 
+    MapLoader* loader = new MapLoader();
+    Map* test = loader->loadMap(name);
+    cout << test->validate() << endl;
+
     Map* map = new Map(name);             // valid map
     if (map->validate()) cout <<"MAP : "<<name << " is valid !" << endl;
     else cout << "MAP : " << name << " is not valid !!" << endl;
