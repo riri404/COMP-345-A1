@@ -37,13 +37,20 @@ int main() {
     list.move(2, 6);
     cout << endl;
 
+    //Execute the orders
+    deploy->execute();
+    advance->execute();
+    bomb->execute();
+    blockade->execute();
+    airlift->execute();
+    negotiate->execute();
+    cout << endl;
+
     //Remove the orders in the list
     cout << "----------Removing orders----------" << endl;
-    list.remove(0);
+    list.remove(3);
     cout << list << endl;
     list.remove(9);
-
-    //Executing the orders
 
     return 0;
 }
