@@ -90,6 +90,7 @@ public:
 	Territory* findTerritory(const string&) const;
 	bool validate() const;
 	void load(const string&);
+	bool isLoaded();
 };
 
 //---------------------------Map loader--------------------------
