@@ -29,7 +29,7 @@ public:
 	vector<Territory*> toAttack(); // method to attck; returns orders list
 	vector<Territory*> toDefend(); // method to defend; returns ordrs list
 	void issueOrder(string order);
-	void setOrder(Orders*);
+	//void setOrder(Orders*);
 
 
 private:
