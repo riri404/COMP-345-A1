@@ -1,6 +1,6 @@
 #include "Player.h"
-#include <Map.h>
-#include <Cards.h>
+#include "Map.h"
+#include "Cards.h"
 #include <vector>
 
 Player::Player()
