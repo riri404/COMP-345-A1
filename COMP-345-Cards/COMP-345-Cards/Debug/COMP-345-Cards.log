@@ -1,12 +1,10 @@
 ﻿  Cards.cpp
-C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(45,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(378,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(406,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(423,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(474,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(506,20): warning C4018: '<': signed/unsigned mismatch
-  CardsDriver.cpp
-  Generating Code...
-C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(162): error C4716: 'operator<<': must return a value
-C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(167): error C4716: 'BlockageCard::operator=': must return a value
-C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(208): error C4716: 'AirliftCard::operator=': must return a value
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(37,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(130,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(144,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(198,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(209,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(233,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(251,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\COMP-345-Cards\Cards.cpp(271,20): warning C4018: '<': signed/unsigned mismatch
+  COMP-345-Cards.vcxproj -> C:\Users\Admin\Source\Repos\COMP-345-A1\COMP-345-Cards\Debug\COMP-345-Cards.exe

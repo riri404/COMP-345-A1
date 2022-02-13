@@ -1,7 +1,0 @@
-﻿  Cards.cpp
-C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP345-A1\Cards.h(28,10): error C2040: 'Cards::type': 'std::string *' differs in levels of indirection from 'std::string'
-C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP345-A1\Cards.cpp(141,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP345-A1\Cards.cpp(143,30): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  CardsDriver.cpp
-C:\Users\Admin\Source\Repos\COMP-345-A1\COMP345-A1\COMP345-A1\Cards.h(28,10): error C2040: 'Cards::type': 'std::string *' differs in levels of indirection from 'std::string'
-  Generating Code...
