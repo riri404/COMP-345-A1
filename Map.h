@@ -8,7 +8,8 @@ class Territory;
 class Continent;
 class Map;
 class MapLoader;
-class Player;
+
+void MapDriver();
 
 //---------------------Territory-----------------------
 class Territory {
@@ -89,11 +90,13 @@ public:
 	Territory* findTerritory(const string&) const;
 	bool validate() const;
 	void load(const string&);
+	bool isMapLoaded();
 };
 
 //---------------------------Map loader--------------------------
 // maploader will first extract the 3 sections (borders, continents and territories) of the file into 3 vectors of string which is then processed and used to initialize the map
 class MapLoader {
+public:
 	friend class Map;
 	MapLoader();
 	MapLoader(const MapLoader&);
@@ -102,8 +105,10 @@ class MapLoader {
 	bool readMap(const string&);
 	void loadMap(Map*, const string&);
 	void loadMap(Map*); // loading map from existing maploader
+	Map* loadMap(const string&);
 	void clear();
 	string mapName;
+private:
 	vector<string> borders;
 	vector<string> continents;
 	vector<string> territories;

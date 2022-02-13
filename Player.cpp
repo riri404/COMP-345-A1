@@ -1,20 +1,20 @@
 #include "Player.h"
-#include <Map.h>
-#include <Cards.h>
+#include "Map.h"
+#include "Cards.h"
 #include <vector>
 
 Player::Player()
 {
-	name = "default";
-	playerID= 0;
+	name = NULL;
+	playerID= NULL;
 	territoryList = *(new vector<Territory*>);
 	cards = new Hand();
 	orderList = new OrdersList();
 }
 
-Player::Player(int playerID, string name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
+Player::Player(int* playerID, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
 {
-	this->playerID = iplayerIDd;
+	this->playerID = playerID;
 	this->name = name;
 	this->territoryList = territoryList;
 	this->cards = cards;

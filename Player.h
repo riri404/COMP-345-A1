@@ -1,7 +1,7 @@
 #pragma once
-#include <Orders.h>
-#include <Map.h>
-#include <Cards.h>
+#include "Orders.h"
+#include "Map.h"
+#include "Cards.h"
 #include <vector>
 #include <iostream>
 using namespace std;
@@ -11,12 +11,14 @@ class OrderList;
 class Card;
 class Hand;
 
+void PlayerDriver();
+
 class Player
 {
 public:
 	// contructors
 	Player(); // default constructor
-	Player(int id,string name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
+	Player(int* id,string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
 	Player(const Player& p); //copy constructor
 	~Player(); //destructor
 

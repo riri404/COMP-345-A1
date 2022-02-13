@@ -108,7 +108,7 @@ void Engine::LoadMap() {
         cout << "\nEnter the name of a map to choose it: ";
         cin >> mapName;
         fileName = "src/Maps/" + mapName + ".map";
-        *map = mapLoader->LoadMap(fileName);
+        map = mapLoader->loadMap(fileName);
 
         //  if (map == nullptr)
         if (false) // added for debugging
@@ -156,6 +156,7 @@ void Engine::AddPlayer() {
         Player* player = new Player();
         cout << "Please enter the player's name" << endl;
         cin >> name;
+        // TODO: CHECK CORRECT METHOD
         player->SetName(name);
         players.push_back(player);
         cout << "\nPlayer " << i + 1
@@ -175,7 +176,8 @@ void Engine::ReinforcementPhase() {
     cout << "Starting Reinforcement Phase..." << endl;
     for (auto player : players)
     {
-        vector<Territory*> playerTerritories = player->GetTerritoryList();
+        // TODO: CHECK CORRECT METHOD
+        vector<Territory*> playerTerritories = player->GetTerritoryList(); 
         int baseArmySize = playerTerritories.size() / 3;
         // Gent Bounus value
         // int continentBonus = findContinentBonusTotal(player);

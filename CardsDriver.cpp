@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int main()
+void CardsDriver()
 {
 	Deck* deck = new Deck;
 	Hand* hand = new Hand;
