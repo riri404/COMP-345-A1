@@ -7,17 +7,17 @@ Order::Order() {
 
 //Destructor
 Order:: ~Order() {
-
+ 
 }
 
 //Copy constructor
 Order::Order(Order& anotherOrder) {
-    this->name = anotherOrder.name;
+    name = anotherOrder.name;
 }
 
 //Assignment operator
 Order& Order::operator=(const Order& anOrder) {
-    this->name = anOrder.name;
+    name = anOrder.name;
     return *this;
 }
 
@@ -34,7 +34,7 @@ ostream& operator<<(ostream& outs, const Order& order) {
 }
 
 string const Order::getName() {
-    return this->name;
+    return name;
 }
 
 void Order::setName(string orderName) {
@@ -78,12 +78,12 @@ Deploy::~Deploy() {
 
 //Copy constructor
 Deploy::Deploy(Deploy& anotherDeploy) : Order(anotherDeploy) {
-    this->name = anotherDeploy.name;
+    name = anotherDeploy.name;
 }
 
 //Assignment operator
 Deploy& Deploy::operator=(const Deploy& aDeploy) {
-    this->name = aDeploy.name;
+    name = aDeploy.name;
     return *this;
 }
 
@@ -93,7 +93,7 @@ ostream& operator<<(ostream& outs, const Deploy& deploy) {
 }
 
 string const Deploy::getName() {
-    return this->name;
+    return name;
 }
 
 bool Deploy::validate() {
@@ -132,12 +132,12 @@ Advance::~Advance() {
 
 //Copy constructor
 Advance::Advance(Advance& anotherAdvance) : Order(anotherAdvance) {
-    this->name = anotherAdvance.name;
+    name = anotherAdvance.name;
 }
 
 //Assignment operator
 Advance& Advance::operator=(const Advance& anAdvance) {
-    this->name = anAdvance.name;
+    name = anAdvance.name;
     return *this;
 }
 
@@ -147,7 +147,7 @@ ostream& operator<<(ostream& outs, const Advance& advance) {
 }
 
 string const Advance::getName() {
-    return this->name;
+    return name;
 }
 
 bool Advance::validate() {
@@ -186,12 +186,12 @@ Bomb::~Bomb() {
 
 //Copy constructor
 Bomb::Bomb(Bomb& anotherBomb) : Order(anotherBomb) {
-    this->name = anotherBomb.name;
+    name = anotherBomb.name;
 }
 
 //Assignment operator
 Bomb& Bomb::operator=(const Bomb& aBomb) {
-    this->name = aBomb.name;
+    name = aBomb.name;
     return *this;
 }
 
@@ -201,7 +201,7 @@ ostream& operator<<(ostream& outs, const Bomb& bomb) {
 }
 
 string const Bomb::getName() {
-    return this->name;
+    return name;
 }
 
 bool Bomb::validate() {
@@ -240,12 +240,12 @@ Blockade::~Blockade() {
 
 //Copy constructor
 Blockade::Blockade(Blockade& anotherBlockade) : Order(anotherBlockade) {
-    this->name = anotherBlockade.name;
+    name = anotherBlockade.name;
 }
 
 //Assignment operator
 Blockade& Blockade::operator=(const Blockade& aBlockade) {
-    this->name = aBlockade.name;
+    name = aBlockade.name;
     return *this;
 }
 
@@ -255,7 +255,7 @@ ostream& operator<<(ostream& outs, const Blockade& blockade) {
 }
 
 string const Blockade::getName() {
-    return this->name;
+    return name;
 }
 
 bool Blockade::validate() {
@@ -294,12 +294,12 @@ Airlift::~Airlift() {
 
 //Copy constructor
 Airlift::Airlift(Airlift& anotherAirlift) : Order(anotherAirlift) {
-    this->name = anotherAirlift.name;
+    name = anotherAirlift.name;
 }
 
 //Assignment operator
 Airlift& Airlift::operator=(const Airlift& anAirlift) {
-    this->name = anAirlift.name;
+    name = anAirlift.name;
     return *this;
 }
 
@@ -309,7 +309,7 @@ ostream& operator<<(ostream& outs, const Airlift& airlift) {
 }
 
 string const Airlift::getName() {
-    return this->name;
+    return name;
 }
 
 bool Airlift::validate() {
@@ -348,12 +348,12 @@ Negotiate::~Negotiate() {
 
 //Copy constructor
 Negotiate::Negotiate(Negotiate& anotherNegotiate) : Order(anotherNegotiate) {
-    this->name = anotherNegotiate.name;
+    name = anotherNegotiate.name;
 }
 
 //Assignment operator
 Negotiate& Negotiate::operator=(const Negotiate& aNegotiate) {
-    this->name = aNegotiate.name;
+    name = aNegotiate.name;
     return *this;
 }
 
@@ -363,7 +363,7 @@ ostream& operator<<(ostream& outs, const Negotiate& negotiate) {
 }
 
 string const Negotiate::getName() {
-    return this->name;
+    return name;
 }
 
 bool Negotiate::validate() {
@@ -449,49 +449,3 @@ void OrdersList::remove(int index) {
         cout << "Cannot remove: invalid index" << endl;
     }
 }
-
-/* int main(){
-    //Driver that creates orders of every kind, places them in an OrdersList object, and demonstrates that the above features are available.
-
-    //Creating pointers for each object
-    Deploy* deploy = new Deploy;
-    Advance* advance = new Advance;
-    Bomb* bomb = new Bomb;
-    Blockade* blockade = new Blockade;
-    Airlift* airlift = new Airlift;
-    Negotiate* negotiate = new Negotiate;
-    cout << endl;
-
-    //Creating OrdersList
-    OrdersList list;
-    cout << list << endl;
-
-    //Adding each pointers to the list
-    list.addToListOfOrders(deploy);
-    list.addToListOfOrders(advance);
-    list.addToListOfOrders(bomb);
-    list.addToListOfOrders(blockade);
-    list.addToListOfOrders(airlift);
-    list.addToListOfOrders(negotiate);
-    cout << endl;
-
-    //Print the filled list
-    cout << list << endl;
-
-    //Move the orders
-    cout << "----------Moving orders----------" << endl;
-    list.move(0, 4);
-    cout << list << endl;
-    list.move(2,6);
-    cout << endl;
-
-    //Remove the orders in the list
-    cout << "----------Removing orders----------" << endl;
-    list.remove(0);
-    cout << list << endl;
-    list.remove(9);
-
-    //Executing the orders
-
-    return 0;
-} */
