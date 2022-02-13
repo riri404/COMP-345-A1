@@ -3,3 +3,5 @@ MapDriver.dSYM/
 .DS_Store
 bin
 .vs
+COMP345/COMP345/COMP345.vcxproj
+*.vcxproj

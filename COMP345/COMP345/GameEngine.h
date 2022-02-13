@@ -2,9 +2,9 @@
 
 #include "Player.h"
 #include "Cards.h"
-//#include "Orders.h"
-//#include "Map.h"
-//#include <vector>
+#include "Orders.h"
+#include "Map.h"
+#include <vector>
 //#include "Deck.h"
 //#include "MapLoader.h"
 

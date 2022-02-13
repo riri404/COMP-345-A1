@@ -156,7 +156,7 @@ void Engine::AddPlayer() {
         Player* player = new Player();
         cout << "Please enter the player's name" << endl;
         cin >> name;
-        player->SetName(name);
+     //   player->SetName(name);
         players.push_back(player);
         cout << "\nPlayer " << i + 1
             << " has been created. " << std::endl;
