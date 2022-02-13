@@ -1,37 +1,19 @@
 #include "GameEngine.h"
 
-
-#define MGL_DRIVER
-#ifdef MGL_DRIVER
-#define STOP std::cin.get();
-#define LOG(x) std::cout << "[Main Game Loop Log] " << x << std::endl
-#else
-#define STOP
-#define LOG(X)
-#endif
-
-//Engine::Engine() : deck(), map(nullptr) {}
-
-
 Engine::Engine()
 {
+    state = null;
     this->map = nullptr;
-    vector<Player*> players;
-   
+    vector<Player*> players;  
     this->deck = new Deck();
     this->numOfPlayers = 0;
-   
-    this-> phase = StartUp;
 
-   // this->observerOn = false;
-   // this->firstPlayer = nullptr;
-   // this->phaseObserver = nullptr;
-   // this->gameStatsObserver = nullptr;
 }
 
 // Creates a deep copy of this GameEngine, and all of its components.
 Engine::Engine(Engine& engine)
 {
+    state = null;
     this->map = new Map(*engine.map);
     this->players;
     for (int i = 0; i < engine.players.size(); i++)
@@ -41,22 +23,19 @@ Engine::Engine(Engine& engine)
   
     this->deck = new Deck(*engine.deck);
     this->numOfPlayers = engine.numOfPlayers;
-   
-    this->phase = engine.phase;
+    this->state = engine.state;
 
-    // this->observerOn = engine.observerOn;
-    //  this->firstPlayer = engine.firstPlayer;
 }
 
 
 Engine::~Engine()
 {
+    
     delete this->map;
     map = NULL;
     delete this->deck;
     deck = NULL;
  
-
     for (int i = 0; i < this->players.size(); i++)
     {
         delete this->players[i];
@@ -64,10 +43,6 @@ Engine::~Engine()
         
     }
     this->players.clear();
-
-  //  delete this->phaseObserver;
-  //  delete this->gameStatsObserver;
-  //  this->firstPlayer = nullptr;
 }
 
 
@@ -90,6 +65,14 @@ void Engine::SetNumberOfPlayers(int x)
     this->numOfPlayers = x;
 }
 
+// Returns all the players in the game in their order of play.
+std::vector<Player*> Engine::GetPlayers() { return players; }
+
+std::vector<Player*>* Engine::GetPlayersAdress() { return &players; }
+
+
+// Returns a pointer to the game map.
+Map* Engine::GetMap() { return map; }
 
 
 //=================== StartUp Phase===================================
@@ -119,9 +102,8 @@ void Engine::LoadMap() {
                 <<"\n---------------------------\n"
                     << "bigeurope.map";
 
-
+   
     // Loops until the user enters a valid map
-    
     do {
         cout << "\nEnter the name of a map to choose it: ";
         cin >> mapName;
@@ -184,11 +166,8 @@ void Engine::AddPlayer() {
 }
 
 
-/*
-Adds troops to a player's reinforcement pool at the start of the turn.
-*/
 
-
+// Adds troops to a player's reinforcement pool at the start of the turn.
 
 void Engine::ReinforcementPhase() {
     state = assignReinforcement;
@@ -199,21 +178,19 @@ void Engine::ReinforcementPhase() {
             vector<Territory*> playerTerritories = player->GetTerritoryList();
             int baseArmySize = playerTerritories.size() / 3;
             // Gent Bounus value
-           // int continentBonus = findContinentBonusTotal(player);
+            // int continentBonus = findContinentBonusTotal(player);
             //int armiesToGive = continentBonus + baseArmySize;
             int reinforcementArmySize = baseArmySize;
 
             if (reinforcementArmySize < 3) reinforcementArmySize = 3;
 
-          //  if (this->phaseObserver)
-          //  {
+         
             /*    string message = "give armies";
                 string armies = to_string(reinforcementArmySize);
                 string id = to_string(player->GetPlayerID());
                 string baseArmies = to_string(baseArmySize);
                 string continentB = to_string(continentBonus);
                 this->notify(message + " " + armies + " " + id + " " + baseArmies + " " + continentB);*/
-         //   }
 
         //    player->AddArmies(reinforcementArmySize); //Using add and not set because of the initial armies given from setup. Will always be 0 at start of a turn.
 
@@ -222,9 +199,9 @@ void Engine::ReinforcementPhase() {
 
 };
 
-/*
-Calls IssueOrder until all players have commited that they are done issuing orders.
-*/
+
+// Calls IssueOrder until all players have commited that they are done issuing orders.
+
 void Engine::IssueOrdersPhase(Player* player) {
     state = issueOrder;
 
@@ -238,9 +215,9 @@ void Engine::IssueOrdersPhase(Player* player) {
     cout << "end of issue orders phase" << endl;
 }
 
-/*
-Calls ExecuteOrder() until all players have no more orders in their orders list.
-*/
+
+// Calls ExecuteOrder() until all players have no more orders in their orders list.
+
 void Engine::ExecuteOrdersPhase() {
     state = ExecuteOrders;
   
@@ -276,8 +253,9 @@ void Engine::PlayerDrawCard(Player* player) {
 
 // ==============================Play Phase===================================
 void Engine::MainGameLoop() {
-    LOG("Starting Main Game Loop...");
-    STOP
+
+    cout << "Starting Main Game Loop..." << endl;
+
         while (true) {
             ReinforcementPhase();
             IssueOrdersPhase();
@@ -285,37 +263,22 @@ void Engine::MainGameLoop() {
             // Eliminate players who don't have any more territories.
             for (int i = players.size() - 1; i >= 0; i--) {
                 if (false/* player has no more territories */) {
-                    LOG("A player has been eliminated.");
-                    STOP
+                    cout << "A player has been eliminated." << endl;
+                   
                         players.erase(players.begin() + i);
                 }
             }
             // If a player controls all territories, they win the game.
             if (players.size() < 2) {
-                LOG("There's only one player left.");
-                STOP
-                    if (false /*players.at(0)->player controls all territories*/) {
+                cout << "There's only one player left." << endl;
 
-                        LOG("Exiting Main Game Loop.");
+             
+                    if (false /*players.at(0)->player controls all territories*/) {
+                        cout << "Exiting Main Game Loop." << endl;
+                        
                         return;
                     }
             }
         }
 }
-
-
-
-
-// Returns all the players in the game in their order of play.
-
-std::vector<Player*> Engine::GetPlayers() { return players; }
-
-std::vector<Player*>* Engine::GetPlayersAdress() { return &players; }
-
-
-// Returns a pointer to the game map.
-Map* Engine::GetMap() { return map; }
-
-
-
 
