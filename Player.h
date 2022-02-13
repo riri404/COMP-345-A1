@@ -16,7 +16,7 @@ class Player
 public:
 	// contructors
 	Player(); // default constructor
-	Player(int id,string name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
+	Player(int* id,string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
 	Player(const Player& p); //copy constructor
 	~Player(); //destructor
 
