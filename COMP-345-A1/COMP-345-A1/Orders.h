@@ -27,14 +27,14 @@ public:
     //Member functions
     bool validate();
     void execute();
-private:
+protected:
     string name;
 };
 
 
 //Each kind of order is implemented as a subclass of the Order class. 
 //Every order subclass must implement the validate() method that is used to validate if the order is valid.
-//Every order subclass must implement the execute() method that first validates the order, and executes its action if it is valid, according to the order’s meaning and the player’s state.
+//Every order subclass must implement the execute() method that first validates the order, and executes its action if it is valid, according to the orderâ€™s meaning and the playerâ€™s state.
 class Deploy : public Order {
 public:
     //Constructor and destructor
@@ -48,13 +48,10 @@ public:
 
     //Getters and setters
     string const getName();
-    void setName(string);
 
     //Member functions
     bool validate();
     void execute();
-private:
-    string name;
 };
 
 class Advance : public Order {
@@ -70,13 +67,10 @@ public:
 
     //Getters and setters
     string const getName();
-    void setName(string);
 
     //Member functions
     bool validate();
     void execute();
-private:
-    string name;
 };
 
 class Bomb : public Order {
@@ -92,13 +86,10 @@ public:
 
     //Getters and setters
     string const getName();
-    void setName(string);
 
     //Member functions
     bool validate();
     void execute();
-private:
-    string name;
 };
 
 class Blockade : public Order {
@@ -114,13 +105,10 @@ public:
 
     //Getters and setters
     string const getName();
-    void setName(string);
 
     //Member functions
     bool validate();
     void execute();
-private:
-    string name;
 };
 
 class Airlift : public Order {
@@ -136,13 +124,10 @@ public:
 
     //Getters and setters
     string const getName();
-    void setName(string);
 
     //Member functions
     bool validate();
     void execute();
-private:
-    string name;
 };
 
 class Negotiate : public Order {
@@ -158,13 +143,10 @@ public:
 
     //Getters and setters
     string const getName();
-    void setName(string);
 
     //Member functions
     bool validate();
     void execute();
-private:
-    string name;
 };
 
 
