@@ -6,14 +6,24 @@
 Player::Player()
 {
 	name = "default";
-	playerID= NULL;
+	playerID= 0;
 	territoryList = *(new vector<Territory*>);
 	cards = new Hand();
 	orderList = new OrdersList();
 }
 
-Player::Player(Player& p)
+Player::Player(int playerID, string name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
 {
+	this->playerID = iplayerIDd;
+	this->name = name;
+	this->territoryList = territoryList;
+	this->cards = cards;
+	this->orderlist = orderlist;
+}
+
+Player::Player(const Player& p)
+{
+	this->playerID = p.playerID;
 	this->name = p.name;
 	this->territoryList = p.territoryList;
 	this->cards = p.cards;
@@ -43,10 +53,11 @@ Player::~Player()
 
 Player& Player::operator=(const Player& p)
 {
-	this->name = player.name;
-	this->territoryList = player.territoryList;
-	this->cards = player.cards;
-	this->orderList = player.orderList;
+	this->playerID = p.playerID;
+	this->name = p.name;
+	this->territoryList = p.territoryList;
+	this->cards = p.cards;
+	this->orderList = p.orderList;
 	return *this;
 }
 
@@ -76,9 +87,11 @@ vector<Territory*> Player::toAttack()
 {
 	
 	vector<Territory*> territoriesToAttack;
-	for (vector<Territory*>::iterator it = territoriesToAttack.begin(); it != territoriesToAttack.end(); ++it) {
-		territoriesToAttack.push_back(*it);
-		std::cout << *it << std::endl;
+	if( territoriesToAttack != territoryList){
+	   for (vector<Territory*>::iterator attcked = territoriesToAttack.begin(); attcked != territoriesToAttack.end(); ++attcked) {
+		   territoriesToAttack.push_back(*attcked);
+		   std::cout << *attcked << std::endl;
+	       }
 	}
 
 	return territoriesToAttack;
@@ -87,19 +100,49 @@ vector<Territory*> Player::toAttack()
 vector<Territory*> Player::toDefend()
 {
 	
-	vector<Territory*> territoriesToDefend;
-	for (vector<Territory*>::iterator it = territoriesToDefend.begin(); it != territoriesToDefend.end(); ++it) {
-		territoriesToDefend.push_back(*it);
-		std::cout << *it << std::endl;
+	vector<Territory*> territoriesToDefend= territoryList;
+	for (vector<Territory*>::iterator defend = territoriesToDefend.begin(); defend != territoriesToDefend.end(); ++defend) {
+		territoriesToDefend.push_back(*defend);
+		std::cout << *defend << std::endl;
 	}
 	return territoriesToDefend;
 }
 
+void Player::issueOrder(string order)
+{
+	if (order == "Deploy") {
+		Deploy* deploy = new Deploy();
+		orderList->addToListOfOrders(deploy);
+	}
+	else if (order == "Advance") {
+		Advance* advance = new Advance();
+		orderList->addToListOfOrders(advance);
+	}
+	else if (order == "Bomb") {
+		Bomb* bomb = new Bomb();
+		orderList->addToListOfOrders(bomb);
+	}
+	else if (order == "Blockade") {
+		Blockade* block = new Blockade();
+		orderList->addToListOfOrders(block);
+	}
+	else if (order == "Airlift") {
+		Airlift* air = new Airlift();
+		orderList->addToListOfOrders(air);
+	}
+	else if (order == "Negotiate") {
+		Negotiate* negotiate = new Negotiate();
+		orderList->addToListOfOrders(negotiate);
+	}
+	else {
+		cout << "Error! Please enter one of the following orders: 1. Deploy, 2. Advance, 3. Bomb, 4. Blockade, 5 Airlift, 6. Negotiate." << endl;
+	}
+}
 
+/*
 void Player::issueOrder()
 {	
 	Order* order = new Bomb();
 	orderList.push_back(order);
 	std::cout << *order << std::endl;
-}
-
+}*/
