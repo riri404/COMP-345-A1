@@ -1,44 +1,69 @@
 #pragma once
-#include "Orders.h"
-#include "Map.h"
-#include "Cards.h"
-#include <vector>
-#include <iostream>
+
+#include "Player.h"
+//#include "Cards.h"
+//#include "Orders.h"
+//#include "Map.h"
+//#include <vector>
+//#include "Deck.h"
+//#include "MapLoader.h"
+
+
 using namespace std;
-class Order;
 
-class Player
-{
+// enum Phase {StartUp, Play };
+
+enum State {
+	null, start, mapLoaded, mapValidated, playersAdded,
+	assignReinforcement, issueOrder, ExecuteOrders, win
+};
+
+class Engine {
+
 public:
-	// contructors
-	Player(); // default constructor
-	// Player(); // default constructor
-	Player(Player& p); //copy constructor
-	~Player(); //destructor
 
-	//methods
-	Player& operator =(const Player& p);
-	friend istream& operator >>(istream& ins, Player& p);
-	friend ostream& operator <<(ostream& outs, const Player& p);
+	// constructors
 
-	vector<Territory*> GetTerritoryList(); // method to attck; returns orders list
-	vector<Territory*> toAttack(); // method to attck; returns orders list
-	vector<Territory*> toDefend(); // method to defend; returns ordrs list
-	//void issueOrder(Orders order);
-	void SetName(string n);
+	Engine();
+	Engine(Engine& engine);
+	~Engine();
+
+	// Mutators
+
+	State GetState();
+	int GetNumberOfPlayers();
+	vector<Player*> GetPlayers();
+	vector<Player*>* GetPlayersAdress();
+	Map* GetMap();
+	Deck* GetDeck();
+	void SetState(State);
+	void SetNumberOfPlayers(int);
+
+
+	// void Init();
+	void StartGame();
+
+	void LoadMap();
+	void ValidateMap();
+	void AddPlayer();
+	void IssueOrdersPhase();
+	void IssueOrdersPhase(Player* player);
+
+	void MainGameLoop();
+	void StartupPhase();
+	void ReinforcementPhase();
+	
+	void ExecuteOrdersPhase();
+	void ExecuteOrdersPhase(Player* player);
+
+
+	void PlayerDrawCard(Player* player);
 
 
 private:
-	//attributes/ variables
-	string* name;
-	Player* playerID;
-	vector<Territory*> territoryList;
-	OrdersList* orderList;
-	Hand* cards;
-
-	//friend classes
-	friend class Card;
-	friend class GameEngine;
-	friend class Map;
-
+	Map* map;
+	vector<Player*> players; 
+	Deck* deck;
+	int numOfPlayers;
+	State state;
 };
