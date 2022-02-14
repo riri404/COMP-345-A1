@@ -77,15 +77,13 @@ Map* Engine::GetMap() { return map; }
 
 //=================== StartUp Phase===================================
 
-void Engine::StartupPhase() {
-    StartGame();
-}
-
 void Engine::StartGame() {
 
     state = start;
-    cout << "Welcome to Warzone" << endl;
-    cout << "end of start phase" << endl;
+    cout << "Welcome to Warzone" << endl<< endl;
+
+    cout << "beginning start phase" << endl;
+    cout << "starting game..." << endl << endl;
 
     LoadMap();
     AddPlayer();
@@ -95,59 +93,90 @@ void Engine::StartGame() {
 void Engine::LoadMap() {
     state = mapLoaded;
 
-    MapLoader* mapLoader = new MapLoader();
+    cout << "Starting Load Map Phase..." << endl;
+
+    // MapLoader* mapLoader = new MapLoader();
 
     /* 1. Select a map and load it. */
 
     string mapName;
     string fileName;
 
+    bool validMap = false;
+
     std::cout << "Available maps:"
         << "\n---------------------------\n"
-        << "bigeurope.map";
+        << "bigeurope"
+        << "\n---------------------------\n"
+        << endl;
 
 
     // Loops until the user enters a valid map
     do {
         cout << "\nEnter the name of a map to choose it: ";
         cin >> mapName;
-        fileName = "src/Maps/" + mapName + ".map";
-        map = mapLoader->loadMap(fileName);
+        fileName = "source_maps/" + mapName + ".map";
+       // *map = mapLoader-> new Map(fileName);
+        map = new Map(fileName);
 
-        //  if (map == nullptr)
-        if (false) // added for debugging
+      //  map = mapLoader.loadMap(filename)
+       // map = map->load(fileName);
+
+       // Map* map = new Map(name);             // valid map
+      /*  if (map->validate()) cout << "MAP : " << mapName << " is valid !" << endl;
+        else cout << "MAP : " << mapName << " is not valid !!" << endl;*/
+      //  bool mapLoaded = mapLoader->loadMap(map, fileName);
+        //if (false) // added for debugging
+        
+        
+       // if (map == nullptr)
+        if (!map->isLoaded)
             cout << "Please try again." << endl;
         else {
-            cout << "end of load map phase" << endl;
-            Engine::ValidateMap();
+            cout<< endl << "The chosen map has been loaded"<< endl;
+            cout << "end of load map phase" << endl<< endl;
+
+            validMap = Engine::ValidateMap();
         }
 
 
 
-    } while (map == nullptr);
-
+    } while (map == nullptr || !validMap);
+   
     // Delete the map loader
-    delete mapLoader;
+  //  delete mapLoader;
 }
 
 
-void Engine::ValidateMap() {
+bool Engine::ValidateMap() {
+    cout << "Starting Validate Map Phase..." << endl;
 
     state = mapValidated;
+
+    cout << "Validating loaded map" << endl;
     bool validMap = false;
-    do {
+    
+    validMap = map->validate();
+       // validMap = true; // added for debugging
+      
+    if (!validMap)
+    {
+        cout << "Not a valid map, please try again\n"; 
+        return false;
+    }
+    else
+    {
+        cout << "end of validate map phase" << endl<< endl;
+        return true;
+    }
 
-        //validMap = map->ValidateMap();
-        validMap = true; // added for debugging
-        if (!validMap) cout << "Not a valid map, please try again\n";
-
-    } while (!validMap);
-
-    cout << "end of validate map phase" << endl;
+    AddPlayer();
 
 }
 
 void Engine::AddPlayer() {
+
+    cout << "Starting Add Player Phase..." << endl;
 
     cout << "Please enter the number of players" << endl;
     cin >> this->numOfPlayers;
@@ -158,16 +187,15 @@ void Engine::AddPlayer() {
     for (int i = 0; i < numOfPlayers; i++) {
         string name;
         Player* player = new Player();
-        cout << "Please enter the player's name" << endl;
+        cout << endl << "Please enter the player's name" << endl;
         cin >> name;
-        // TODO: CHECK CORRECT METHOD
-        player->setName(name);
+     //   player->SetName(name);
         players.push_back(player);
-        cout << "\nPlayer " << i + 1
-            << " has been created. " << std::endl;
+        cout << "Player " << i + 1
+             << " has been created. " << endl;
     }
-    cout << "end of add player phase" << endl;
-
+    cout << endl << "end of add player phase" << endl<< endl;
+    ReinforcementPhase();
 }
 
 
@@ -180,58 +208,50 @@ void Engine::ReinforcementPhase() {
     cout << "Starting Reinforcement Phase..." << endl;
     for (auto player : players)
     {
-        // TODO: CHECK CORRECT METHOD
-        vector<Territory*> playerTerritories = player->getTerritoryList(); 
-        int baseArmySize = playerTerritories.size() / 3;
-        // Gent Bounus value
-        // int continentBonus = findContinentBonusTotal(player);
+
+
+
+        //vector<Territory*> playerTerritories = player->GetTerritoryList();
+        //int baseArmySize = playerTerritories.size() / 3;
+        //Gent Bounus value
+        //int continentBonus = findContinentBonusTotal(player);
         //int armiesToGive = continentBonus + baseArmySize;
-        int reinforcementArmySize = baseArmySize;
+        //int reinforcementArmySize = baseArmySize;
 
-        if (reinforcementArmySize < 3) reinforcementArmySize = 3;
+        //if (reinforcementArmySize < 3) reinforcementArmySize = 3;
 
 
-        /*    string message = "give armies";
-            string armies = to_string(reinforcementArmySize);
-            string id = to_string(player->GetPlayerID());
-            string baseArmies = to_string(baseArmySize);
-            string continentB = to_string(continentBonus);
-            this->notify(message + " " + armies + " " + id + " " + baseArmies + " " + continentB);*/
+        // string message = "give armies";
+        // string armies = to_string(reinforcementArmySize);
+        // string id = to_string(player->GetPlayerID());
+        // string baseArmies = to_string(baseArmySize);
+        // string continentB = to_string(continentBonus);
+        // this->notify(message + " " + armies + " " + id + " " + baseArmies + " " + continentB);
 
-            //    player->AddArmies(reinforcementArmySize); //Using add and not set because of the initial armies given from setup. Will always be 0 at start of a turn.
+        // player->AddArmies(reinforcementArmySize); //Using add and not set because of the initial armies given from setup. Will always be 0 at start of a turn.
 
     }
-    cout << "end of add player phase" << endl;
-
-};
+    cout << endl << "end of Reinforcement phase" << endl << endl;
+    IssueOrdersPhase();
+}
 
 
 // Calls IssueOrder until all players have commited that they are done issuing orders.
 
-void Engine::IssueOrdersPhase(Player* player) {
-    state = issueOrder;
-
-
-    cout << "Starting Issue Orders Phase..." << endl;
-
-    for (auto player : players)
-    {
-        // player->issueOrder(this, map, deck);
-    }
-    cout << "end of issue orders phase" << endl;
-}
-
 void Engine::IssueOrdersPhase() {
     state = issueOrder;
+
+
     cout << "Starting Issue Orders Phase..." << endl;
 
     for (auto player : players)
     {
         // player->issueOrder(this, map, deck);
     }
-    cout << "end of issue orders phase" << endl;
-}
+    cout << "end of issue orders phase" << endl << endl;
 
+    ExecuteOrdersPhase();
+}
 
 
 // Calls ExecuteOrder() until all players have no more orders in their orders list.
