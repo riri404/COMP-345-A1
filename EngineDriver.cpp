@@ -3,8 +3,7 @@
 
 void EngineDriver()
 {
-    std::cout << "Starting main\n";
-    Engine *engine;
+    Engine* engine;
     engine = new Engine;
-    engine->StartupPhase();
+    engine->StartGame();
 }
