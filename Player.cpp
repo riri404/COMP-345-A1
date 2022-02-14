@@ -96,15 +96,12 @@ vector<Territory*> Player::toDefend()
 {
 
 	vector<Territory*> territoriesToDefend = territoryList;
-	cout << territoriesToDefend.size() << endl;
-	for (auto i : territoriesToDefend) {
-		std::cout << *i << std::endl;
+
+	for (auto i = territoriesToDefend.begin(); i != territoriesTo)
+	for (auto defend = territoriesToDefend.begin(); defend != territoriesToDefend.end(); ++defend) {
+		// territoriesToDefend.push_back(*defend);
+		std::cout << *defend << std::endl;
 	}
-	// for (auto defend = territoriesToDefend.begin(); defend != territoriesToDefend.end(); ++defend) {
-	// 	territoriesToDefend.push_back(*defend);
-	// 	std::cout << *defend << std::endl;
-	// 	std::cout << "test" <<  std::endl;
-	// }
 	return territoriesToDefend;
 }
 
