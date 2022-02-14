@@ -46,15 +46,15 @@ public:
 	void StartGame();
 
 	void LoadMap();
-	void ValidateMap();
+	bool ValidateMap();
 	void AddPlayer();
 	void IssueOrdersPhase();
 	void IssueOrdersPhase(Player* player);
 
 	void MainGameLoop();
-	void StartupPhase();
+	//void StartupPhase();
 	void ReinforcementPhase();
-	
+
 	void ExecuteOrdersPhase();
 	void ExecuteOrdersPhase(Player* player);
 
@@ -64,7 +64,7 @@ public:
 
 private:
 	Map* map;
-	vector<Player*> players; 
+	vector<Player*> players;
 	Deck* deck;
 	int numOfPlayers;
 	State state;

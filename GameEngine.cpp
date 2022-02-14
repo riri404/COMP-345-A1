@@ -130,7 +130,7 @@ void Engine::LoadMap() {
         
         
        // if (map == nullptr)
-        if (!map->isLoaded)
+        if (!map->isMapLoaded())
             cout << "Please try again." << endl;
         else {
             cout<< endl << "The chosen map has been loaded"<< endl;

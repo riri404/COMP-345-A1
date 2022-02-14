@@ -43,19 +43,19 @@ void PlayerDriver(){
     //  testing toAttack()
      std::cout << "testing toAttack() method---------------------------------\n";
      player1->toAttack();
-     cout>>"Attack successful">>endl;
+     cout << "Attack successful" << endl;
 
 
     //  testing toDefend()
      std::cout << "testing toDefend() method--------------------------------\n";
      player1->toDefend();
-     cout>>"Territory Defended">>endl;
+     cout << "Territory Defended" << endl;
 
 
 
        std::cout << "testing issueOrder() method---------------------------------\n";
        player1->issueOrder("Bomb"); 
-       cout>>"Order issued">>endl;
+       cout << "Order issued" <<endl;
     
     
        std::cout << player1 << endl;
