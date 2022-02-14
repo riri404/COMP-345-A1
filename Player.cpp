@@ -1,12 +1,16 @@
+#pragma once
 #include "Player.h"
-#include <Map.h>
-#include <Cards.h>
+#include "Map.h"
+#include "Cards.h"
 #include <vector>
+#include <iostream>
+#include <string>
+using namespace std;
 
 Player::Player()
 {
 	name = NULL;
-	playerID= NULL;
+	playerID = NULL;
 	territoryList = *(new vector<Territory*>);
 	cards = new Hand();
 	orderList = new OrdersList();
@@ -18,7 +22,7 @@ Player::Player(int* playerID, string* name, vector<Territory*> territoryList, Ha
 	this->name = name;
 	this->territoryList = territoryList;
 	this->cards = cards;
-	this->orderlist = orderlist;
+	this->orderList = orderList;
 }
 
 Player::Player(const Player& p)
@@ -38,17 +42,14 @@ Player::~Player()
 	name = nullptr;
 	delete cards;
 	cards = nullptr;
+	delete orderList;
+	orderList = nullptr;
 	for (auto p : territoryList)
 	{
 		delete p;
 	}
 	territoryList.clear();
 
-	for (auto p : orderList)
-	{
-		delete p;
-	}
-	orderList.clear();
 }
 
 Player& Player::operator=(const Player& p)
@@ -61,37 +62,35 @@ Player& Player::operator=(const Player& p)
 	return *this;
 }
 
-istream& operator>>(istream& ins, Player& p1)
+/*std:: istream& operator>>(std::istream& ins, Player& p1)
 {
-	cout << "Enter name ";
 	ins >> p1.name;
-	cout << "Enter Cards ";
 	ins >> p1.cards;
-	cout << "Enter territoty list ";
 	ins >> p1.territoryList;
-	cout << "Enter orders lost ";
 	ins >> p1.orderList;
 	return ins;
-}
+}*/
 
-ostream& operator<<(ostream& outs, const Player& p1)
+std::ostream& operator<<(std::ostream& outs, const Player& p1)
 {
+	outs << p1.playerID;
 	outs << p1.name;
 	outs << p1.cards;
-	outs << p1.territoryList;
-	outs << p1.orderList;
+	//outs << (p1.territoryList);
+	//outs << p1.orderList;
+
 	return outs;
 }
 
 vector<Territory*> Player::toAttack()
 {
-	
+
 	vector<Territory*> territoriesToAttack;
-	if( territoriesToAttack != territoryList){
-	   for (vector<Territory*>::iterator attcked = territoriesToAttack.begin(); attcked != territoriesToAttack.end(); ++attcked) {
-		   territoriesToAttack.push_back(*attcked);
-		   std::cout << *attcked << std::endl;
-	       }
+	if (territoriesToAttack != territoryList) {
+		for (vector<Territory*>::iterator attcked = territoriesToAttack.begin(); attcked != territoriesToAttack.end(); ++attcked) {
+			territoriesToAttack.push_back(*attcked);
+			std::cout << *attcked << std::endl;
+		}
 	}
 
 	return territoriesToAttack;
@@ -99,8 +98,8 @@ vector<Territory*> Player::toAttack()
 
 vector<Territory*> Player::toDefend()
 {
-	
-	vector<Territory*> territoriesToDefend= territoryList;
+
+	vector<Territory*> territoriesToDefend = territoryList;
 	for (vector<Territory*>::iterator defend = territoriesToDefend.begin(); defend != territoriesToDefend.end(); ++defend) {
 		territoriesToDefend.push_back(*defend);
 		std::cout << *defend << std::endl;
@@ -141,7 +140,7 @@ void Player::issueOrder(string order)
 
 /*
 void Player::issueOrder()
-{	
+{
 	Order* order = new Bomb();
 	orderList.push_back(order);
 	std::cout << *order << std::endl;
