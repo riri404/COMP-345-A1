@@ -6,8 +6,8 @@ using namespace std;
 
 Player::Player()
 {
-	name = NULL;
-	playerID = NULL;
+	name = new string("");
+	playerID = new int(-1);
 	territoryList = *(new vector<Territory*>);
 	cards = new Hand();
 	orderList = new OrdersList();
