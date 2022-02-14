@@ -78,7 +78,7 @@ Map* Engine::GetMap() { return map; }
 //=================== StartUp Phase===================================
 
 void Engine::StartupPhase() {
-    // TODO: please complete
+    StartGame();
 }
 
 void Engine::StartGame() {
