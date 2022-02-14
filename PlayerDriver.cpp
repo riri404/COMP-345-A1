@@ -9,11 +9,9 @@ using namespace std;
 
 void PlayerDriver(){
 
-    int playerID = 12345;
-    int* id = &playerID;
+    int* id = new int(12345);
 
-    string name = "badgirlriri";
-    string* n = &name;
+    string* n = new string("badgirlririrama");
 
     //creating arbitary list of territories
      Territory * t1 = new Territory();
@@ -54,8 +52,8 @@ void PlayerDriver(){
 
 
        std::cout << "testing issueOrder() method---------------------------------\n";
-       player1->issueOrder("Bomb");
-
+       player1->issueOrder("Bomb"); 
+       std::cout << player1 << endl;
        //delete player that created
        delete player1;
 
