@@ -106,9 +106,9 @@ void Engine::LoadMap() {
 
     std::cout << "Available maps:"
         << "\n---------------------------\n"
-        << "bigeurope"
-        << "bigeurope2 (invalid)"
-        << "invalid (lol)"
+        << "bigeurope" << endl
+        << "bigeurope2 (invalid)" << endl
+        << "invalid (lol)" << endl
         << "sw_baltic"
         << "\n---------------------------\n"
         << endl;
