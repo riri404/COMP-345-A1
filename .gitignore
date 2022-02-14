@@ -5,3 +5,4 @@ bin
 .vs
 COMP345/COMP345/COMP345.vcxproj
 *.vcxproj
+/COMP345

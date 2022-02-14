@@ -77,6 +77,10 @@ Map* Engine::GetMap() { return map; }
 
 //=================== StartUp Phase===================================
 
+void Engine::StartupPhase() {
+    // TODO: please complete
+}
+
 void Engine::StartGame() {
 
     state = start;
@@ -157,7 +161,7 @@ void Engine::AddPlayer() {
         cout << "Please enter the player's name" << endl;
         cin >> name;
         // TODO: CHECK CORRECT METHOD
-        player->SetName(name);
+        player->setName(name);
         players.push_back(player);
         cout << "\nPlayer " << i + 1
             << " has been created. " << std::endl;
@@ -177,7 +181,7 @@ void Engine::ReinforcementPhase() {
     for (auto player : players)
     {
         // TODO: CHECK CORRECT METHOD
-        vector<Territory*> playerTerritories = player->GetTerritoryList(); 
+        vector<Territory*> playerTerritories = player->getTerritoryList(); 
         int baseArmySize = playerTerritories.size() / 3;
         // Gent Bounus value
         // int continentBonus = findContinentBonusTotal(player);
@@ -216,6 +220,18 @@ void Engine::IssueOrdersPhase(Player* player) {
     }
     cout << "end of issue orders phase" << endl;
 }
+
+void Engine::IssueOrdersPhase() {
+    state = issueOrder;
+    cout << "Starting Issue Orders Phase..." << endl;
+
+    for (auto player : players)
+    {
+        // player->issueOrder(this, map, deck);
+    }
+    cout << "end of issue orders phase" << endl;
+}
+
 
 
 // Calls ExecuteOrder() until all players have no more orders in their orders list.

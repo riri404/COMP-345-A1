@@ -1,9 +1,10 @@
 #pragma once
-#include "Orders.h"
+#include "Player.h"
 #include "Map.h"
 #include "Cards.h"
 #include <vector>
 #include <iostream>
+#include <string>
 using namespace std;
 
 class Orders;
@@ -18,7 +19,7 @@ class Player
 public:
 	// contructors
 	Player(); // default constructor
-	Player(int* id,string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
+	Player(int* id, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
 	Player(const Player& p); //copy constructor
 	~Player(); //destructor
 
@@ -31,6 +32,8 @@ public:
 	vector<Territory*> toAttack(); // method to attck; returns orders list
 	vector<Territory*> toDefend(); // method to defend; returns ordrs list
 	void issueOrder(string order);
+	void setName(const string& name);
+	vector<Territory*> getTerritoryList();
 	//void setOrder(Orders*);
 
 
@@ -38,8 +41,8 @@ private:
 	//attributes/ variables
 	string* name;
 	int* playerID;
-	vector<Territory*> territoryList; 
+	vector<Territory*> territoryList;
 	OrdersList* orderList;
-	Hand* cards; 
+	Hand* cards;
 
 };

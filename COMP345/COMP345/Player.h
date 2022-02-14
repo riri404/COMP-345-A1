@@ -4,6 +4,7 @@
 #include "Cards.h"
 #include <vector>
 #include <iostream>
+#include <string>
 using namespace std;
 
 class Orders;
