@@ -14,7 +14,7 @@ Subject::Subject() {
 }
 
 Subject::~Subject() {
-  for (auto observer : observers) delete observer;
+  for (auto observer : *observers) delete observer;
   delete observers;
 }
 
@@ -26,8 +26,20 @@ void Subject::Detach(Observer* o) {
   observers->remove(o);
 };
 
-void Subject::Notify() {
-  for (auto i = observers->begin; i != observers->end(); ++i) {
-    (*i)->Update();
+void Subject::Notify(ILoggable* loggable) {
+  for (auto i = observers->begin(); i != observers->end(); ++i) {
+    (*i)->Update(loggable);
   }
 };
+
+LogObserver::~LogObserver() {
+  logfile.close();
+}
+
+LogObserver::LogObserver() {
+  logfile.open("gamelog.txt", std::ofstream::out);
+}
+
+void LogObserver::Update(ILoggable* loggable) {
+  logfile << loggable->stringToLog() << std::endl;
+}
