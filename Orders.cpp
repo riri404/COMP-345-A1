@@ -56,6 +56,7 @@ void Order::execute() {
     bool isValid = validate();
     if (isValid) {
         cout << "Executing order..." << endl;
+         Notify(this);
         //execute deploy action
     }
     else {
@@ -63,6 +64,9 @@ void Order::execute() {
     }
 }
 
+string Order::stringToLog() {
+    return name + " executed";
+}
 
 //--------------------------DEPLOY---------------------------
 //Default constructor
@@ -426,9 +430,12 @@ ostream& operator<<(ostream& outs, const OrdersList& anOrdersList) {
     return outs;
 }
 
-void OrdersList::addToListOfOrders(Order* anOrder) {
-    listOfOrders.push_back(anOrder);                //Push order at the end of the list
-    cout << anOrder->getName() << " added" << endl;
+void OrdersList::addToListOfOrders(Order* order) {
+    listOfOrders.push_back(order);                //Push order at the end of the list
+    cout << stringToLog() << endl;
+
+    notifyAddOrder(order);
+    Notify(this);
 }
 
 void OrdersList::move(int fromIndex, int toIndex) {
@@ -447,5 +454,16 @@ void OrdersList::remove(int index) {
     }
     else {
         cout << "Cannot remove: invalid index" << endl;
+    }
+}
+
+string OrdersList::stringToLog() {
+    Order* latestOrder = listOfOrders.back();
+    return latestOrder->getName() + " added";
+}
+
+void OrdersList::notifyAddOrder(Order* order) {
+    for (auto observer : *observers) {
+        order->Attach(observer);
     }
 }

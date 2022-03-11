@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "LoggingObserver.h"
 using namespace std;
 
 void OrdersDriver();
@@ -10,7 +11,7 @@ void OrdersDriver();
 //Superclass Orders
 //The Order class implements a stream insertion operator that outputs a string describing the order. 
 //If the order has been executed, it should also output the effect of the order, stored as a string. 
-class Order {
+class Order: public Subject, public ILoggable {
 public:
     //Constructor and destructor
     Order();
@@ -29,6 +30,8 @@ public:
     //Member functions
     bool validate();
     void execute();
+
+    string stringToLog();
 protected:
     string name;
 };
@@ -155,7 +158,7 @@ public:
 //Superclass OrdersList
 //The OrdersList class implements a remove() method that deletes an order from the list. 
 //The OrdersList class implements a move() method to move an order in the list of orders. 
-class OrdersList {
+class OrdersList: public Subject, public ILoggable {
 public:
     //Constructor and destructor
     OrdersList();
@@ -171,6 +174,10 @@ public:
     void addToListOfOrders(Order*);
     void move(int, int);
     void remove(int);
+
+
+    string stringToLog();
+    void notifyAddOrder(Order* order);
 
     //private:
         //The OrdersList class contains a list of Order objects

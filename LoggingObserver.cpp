@@ -1,4 +1,5 @@
 #include "LoggingObserver.h"
+#include "Orders.h"
 #include <iostream>
 
 Observer::Observer() {
@@ -36,8 +37,12 @@ LogObserver::~LogObserver() {
   logfile.close();
 }
 
-LogObserver::LogObserver() {
+LogObserver::LogObserver(OrdersList* ordersList) {
   logfile.open("gamelog.txt", std::ofstream::out);
+  ordersList->Attach(this);
+  for (auto order: ordersList->listOfOrders) {
+    order->Attach(this);
+  }
 }
 
 void LogObserver::Update(ILoggable* loggable) {
