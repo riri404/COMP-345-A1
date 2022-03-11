@@ -2,7 +2,7 @@
 
 Engine::Engine()
 {
-    state = null;
+    state = State::null;
     this->map = nullptr;
     vector<Player*> players;
     this->deck = new Deck();
@@ -13,7 +13,7 @@ Engine::Engine()
 // Creates a deep copy of this GameEngine, and all of its components.
 Engine::Engine(Engine& engine)
 {
-    state = null;
+    state = State::null;
     this->map = new Map(*engine.map);
     this->players;
     for (int i = 0; i < engine.players.size(); i++)
@@ -79,11 +79,13 @@ Map* Engine::GetMap() { return map; }
 
 void Engine::StartGame() {
 
-    state = start;
+    state = State::start;
     cout << "Welcome to Warzone" << endl<< endl;
 
     cout << "beginning start phase" << endl;
     cout << "starting game..." << endl << endl;
+
+    Notify(this);
 
     LoadMap();
     AddPlayer();
@@ -91,8 +93,6 @@ void Engine::StartGame() {
 
 
 void Engine::LoadMap() {
-    state = mapLoaded;
-
     cout << "Starting Load Map Phase..." << endl;
 
     // MapLoader* mapLoader = new MapLoader();
@@ -138,6 +138,8 @@ void Engine::LoadMap() {
         else {
             cout<< endl << "The chosen map has been loaded"<< endl;
             cout << "end of load map phase" << endl<< endl;
+            state = State::mapLoaded;
+            Notify(this);
 
             validMap = Engine::ValidateMap();
         }
@@ -154,8 +156,6 @@ void Engine::LoadMap() {
 bool Engine::ValidateMap() {
     cout << "Starting Validate Map Phase..." << endl;
 
-    state = mapValidated;
-
     cout << "Validating loaded map" << endl;
     bool validMap = false;
     
@@ -170,6 +170,8 @@ bool Engine::ValidateMap() {
     else
     {
         cout << "end of validate map phase" << endl<< endl;
+        state = State::mapValidated;
+        Notify(this);
         return true;
     }
 
@@ -186,7 +188,6 @@ void Engine::AddPlayer() {
     // Allocating the right number of space in the vector
     players.reserve(numOfPlayers);
 
-    state = playersAdded;
     for (int i = 0; i < numOfPlayers; i++) {
         string name;
         Player* player = new Player();
@@ -198,6 +199,8 @@ void Engine::AddPlayer() {
              << " has been created. " << endl;
     }
     cout << endl << "end of add player phase" << endl<< endl;
+    state = State::playersAdded;
+    Notify(this);
     ReinforcementPhase();
 }
 
@@ -206,7 +209,8 @@ void Engine::AddPlayer() {
 // Adds troops to a player's reinforcement pool at the start of the turn.
 
 void Engine::ReinforcementPhase() {
-    state = assignReinforcement;
+    state = State::reinforcementPhase;
+    Notify(this);
 
     cout << "Starting Reinforcement Phase..." << endl;
     for (auto player : players)
@@ -242,8 +246,8 @@ void Engine::ReinforcementPhase() {
 // Calls IssueOrder until all players have commited that they are done issuing orders.
 
 void Engine::IssueOrdersPhase() {
-    state = issueOrder;
-
+    state = State::issueOrderPhase;
+    Notify(this);
 
     cout << "Starting Issue Orders Phase..." << endl;
 
@@ -260,7 +264,8 @@ void Engine::IssueOrdersPhase() {
 // Calls ExecuteOrder() until all players have no more orders in their orders list.
 
 void Engine::ExecuteOrdersPhase() {
-    state = ExecuteOrders;
+    state = State::executeOrderPhase;
+    Notify(this);
 
 
     cout << "Starting Execute Orders Phase..." << endl;
@@ -321,6 +326,34 @@ void Engine::MainGameLoop() {
             }
         }
     }
+}
+
+std::string Engine::stringToLog() {
+    std::string log = "";
+    switch (state) {
+        case State::start:
+            log = "Starting game";
+            break;
+        case State::mapLoaded:
+            log = "Map loaded";
+            break;
+        case State::mapValidated:
+            log = "Map validated";
+            break;
+        case State::playersAdded:
+            log = "Players added";
+            break;
+        case State::reinforcementPhase:
+            log = "Reinforcement phase";
+            break;
+        case State::issueOrderPhase:
+            log = "Issue order phase";
+            break;
+        case State::executeOrderPhase:
+            log = "Execute order phase";
+            break;
+    }
+    return log;
 }
 
 
