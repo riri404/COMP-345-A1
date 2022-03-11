@@ -5,8 +5,10 @@
 #include "Orders.h"
 #include "Map.h"
 #include <vector>
+#include <string>
 //#include "Deck.h"
 //#include "MapLoader.h"
+#include "LoggingObserver.h"
 
 
 void EngineDriver();
@@ -15,12 +17,12 @@ using namespace std;
 
 // enum Phase {StartUp, Play };
 
-enum State {
+enum class State {
 	null, start, mapLoaded, mapValidated, playersAdded,
-	assignReinforcement, issueOrder, ExecuteOrders, win
+	reinforcementPhase, issueOrderPhase, executeOrderPhase, win
 };
 
-class Engine {
+class Engine: public Subject, public ILoggable {
 
 public:
 
@@ -60,7 +62,8 @@ public:
 
 
 	void PlayerDrawCard(Player* player);
-
+	
+	std::string stringToLog();
 
 private:
 	Map* map;
