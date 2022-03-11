@@ -1,9 +1,11 @@
-#ifndef LOGGINGOBSERVER_H
-#define LOGGINGOBSERVER_H
+#ifndef OBSERVER_H
+#define OBSERVER_H
 
 #include <string>
 #include <list>
 #include <fstream>
+
+class OrdersList;
 
 class ILoggable {
 public:
@@ -22,19 +24,20 @@ public:
   virtual void Attach(Observer* o);
   virtual void Detach(Observer* o);
   virtual void Notify(ILoggable*);
+  virtual ~Subject();
   Subject();
-  ~Subject();
-private:
+protected:
   std::list<Observer*>* observers;
 };
 
 class LogObserver: public Observer {
 public:
   ~LogObserver();
-  LogObserver();
+  LogObserver(OrdersList*);
   void Update(ILoggable*);
 private:
   std::ofstream logfile;
+  OrdersList* ordersList;
 };
 
 #endif
