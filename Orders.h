@@ -3,19 +3,18 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "LoggingObserver.h"
+#include "Map.h"
+#include "Player.h"
 using namespace std;
 
-void OrdersDriver();
+class Player;
+class Territory;
 
-//Superclass Orders
-//The Order class implements a stream insertion operator that outputs a string describing the order. 
-//If the order has been executed, it should also output the effect of the order, stored as a string. 
-class Order: public Subject, public ILoggable {
+class Order {
 public:
     //Constructor and destructor
     Order();
-    ~Order();
+    virtual ~Order();
 
     //Copy constructor, assignement and stream insertion operator
     Order(Order& anotherOrder);
@@ -28,22 +27,21 @@ public:
     void setName(string);
 
     //Member functions
-    bool validate();
-    void execute();
-
-    string stringToLog();
+    // I added virtual in front
+    virtual bool validate() = 0; //pure virtual
+    virtual void execute() = 0; //pure virtual
 protected:
     string name;
+    Player* player;
 };
 
-
-//Each kind of order is implemented as a subclass of the Order class. 
-//Every order subclass must implement the validate() method that is used to validate if the order is valid.
-//Every order subclass must implement the execute() method that first validates the order, and executes its action if it is valid, according to the order�s meaning and the player�s state.
+//A deploy order tells a certain number of armies taken from the reinforcement pool to deploy to a target territory owned 
+//by the player issuing this order.
 class Deploy : public Order {
 public:
     //Constructor and destructor
     Deploy();
+    Deploy(Player*, int, Territory*);   //player, armies, target
     ~Deploy();
 
     //Copy constructor, assignement and stream insertion operator
@@ -57,12 +55,18 @@ public:
     //Member functions
     bool validate();
     void execute();
+private:
+    int armies;
+    Territory* target;
 };
 
+
+// An advance order tells a certain number of army units to move from a source territory to a target adjacent territory.
 class Advance : public Order {
 public:
     //Constructor and destructor
     Advance();
+    Advance(Player*, int, Territory*, Territory*);  //player, armies, source, target
     ~Advance();
 
     //Copy constructor, assignement and stream insertion operator
@@ -76,12 +80,19 @@ public:
     //Member functions
     bool validate();
     void execute();
+private:
+    int armies;
+    Territory* source;
+    Territory* target;
 };
 
+//A bomb order targets a territory owned by another player than the one issuing the order. Its result is
+//to remove half of the armies from this territory.The bomb order can only be created by playing the bomb card.
 class Bomb : public Order {
 public:
     //Constructor and destructor
     Bomb();
+    Bomb(Player*, Territory*, vector<Territory*>);  //player, target, territoryList
     ~Bomb();
 
     //Copy constructor, assignement and stream insertion operator
@@ -95,12 +106,19 @@ public:
     //Member functions
     bool validate();
     void execute();
+private:
+    Territory* target;
+    vector<Territory*> territoryList;
 };
 
+//A blockade order targets a territory that belongs to the player issuing the order. Its effect is to
+//double the number of armies on the territory and to transfer the ownership of the territory to the Neutral player.
+//The blockade order can only be created by playing the blockade card.
 class Blockade : public Order {
 public:
     //Constructor and destructor
     Blockade();
+    Blockade(Player*, Territory*);  //player, target
     ~Blockade();
 
     //Copy constructor, assignement and stream insertion operator
@@ -114,12 +132,18 @@ public:
     //Member functions
     bool validate();
     void execute();
+private:
+    Territory* target;
 };
 
+//An airlift order tells a certain number of armies taken from a source territory to be moved to a target
+//territory, the source and the target territory being owned by the player issuing the order.The airlift order can only
+//be created by playing the airlift card
 class Airlift : public Order {
 public:
     //Constructor and destructor
     Airlift();
+    Airlift(Player*, int, Territory*, Territory*);   //player, armies, source, target
     ~Airlift();
 
     //Copy constructor, assignement and stream insertion operator
@@ -133,12 +157,20 @@ public:
     //Member functions
     bool validate();
     void execute();
+private:
+    int armies;
+    Territory* source;
+    Territory* target;
 };
 
+//A negotiate order targets an enemy player. It results in the target player and the player issuing
+//the order to not be able to successfully attack each others’ territories for the remainder of the turn.The negotiate
+//order can only be created by playing the diplomacy card.
 class Negotiate : public Order {
 public:
     //Constructor and destructor
     Negotiate();
+    Negotiate(Player*, Player*);    //player, enemyPlayer
     ~Negotiate();
 
     //Copy constructor, assignement and stream insertion operator
@@ -152,13 +184,12 @@ public:
     //Member functions
     bool validate();
     void execute();
+private:
+    Player* enemyPlayer;
 };
 
 
-//Superclass OrdersList
-//The OrdersList class implements a remove() method that deletes an order from the list. 
-//The OrdersList class implements a move() method to move an order in the list of orders. 
-class OrdersList: public Subject, public ILoggable {
+class OrdersList {
 public:
     //Constructor and destructor
     OrdersList();
@@ -175,11 +206,6 @@ public:
     void move(int, int);
     void remove(int);
 
-
-    string stringToLog();
-    void notifyAddOrder(Order* order);
-
     //private:
-        //The OrdersList class contains a list of Order objects
-    vector<Order*> listOfOrders;        //vector of pointers to Order object
+    vector<Order*> listOfOrders;
 };
