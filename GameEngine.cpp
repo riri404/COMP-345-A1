@@ -7,7 +7,8 @@ GameEngine::GameEngine()
     this->map = nullptr;
     vector<Player*> players;
     this->deck = new Deck();
-    this->numOfPlayers = 0;
+    this->numberOfPlayers = 0;
+    this->NumberOfTerritories = 0;
 
 }
 
@@ -23,7 +24,8 @@ GameEngine::GameEngine(GameEngine& engine)
     }
 
     this->deck = new Deck(*engine.deck);
-    this->numOfPlayers = engine.numOfPlayers;
+    this->numberOfPlayers = engine.numberOfPlayers;
+    this->NumberOfTerritories = engine.NumberOfTerritories;
     this->state = engine.state;
 
 }
@@ -57,12 +59,12 @@ void GameEngine::SetState(State state)
 
 int GameEngine::GetNumberOfPlayers()
 {
-    return numOfPlayers;
+    return numberOfPlayers;
 }
 
-void GameEngine::SetNumberOfPlayers(int x)
+void GameEngine::SetNumberOfPlayers(int nop)
 {
-    this->numOfPlayers = x;
+    this->numberOfPlayers = nop;
 }
 
 // Returns all the players in the game in their order of play.
@@ -81,22 +83,22 @@ Map* GameEngine::GetMap()
 ostream& operator<<(ostream& os, const GameEngine& gameEngine) {
     string p = "";
     for (Player* i : gameEngine.players) {
-      //  p += (*i).getName() + " | ";
+        p += (*i).GetPlayerName() + " | ";
     }
 
     return os <<
         "GAME ENGINE: Current state: " << gameEngine.state <<
-        "\n    Players (" << gameEngine.numOfPlayers << "): " << endl << p.substr(0, p.length() - 2) << endl;
-      //  "\n    Number of Territories : (" << gameEngine.NumberOfTerritories << ")" << endl;
+        "\n    Players (" << gameEngine.numberOfPlayers << "): " << endl << p.substr(0, p.length() - 2) << endl<<
+        "\n    Number of Territories : (" << gameEngine.NumberOfTerritories << ")" << endl;
 }
 
 
 
 // Get String between two delimiter String
 // https://stackoverflow.com/questions/18800796/c-get-string-between-two-delimiter-string
-string GameEngine::get_str_between_two_str(const std::string& s,
-                                              const std::string& start_delim,
-                                                const std::string& stop_delim)
+string GameEngine::get_str_between_two_str(const string& s,
+                                              const string& start_delim,
+                                                const string& stop_delim)
 {
     unsigned first_delim_pos = s.find(start_delim);
     unsigned end_pos_of_first_delim = first_delim_pos + start_delim.length();
@@ -115,24 +117,23 @@ string GameEngine::SelectName(string command) {
 void GameEngine::StartupPhase() {
     cout << "Welcome to Warzone" << endl << endl;
 
-    StartGame();
+    Start();
     LoadMap();
     cout << "use the \"validatemap\" command to validate the map" << endl << endl;
     bool validMap = false;
     validMap = GameEngine::ValidateMap();
-    AddPlayer();
+    AddPlayers();
+    GameStart();
 }
 
 
 //=================== StartUp Phase===================================
 
-void GameEngine::StartGame() {
+void GameEngine::Start() {
     Notify(this);
 
     state = State::start;   
-    cout << "GamePhase: start" << endl;
-
-    cout << "starting game..." << endl << endl;
+    cout << "GamePhase: start" << endl << endl;
 
 
     // show a list of available maps
@@ -154,7 +155,9 @@ void GameEngine::StartGame() {
     do {
     cout << "use the \"loadmap <filename>\" command to select a map" << endl << endl;
    
-    cin >> command;
+    getline(cin, command);
+
+   // cin >> command;
 
     mapName = SelectName(command);
 
@@ -162,15 +165,15 @@ void GameEngine::StartGame() {
 
     map = new Map(fileName);
 
-    if (!map->isMapLoaded())
+ /*   if (!map->isMapLoaded())
         cout << "Please try again." << endl;
     else {
         cout << endl << "The chosen map has been loaded" << endl;   
-    }
+    }*/
 
     if (map->isMapLoaded()) {
         state = State::mapLoaded;
-        cout << "GamePhase: map loaded" << endl;
+        cout << endl << "GamePhase: map loaded" << endl << endl;
         Notify(this);
     }
 
@@ -181,44 +184,17 @@ void GameEngine::StartGame() {
 
 void GameEngine::LoadMap() {
  
-    //string mapName;
-    //string fileName;
-
-    //bool validMap = false;
-
-    //// Loops until the user enters a valid map
-    //do {
-    //    cout << "\nEnter the name of a map to choose it: ";
-
-    //    cin >> mapName;
-
-    //    fileName = "source_maps/" + mapName + ".map";
-
-    //    map = new Map(fileName);
-
-    //    if (!map->isMapLoaded())
-    //        cout << "Please try again." << endl;
-    //    else {
-    //        cout<< endl << "The chosen map has been loaded"<< endl;
-    //        cout << "end of load map phase" << endl<< endl;
-    //        state = State::mapLoaded;
-    //        Notify(this);
-
-    //        validMap = GameEngine::ValidateMap();
-    //    }
-
-    //} while (map == nullptr || !validMap);
    
 }
 
 
 bool GameEngine::ValidateMap() {
     
-    cout << "Validating loaded map" << endl;
+   // cout << "Validating loaded map" << endl;
     bool validMap = false;
     
     validMap = map->validate();
-       // validMap = true; // added for debugging
+ 
       
     if (!validMap)
     {
@@ -227,9 +203,8 @@ bool GameEngine::ValidateMap() {
     }
     else
     {
-        cout << "end of validate map phase" << endl<< endl;
         state = State::mapValidated;
-        cout << "GamePhase: map validated" << endl;
+        cout << "GamePhase: map validated" << endl << endl;
         Notify(this);
         return true;
     }
@@ -240,54 +215,55 @@ void GameEngine::AddPlayer() {
 
     string command;
     string playerName;
-    int numberOfPlayers = 0;
 
 
-
-    
     cout << "use the \"addplayer <playername>\" command to enter players in the game (2-6 players)" << endl << endl;
 
-    cin >> command;
+    getline(cin, command);
 
     playerName = SelectName(command);
 
     Player* player = new Player();
-  
-    player->setName(playerName);
-    players.push_back(player);
     numberOfPlayers++;
-    
+    player->setName(playerName);
+    player->setPlayerID(numberOfPlayers);
 
-    cout << "Player " << numberOfPlayers << " has been created. " << endl;
+    players.push_back(player);
 
+    cout << "Player " << numberOfPlayers << " has been created. " << endl << endl;
 
-    state = State::playersAdded;
-    cout << "GamePhase: players added" << endl;
-    Notify(this);
-    
-
-    ////////////////////////////////////////////////////
-
-//    cout << "Please enter the number of players" << endl;
-//    cin >> this->numOfPlayers;
-    // Allocating the right number of space in the vector
-//    players.reserve(numOfPlayers);
-
-    for (int i = 0; i < numOfPlayers; i++) {
-   /*     string name;
-        Player* player = new Player();
-        cout << endl << "Please enter the player's name" << endl;
-        cin >> name;
-        player->setName(name);
-        players.push_back(player);
-        cout << "Player " << i + 1
-             << " has been created. " << endl;*/
-    }
-   // cout << endl << "end of add player phase" << endl<< endl;
-    
-    ReinforcementPhase();
 }
 
+void GameEngine::AddPlayers() {
+
+    AddPlayer();
+
+    state = State::playersAdded;
+
+    cout << "GamePhase: players added" << endl << endl; 
+
+    Notify(this);
+    
+    while (numberOfPlayers < 6) {
+        AddPlayer();
+    }
+
+}
+
+
+void GameEngine::GameStart() {
+
+   // map->GetMapTerritories();
+   // cout << *map;
+
+   // cout << players.size();
+
+    for (auto player : players)
+    {
+        cout << *player;
+    }
+
+}
 
 
 // Adds troops to a player's reinforcement pool at the start of the turn.
@@ -299,9 +275,7 @@ void GameEngine::ReinforcementPhase() {
     cout << "Starting Reinforcement Phase..." << endl;
     for (auto player : players)
     {
-
-
-        //vector<Territory*> playerTerritories = player->GetTerritoryList();
+       // vector<Territory*> playerTerritories = player->GetTerritoryList();
         //int baseArmySize = playerTerritories.size() / 3;
         //Gent Bounus value
         //int continentBonus = findContinentBonusTotal(player);
@@ -309,7 +283,6 @@ void GameEngine::ReinforcementPhase() {
         //int reinforcementArmySize = baseArmySize;
 
         //if (reinforcementArmySize < 3) reinforcementArmySize = 3;
-
 
         // string message = "give armies";
         // string armies = to_string(reinforcementArmySize);
@@ -324,6 +297,8 @@ void GameEngine::ReinforcementPhase() {
     cout << endl << "end of Reinforcement phase" << endl << endl;
     IssueOrdersPhase();
 }
+
+
 
 
 // Calls IssueOrder until all players have commited that they are done issuing orders.
@@ -359,7 +334,6 @@ void GameEngine::ExecuteOrdersPhase() {
     }
     cout << "end of execute orders phase" << endl;
 }
-
 
 
 //

@@ -279,6 +279,11 @@ void Map::load() {
   mapLoader->loadMap(this);
 }
 
+
+vector<Territory*> Map:: GetMapTerritories() {
+    return territories;
+}
+
 //---------------------------Map loader----------------------
 MapLoader::MapLoader() {
   mapName = "N/A"; // default name

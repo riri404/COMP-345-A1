@@ -12,11 +12,17 @@ int main() {
     GameEngine* engine;
     engine = new GameEngine;
 
-   cout<< engine->SelectMapName("loadmap <mapfile>");
+   // engine->AddPlayer();
+
+    engine->StartupPhase();
+
+ //  cout<< engine->SelectName("loadmap <mapfile>");
     
 
+    system("pause");
 
-    cin.get();
+
+ //   cin.get();
     return 0;
     
       /*  string str = "STARTDELIMITER_0_192.168.1.18_STOPDELIMITER";

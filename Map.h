@@ -92,6 +92,7 @@ public:
 	bool validate() const;
 	void load(const string&);
 	bool isMapLoaded();
+	vector<Territory*> GetMapTerritories();
 };
 
 //---------------------------Map loader--------------------------

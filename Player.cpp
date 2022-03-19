@@ -70,9 +70,9 @@ Player& Player::operator=(const Player& p)
 
 std::ostream& operator<<(std::ostream& outs, const Player& p1)
 {
-	outs << *(p1.playerID);
-	outs << *(p1.name);
-	outs << p1.cards;
+	outs << "Player ID: " << * (p1.playerID) << endl;
+	outs << "Player's name: " << * (p1.name) << endl;
+	outs << "Player's cards: " << p1.cards << endl;
 	//outs << (p1.territoryList);
 	//outs << p1.orderList;
 
@@ -147,6 +147,15 @@ void Player::setName(const string& n) {
 	*name = n;
 }
 
+void Player::setPlayerID(const int& ID) {
+	*playerID = ID;
+}
+
 vector<Territory*> Player::getTerritoryList() {
 	return territoryList;
+}
+
+
+string Player::GetPlayerName() const{
+	return *name;
 }

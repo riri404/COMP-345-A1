@@ -33,9 +33,10 @@ public:
 	vector<Territory*> toDefend(); // method to defend; returns ordrs list
 	void issueOrder(string order);
 	void setName(const string& name);
+	void setPlayerID(const int& playerID);
 	vector<Territory*> getTerritoryList();
 	//void setOrder(Orders*);
-
+	string GetPlayerName() const;
 
 private:
 	//attributes/ variables

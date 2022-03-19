@@ -26,47 +26,34 @@ enum State {
 class GameEngine: public Subject, public ILoggable {
 
 public:
-
 	// constructors
-
 	GameEngine();
 	GameEngine(GameEngine& engine);
-
 	//Destructor:
 	~GameEngine();
 
 
 	//Assignment operator
 	GameEngine& operator =(const GameEngine& other);
-
-
 	//Stream insertion
 	friend ostream& operator << (ostream& out, const GameEngine& g);
 
-
-
 	// Mutators
-
 	void SetState(State);
 	State GetState();
-
 	Map* GetMap();
-
 	Deck* GetDeck();
-
-
-	void AddPlayer();
+	void AddPlayers();
 	int GetNumberOfPlayers();
 	vector<Player*> GetPlayers();
 	vector<Player*>* GetPlayersAdress();
 	
 	
-	
 	void SetNumberOfPlayers(int);
 
-
+	void AddPlayer();
 	// void Init();
-	void StartGame();
+	void Start();
 
 	void LoadMap();
 	bool ValidateMap();
@@ -84,19 +71,19 @@ public:
 
 	void PlayerDrawCard(Player* player);
 	
-	std::string stringToLog();
+	string stringToLog();
 
-
-
-	string GameEngine::SelectName(string command);
+	string SelectName(string command);
 	
 
+	void GameStart();
 
 private:
 	Map* map;
 	vector<Player*> players;
 	Deck* deck;
-	int numOfPlayers;
+	int numberOfPlayers;
+	int NumberOfTerritories;
 	State state;
 	string get_str_between_two_str(const std::string& s,
 		const std::string& start_delim,
