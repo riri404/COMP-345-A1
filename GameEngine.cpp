@@ -147,44 +147,44 @@ void GameEngine::Start() {
         << endl;
 
 
-    // Select a map and load it
-    string command;
-    string mapName;
-    string fileName;
-
-    do {
-    cout << "use the \"loadmap <filename>\" command to select a map" << endl << endl;
-   
-    getline(cin, command);
-
-   // cin >> command;
-
-    mapName = SelectName(command);
-
-    fileName = "source_maps/" + mapName + ".map";
-
-    map = new Map(fileName);
-
-    /*  if (!map->isMapLoaded())
-        cout << "Please try again." << endl;
-    else {
-        cout << endl << "The chosen map has been loaded" << endl;   
-    }*/
-
-    if (map->isMapLoaded()) {
-        state = State::mapLoaded;
-        cout << endl << "GamePhase: map loaded" << endl << endl;
-        Notify(this);
-    }
-
-    } while (map == nullptr || !map->isMapLoaded());
+    LoadMap();
     
 }
 
 
 void GameEngine::LoadMap() {
  
-   
+    // Select a map and load it
+    string command;
+    string mapName;
+    string fileName;
+
+    do {
+        cout << "use the \"loadmap <filename>\" command to select a map" << endl << endl;
+
+        getline(cin, command);
+
+        // cin >> command;
+
+        mapName = SelectName(command);
+
+        fileName = "source_maps/" + mapName + ".map";
+
+        map = new Map(fileName);
+
+        /*  if (!map->isMapLoaded())
+            cout << "Please try again." << endl;
+        else {
+            cout << endl << "The chosen map has been loaded" << endl;
+        }*/
+
+        if (map->isMapLoaded()) {
+            state = State::mapLoaded;
+            cout << endl << "GamePhase: map loaded" << endl << endl;
+            Notify(this);
+        }
+
+    } while (map == nullptr || !map->isMapLoaded());
 }
 
 bool GameEngine::ValidateMap() {
@@ -226,6 +226,7 @@ void GameEngine::AddPlayer() {
     numberOfPlayers++;
     player->setName(playerName);
     player->setPlayerID(numberOfPlayers);
+    player->addToReinforcePool(50);
 
     players.push_back(player);
 
@@ -254,10 +255,9 @@ void GameEngine::GameStart() {
     NumberOfTerritories = map->GetMapTerritoriesNumber();
    
    // cout << *map;
-
    // cout << players.size();
 
-   // cout << map->GetMapTerritoriesNumber();
+  
 
     for (auto player : players)
     {

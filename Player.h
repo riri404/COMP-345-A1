@@ -39,6 +39,10 @@ public:
 	string GetPlayerName() const;
 	int GetPlayerID() const;
 	void addTerritory(Territory*);
+	void addToReinforcePool(int armies); // Add to reinforcement pool
+	void removeFromReinforcePool(int armies); // Remove from reinforcement pool
+	int getReinforcePool();
+
 
 private:
 	//attributes/ variables
@@ -47,5 +51,6 @@ private:
 	vector<Territory*> territoryList;
 	OrdersList* orderList;
 	Hand* cards;
+	int reinforcePool;
 
 };

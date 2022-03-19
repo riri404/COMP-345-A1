@@ -168,3 +168,13 @@ void Player::addTerritory(Territory* newTerritory) {
 
 	territoryList.push_back(newTerritory);
 }
+
+void Player::addToReinforcePool(int armies) {
+	reinforcePool += armies;
+}
+
+void Player::removeFromReinforcePool(int armies) {
+	reinforcePool -= armies;
+}
+
+int Player::getReinforcePool() { return reinforcePool; }
