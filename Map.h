@@ -18,7 +18,7 @@ class Territory {
 	friend class Map;
   string name;             	// territory name.
   int id;                   // territory ID.
-  int playerId;             // territory owned by player with this id
+  int ownerID;             // territory owned by player with this id
   int armies;               // # of armies
 	vector<Territory*> adjTerritories;
 	void addAdjTerritory(Territory*);
@@ -31,7 +31,7 @@ public:
   Territory& operator=(const Territory&);
 	friend bool operator==(const Territory&, const Territory&);
   friend ostream& operator<<(ostream&, const Territory&);
-	void setPlayerId(int);
+	void setOwnerId(int);
 	int getId() const;
 	int getPlayerId() const;
 	int getArmies() const;
@@ -93,6 +93,7 @@ public:
 	void load(const string&);
 	bool isMapLoaded();
 	vector<Territory*> GetMapTerritories();
+	int GetMapTerritoriesNumber();
 };
 
 //---------------------------Map loader--------------------------

@@ -85,7 +85,7 @@ private:
 	int numberOfPlayers;
 	int NumberOfTerritories;
 	State state;
-	string get_str_between_two_str(const std::string& s,
-		const std::string& start_delim,
-		const std::string& stop_delim);
+	vector<Territory*> mapTerritories;
+
+	string get_str_between_two_str(const string& s, const string& start_delim, const string& stop_delim);
 };

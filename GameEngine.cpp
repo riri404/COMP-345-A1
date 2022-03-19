@@ -165,7 +165,7 @@ void GameEngine::Start() {
 
     map = new Map(fileName);
 
- /*   if (!map->isMapLoaded())
+    /*  if (!map->isMapLoaded())
         cout << "Please try again." << endl;
     else {
         cout << endl << "The chosen map has been loaded" << endl;   
@@ -186,7 +186,6 @@ void GameEngine::LoadMap() {
  
    
 }
-
 
 bool GameEngine::ValidateMap() {
     
@@ -239,12 +238,10 @@ void GameEngine::AddPlayers() {
     AddPlayer();
 
     state = State::playersAdded;
-
     cout << "GamePhase: players added" << endl << endl; 
-
     Notify(this);
     
-    while (numberOfPlayers < 6) {
+    while (numberOfPlayers < 2) {
         AddPlayer();
     }
 
@@ -253,15 +250,63 @@ void GameEngine::AddPlayers() {
 
 void GameEngine::GameStart() {
 
-   // map->GetMapTerritories();
+    mapTerritories = map->GetMapTerritories();
+    NumberOfTerritories = map->GetMapTerritoriesNumber();
+   
    // cout << *map;
 
    // cout << players.size();
+
+   // cout << map->GetMapTerritoriesNumber();
 
     for (auto player : players)
     {
         cout << *player;
     }
+
+    // Fairly distribute all the territories to the players
+
+    int playerIndex = 0;
+
+    for (int i = 0; i < NumberOfTerritories; i++) {
+        Player* tempPlayer = players.at(playerIndex);
+        mapTerritories[i]->setOwnerId(tempPlayer->GetPlayerID());
+        Territory* tempTerritory = new Territory(*mapTerritories[i]);
+        tempPlayer->addTerritory(tempTerritory);
+
+       // tempPlayer->getTerritoryList().push_back(tempTerritory);
+
+        playerIndex++;
+
+        if (playerIndex >= players.size()) {
+            playerIndex = 0;
+        }
+    }
+
+    for (Player* p : players) {
+
+        cout << "Territories owned by " << p->GetPlayerName() << " are:" << endl;
+        for (Territory* t : p->getTerritoryList()) {
+            cout << *t;
+        }
+        
+    }
+
+    for (Territory* t : map->GetMapTerritories()) {
+        //adjTerritories.push_back(t); // shallow copy
+       // cout << *t;
+    }
+
+
+    // Determine randomly the order of play of the players in the game
+
+   /* int* tempOrder = new int[players.size()];
+
+    for (int j = 0; j < players.size(); j++) {
+        tempOrder[j] = rand() % (player_list.size() - j) + j;
+    }
+
+    setPlayerOrder(tempOrder);*/
 
 }
 

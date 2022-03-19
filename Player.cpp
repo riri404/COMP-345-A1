@@ -159,3 +159,12 @@ vector<Territory*> Player::getTerritoryList() {
 string Player::GetPlayerName() const{
 	return *name;
 }
+
+int Player::GetPlayerID() const {
+	return *playerID;
+}
+
+void Player::addTerritory(Territory* newTerritory) {
+
+	territoryList.push_back(newTerritory);
+}

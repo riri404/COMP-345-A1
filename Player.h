@@ -37,6 +37,8 @@ public:
 	vector<Territory*> getTerritoryList();
 	//void setOrder(Orders*);
 	string GetPlayerName() const;
+	int GetPlayerID() const;
+	void addTerritory(Territory*);
 
 private:
 	//attributes/ variables

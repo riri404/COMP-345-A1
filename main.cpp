@@ -25,11 +25,7 @@ int main() {
  //   cin.get();
     return 0;
     
-      /*  string str = "STARTDELIMITER_0_192.168.1.18_STOPDELIMITER";
-        unsigned first = str.find(<);
-        unsigned last = str.find_last_of(">");
-        string strNew = str.substr(first, last - first);
-        std::cout << strNew << std::endl;*/
+
     
  /* std::cout << "-------------MAP DRIVER-------------" << std::endl;
   MapDriver();
