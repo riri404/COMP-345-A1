@@ -209,15 +209,94 @@ void Engine::AddPlayer() {
 // Adds troops to a player's reinforcement pool at the start of the turn.
 
 void Engine::ReinforcementPhase() {
+   
+
+    // create some of the functions before
+    {
+        cout << "\nEnter \"continue\" to assign reinforcements and begin to play" << endl;
+        string a;
+        cin >> a;
+        if (a == "continue")
+        {
+            //dividing the territories to the players 
+            //making the player own the territory
+            for (int i = 0; i < theMap->theMap->size(); i++)
+            {
+                players.at(i % players.size())->setTerritory(&(theMap->theMap->at(i)));
+
+            }
+            //initializing play order
+            random_shuffle(players.begin(), players.end());
+            //giving every player 50 initial armies to their reinforcement pool
+            for (int i = 0; i < players.size(); i++)
+            {
+                players.at(i)->setReinforcementPool(50);
+            }
+            //giving every player 2 draws
+            for (int i = 0; i < players.size(); i++)
+            {
+                players.at(i)->setHand(deck->Draw());
+                players.at(i)->setHand(deck->Draw());
+            }
+            for (int i = 0; i < players.size(); i++)
+            {
+                cout << players.at(i)->getName() << ": ";
+                players.at(i)->handCard->ShowCards();
+            }
+            state = changeState(4);
+            //calling play function
+            play();
+        }
+    }
+    
+    
+    
+    // maybe?
+    {
+        bool check = false;
+        int temp = 0;
+        double count = 0;
+
+        for (int i = 0; i < playerList.size(); i++)
+        {   //check the player's terriotries
+            temp = playerList[i]->getReinforcementPool();
+
+            for (int j = 0; j < playerList[i]->territory.size(); i++)
+            {//count the terriorties number
+                count++;
+            }
+            //calcuate the contient bouns
+            check = (*playerList[i]).playerContientBouns();
+
+
+            if (check == true)
+            {
+                temp += 2 * (int)round(count / 3);
+            }
+            else
+            {
+                temp += (int)round(count / 3);
+            }
+
+            temp += 3;
+
+            playerList[i]->setReinforcementPool(temp);
+            check = false;
+            temp = 0;
+            count = 0;
+
+        }
+    }
+
+
+
+  {
     state = State::reinforcementPhase;
     Notify(this);
 
     cout << "Starting Reinforcement Phase..." << endl;
     for (auto player : players)
     {
-
-
-
         //vector<Territory*> playerTerritories = player->GetTerritoryList();
         //int baseArmySize = playerTerritories.size() / 3;
         //Gent Bounus value
@@ -238,6 +317,7 @@ void Engine::ReinforcementPhase() {
         // player->AddArmies(reinforcementArmySize); //Using add and not set because of the initial armies given from setup. Will always be 0 at start of a turn.
 
     }
+  }
     cout << endl << "end of Reinforcement phase" << endl << endl;
     IssueOrdersPhase();
 }

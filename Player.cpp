@@ -7,15 +7,17 @@ using namespace std;
 Player::Player()
 {
 	name = new string("");
+	int reinforcementPool = 0;
 	playerID = new int(-1);
 	territoryList = *(new vector<Territory*>);
 	cards = new Hand();
 	orderList = new OrdersList();
 }
 
-Player::Player(int* playerID, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
+Player::Player(int* playerID, int* reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
 {
 	this->playerID = playerID;
+	this->reinforcementPool= reinforcementPool;
 	this->name = name;
 	this->territoryList = territoryList;
 	this->cards = cards;
@@ -25,6 +27,7 @@ Player::Player(int* playerID, string* name, vector<Territory*> territoryList, Ha
 Player::Player(const Player& p)
 {
 	this->playerID = p.playerID;
+	this->reinforcementPool = p.reinforcementPool;
 	this->name = p.name;
 	this->territoryList = p.territoryList;
 	this->cards = p.cards;
@@ -37,6 +40,8 @@ Player::~Player()
 	playerID = nullptr;
 	delete name;
 	name = nullptr;
+	delete reinforcementPool;
+	reinforcementPool = nullptr;
 	delete cards;
 	cards = nullptr;
 	delete orderList;
@@ -53,6 +58,7 @@ Player& Player::operator=(const Player& p)
 {
 	this->playerID = p.playerID;
 	this->name = p.name;
+	this->reinforcementPool = p.reinforcementPool;
 	this->territoryList = p.territoryList;
 	this->cards = p.cards;
 	this->orderList = p.orderList;
@@ -73,6 +79,7 @@ std::ostream& operator<<(std::ostream& outs, const Player& p1)
 	outs << *(p1.playerID);
 	outs << *(p1.name);
 	outs << p1.cards;
+	outs<< p1.reinforcementPool;
 	//outs << (p1.territoryList);
 	//outs << p1.orderList;
 
@@ -142,6 +149,14 @@ void Player::issueOrder()
 	orderList.push_back(order);
 	std::cout << *order << std::endl;
 }*/
+
+int Player::getReinforcementPool() {
+	return this->reinforcementPool;
+}
+
+void Player::setReinforcementPool(int i) {
+	this->reinforcementPool = i;
+}
 
 void Player::setName(const string& n) {
 	*name = n;
