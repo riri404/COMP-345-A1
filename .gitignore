@@ -44,3 +44,7 @@ x64/Debug/Assignment2-345.tlog/link-rc.read.1.tlog
 x64/Debug/Assignment2-345.tlog/link-rc.write.1.tlog
 x64/Debug/Assignment2-345.tlog/link.read.2.tlog
 x64/Debug/Assignment2-345.tlog/unsuccessfulbuild
+*.obj
+*.tlog
+*.idb
+*.pdb

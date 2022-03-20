@@ -114,6 +114,6 @@ public:
 	//destructor 
 //	~FileCommandProcessorAdapter();
 	virtual string readCommand();
-
+	///test
 
 };
