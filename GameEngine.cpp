@@ -118,27 +118,22 @@ void GameEngine::StartupPhase() {
     cout << "Welcome to Warzone" << endl << endl;
 
     Start();
-   
-    cout << "use the \"validatemap\" command to validate the map" << endl << endl;
-    bool validMap = false;
-    validMap = GameEngine::ValidateMap();
+    LoadMap();
+    ValidateMap();
     AddPlayers();
     GameStart();
 }
 
 
-//=================== StartUp Phase===================================
+
+
+
+//=================== StartUp Phase===================
 
 void GameEngine::Start() {
-    Notify(this);
-
     state = State::start;   
     cout << "GamePhase: start" << endl << endl;
-
-    
-  
-    
-
+    Notify(this);
 
     // show a list of available maps
     std::cout << "Available maps:"
@@ -151,7 +146,7 @@ void GameEngine::Start() {
         << endl;
 
 
-    LoadMap();
+    
     
 }
 
@@ -188,12 +183,6 @@ void GameEngine::LoadMap() {
 
         map = new Map(fileName);
 
-        /*  if (!map->isMapLoaded())
-            cout << "Please try again." << endl;
-        else {
-            cout << endl << "The chosen map has been loaded" << endl;
-        }*/
-
         if (map->isMapLoaded()) {
             state = State::maploaded;
             cout << endl << "GamePhase: map loaded" << endl << endl;
@@ -205,7 +194,11 @@ void GameEngine::LoadMap() {
 
 bool GameEngine::ValidateMap() {
     
-   // cout << "Validating loaded map" << endl;
+
+    cout << "use the \"validatemap\" command to validate the map" << endl << endl;
+ 
+
+
     bool validMap = false;
     
     validMap = map->validate();

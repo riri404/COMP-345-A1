@@ -37,3 +37,10 @@ x64/Debug/vc143.pdb
 Assignment2-345.vcxproj.filters
 Assignment2-345.vcxproj.user
 x64/Debug/CommandProcessing.obj
+*.log
+x64/Debug/Assignment2-345.tlog/link-cvtres.read.1.tlog
+x64/Debug/Assignment2-345.tlog/link-cvtres.write.1.tlog
+x64/Debug/Assignment2-345.tlog/link-rc.read.1.tlog
+x64/Debug/Assignment2-345.tlog/link-rc.write.1.tlog
+x64/Debug/Assignment2-345.tlog/link.read.2.tlog
+x64/Debug/Assignment2-345.tlog/unsuccessfulbuild
