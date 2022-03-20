@@ -5,7 +5,7 @@ bin
 .vs
 COMP345/COMP345/COMP345.vcxproj
 *.vcxproj
-/COMP345
+
 Assignment2-345.sln
 x64/Debug/Assignment2-345.exe
 x64/Debug/Assignment2-345.exe.recipe
