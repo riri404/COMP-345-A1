@@ -9,7 +9,7 @@ using namespace std;
 
 class Orders;
 class OrderList;
-class Card;
+class Cards;
 class Hand;
 
 void PlayerDriver();
@@ -42,6 +42,7 @@ public:
 	void addToReinforcePool(int armies); // Add to reinforcement pool
 	void removeFromReinforcePool(int armies); // Remove from reinforcement pool
 	int getReinforcePool();
+	void AddCard(Cards*);
 
 
 private:
@@ -50,7 +51,7 @@ private:
 	int* playerID;
 	vector<Territory*> territoryList;
 	OrdersList* orderList;
-	Hand* cards;
+	Hand* handCards;
 	int reinforcePool;
 
 };

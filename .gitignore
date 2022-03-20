@@ -34,3 +34,6 @@ x64/Debug/Player.obj
 x64/Debug/PlayerDriver.obj
 x64/Debug/vc143.idb
 x64/Debug/vc143.pdb
+Assignment2-345.vcxproj.filters
+Assignment2-345.vcxproj.user
+x64/Debug/CommandProcessing.obj

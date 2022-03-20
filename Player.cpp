@@ -9,7 +9,7 @@ Player::Player()
 	name = new string("");
 	playerID = new int(-1);
 	territoryList = *(new vector<Territory*>);
-	cards = new Hand();
+	handCards = new Hand();
 	orderList = new OrdersList();
 }
 
@@ -18,7 +18,7 @@ Player::Player(int* playerID, string* name, vector<Territory*> territoryList, Ha
 	this->playerID = playerID;
 	this->name = name;
 	this->territoryList = territoryList;
-	this->cards = cards;
+	this->handCards = cards;
 	this->orderList = orderlist;
 }
 
@@ -27,7 +27,7 @@ Player::Player(const Player& p)
 	this->playerID = p.playerID;
 	this->name = p.name;
 	this->territoryList = p.territoryList;
-	this->cards = p.cards;
+	this->handCards = p.handCards;
 	this->orderList = p.orderList;
 }
 
@@ -37,8 +37,8 @@ Player::~Player()
 	playerID = nullptr;
 	delete name;
 	name = nullptr;
-	delete cards;
-	cards = nullptr;
+	delete handCards;
+	handCards = nullptr;
 	delete orderList;
 	orderList = nullptr;
 	for (auto p : territoryList)
@@ -54,7 +54,7 @@ Player& Player::operator=(const Player& p)
 	this->playerID = p.playerID;
 	this->name = p.name;
 	this->territoryList = p.territoryList;
-	this->cards = p.cards;
+	this->handCards = p.handCards;
 	this->orderList = p.orderList;
 	return *this;
 }
@@ -72,7 +72,7 @@ std::ostream& operator<<(std::ostream& outs, const Player& p1)
 {
 	outs << "Player ID: " << * (p1.playerID) << endl;
 	outs << "Player's name: " << * (p1.name) << endl;
-	outs << "Player's cards: " << p1.cards << endl;
+	outs << "Player's cards: " << p1.handCards << endl;
 	//outs << (p1.territoryList);
 	//outs << p1.orderList;
 
@@ -178,3 +178,7 @@ void Player::removeFromReinforcePool(int armies) {
 }
 
 int Player::getReinforcePool() { return reinforcePool; }
+
+void Player::AddCard(Cards* card) {
+	handCards->setHand(card);
+}

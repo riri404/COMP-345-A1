@@ -9,6 +9,7 @@
 //#include "Deck.h"
 //#include "MapLoader.h"
 #include "LoggingObserver.h"
+#include "CommandProcessing.h"
 
 using namespace std;
 
@@ -18,8 +19,8 @@ void EngineDriver();
 
 // enum Phase {StartUp, Play };
 
-enum State {
-	null, start, mapLoaded, mapValidated, playersAdded,
+enum  State{
+	null, start, maploaded, mapvalidated, playersadded,
 	reinforcementPhase, issueOrderPhase, executeOrderPhase, win
 };
 

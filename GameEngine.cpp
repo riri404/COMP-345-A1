@@ -118,7 +118,7 @@ void GameEngine::StartupPhase() {
     cout << "Welcome to Warzone" << endl << endl;
 
     Start();
-    LoadMap();
+   
     cout << "use the \"validatemap\" command to validate the map" << endl << endl;
     bool validMap = false;
     validMap = GameEngine::ValidateMap();
@@ -134,6 +134,10 @@ void GameEngine::Start() {
 
     state = State::start;   
     cout << "GamePhase: start" << endl << endl;
+
+    
+  
+    
 
 
     // show a list of available maps
@@ -162,11 +166,23 @@ void GameEngine::LoadMap() {
     do {
         cout << "use the \"loadmap <filename>\" command to select a map" << endl << endl;
 
-        getline(cin, command);
+        string returnedCommand;
+
+
+        Command* commandEntered{};
+        CommandProcessor* processor{};
+
+        processor = new CommandProcessor();
+
+        commandEntered = processor->getCommand();
+      //  getline(cin, command);
 
         // cin >> command;
+        cout << "validation result: " << processor->validate(commandEntered)<< endl;
+       
+        mapName = SelectName(commandEntered->getCommandName());
 
-        mapName = SelectName(command);
+        
 
         fileName = "source_maps/" + mapName + ".map";
 
@@ -179,7 +195,7 @@ void GameEngine::LoadMap() {
         }*/
 
         if (map->isMapLoaded()) {
-            state = State::mapLoaded;
+            state = State::maploaded;
             cout << endl << "GamePhase: map loaded" << endl << endl;
             Notify(this);
         }
@@ -202,7 +218,7 @@ bool GameEngine::ValidateMap() {
     }
     else
     {
-        state = State::mapValidated;
+        state = State::mapvalidated;
         cout << "GamePhase: map validated" << endl << endl;
         Notify(this);
         return true;
@@ -238,7 +254,7 @@ void GameEngine::AddPlayers() {
 
     AddPlayer();
 
-    state = State::playersAdded;
+    state = State::playersadded;
     cout << "GamePhase: players added" << endl << endl; 
     Notify(this);
     
@@ -254,6 +270,9 @@ void GameEngine::GameStart() {
     mapTerritories = map->GetMapTerritories();
     NumberOfTerritories = map->GetMapTerritoriesNumber();
    
+    deck->create_deck();
+
+
    // cout << *map;
    // cout << players.size();
 
@@ -282,6 +301,16 @@ void GameEngine::GameStart() {
             playerIndex = 0;
         }
     }
+
+    for (Player* p : players) {
+
+        p->AddCard(deck->draw());
+
+        cout << "Territories owned by " << p->GetPlayerName() << " are:" << endl;
+       
+
+    }
+
 
     for (Player* p : players) {
 
@@ -436,13 +465,13 @@ std::string GameEngine::stringToLog() {
         case State::start:
             log = "Starting game";
             break;
-        case State::mapLoaded:
+        case State::maploaded:
             log = "Map loaded";
             break;
-        case State::mapValidated:
+        case State::mapvalidated:
             log = "Map validated";
             break;
-        case State::playersAdded:
+        case State::playersadded:
             log = "Players added";
             break;
         case State::reinforcementPhase:
