@@ -48,3 +48,7 @@ x64/Debug/Assignment2-345.tlog/unsuccessfulbuild
 *.tlog
 *.idb
 *.pdb
+*.sln
+*.filters
+*.user
+driver.cpp

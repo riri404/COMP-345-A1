@@ -1,6 +1,9 @@
+
 #pragma once
 #include "CommandProcessing.h"
-
+//#include "ILoggable.h"
+//#include "Subject.h"
+#include "GameEngine.h"
 #include<limits>
 #include<vector>
 #include<string>
@@ -11,20 +14,15 @@ using namespace std;
 Command::Command() {
 	CommandName = "Default";
 	CommandEffect = "Default";
-	CommandType{};
+	type = CommandType::none;
 }
-Command::Command(string commandInfo) : CommandName(commandInfo), CommandEffect("") {
-	//type = CommandType::none;
+Command::Command(string commandInfo) : CommandName(commandInfo), CommandEffect("no Effect") {
 	// initialize command type
-
 	if (commandInfo.find("loadmap") != string::npos) {
 		type = CommandType::loadmap;
 	}
 	else if (commandInfo.find("validatemap") != string::npos) {
 		type = CommandType::validatemap;
-	}
-	else if (commandInfo.find("tournament") != string::npos) {
-		type = CommandType::tournament;
 	}
 	else if (commandInfo.find("addplayer") != string::npos) {
 		type = CommandType::addplayer;
@@ -38,18 +36,9 @@ Command::Command(string commandInfo) : CommandName(commandInfo), CommandEffect("
 	else if (commandInfo.find("quit") != string::npos) {
 		type = CommandType::quit;
 	}
-	else if (commandInfo.find("m") != string::npos) {
-		type = CommandType::m;
-	}
-	else if (commandInfo.find("p") != string::npos) {
-		type = CommandType::p;
-	}
-	else if (commandInfo.find("d") != string::npos) {
-		type = CommandType::d;
-	}
-	else if (commandInfo.find("g") != string::npos) {
-		type = CommandType::g;
-	}
+	else {
+		type = CommandType::none;
+	}  //SHOULD ADD THIS?
 }
 // Destructor
 Command::~Command() {
@@ -59,20 +48,28 @@ Command::~Command() {
 Command& Command::operator =(const Command& other) {
 	CommandName = other.CommandName;
 	CommandEffect = other.CommandEffect;
+	type = other.type;
 	return *this;
 }
 Command::Command(const Command& other) {
 	CommandName = other.CommandName;
 	CommandEffect = other.CommandEffect;
+	type = other.type;
 }
 //Stream insertion
 ostream& operator << (ostream& out, const Command& c) {
-	out << "The command is " << c.CommandName << " and the effect is " << c.CommandEffect << endl;
+	out << "The command is " << c.CommandName << " and its Effect is " << c.CommandEffect << endl;
 	return out;
 }
+
+string Command::GetCommandName() {
+	return CommandName;
+}
+
+
 //1.4 saveEffect() method can be used to save the effect of the command as a string in the Command object. 
-void Command::saveEffect(string com) {
-	CommandEffect = com;
+void Command::saveEffect(string comand) {
+	CommandEffect = comand;
 }
 // redefine the virtual method inherited from Subject class
 //string Command::stringToLog() {
@@ -83,7 +80,7 @@ void Command::saveEffect(string com) {
 
 //Constructors
 CommandProcessor::CommandProcessor() {
-	state = GameState::start;
+	//state = GameState::maploaded;
 }
 
 CommandProcessor::CommandProcessor(const CommandProcessor& other) {
@@ -113,6 +110,8 @@ CommandProcessor& CommandProcessor::operator =(const CommandProcessor& other) {
 string CommandProcessor::readCommand() {
 	string input;
 	getline(cin, input);
+	Command* command = new Command(input);
+	saveCommand(command);
 	return input;
 }
 // 1.2 saves the string of the command inside the command itself
@@ -121,87 +120,103 @@ void CommandProcessor::saveCommand(Command* command) {
 	commandObjects.push_back(command);
 
 	//Notify(); //5.2.1 When a command is read, it is written in the log file. When a command is executed,
-	//its effect is written in the log file.
-
+	//its effect is written in the log file.	
 }
 // 1.3 a public method to other objects such as the GameEngine or the Player. 
 Command* CommandProcessor::getCommand() {
-	Command* comand = new Command(readCommand());
-	saveCommand(comand);
-	return comand;
+	Command* command = new Command(readCommand());
+	//saveCommand(comand);
+	return command;
 }
 // 1.5 validate() checks if a certain command has been entered is a valid command in the current state of 
-//the gane engine. if its not valid the error msg will be saved in the effect of the command.
-bool CommandProcessor::validate(Command* comand) {
+//the game engine. if its not valid the error msg will be saved in the effect of the command.
+bool CommandProcessor::validate(Command* command) {
 
-	if (comand->type == Command::CommandType::loadmap) {
-		if (state == GameState::start || state == GameState::map_loaded) {
+	if (command->type == Command::CommandType::loadmap) {
+		if (gameEnginePtr->GetState() ==   start || gameEnginePtr->GetState() == maploaded) {
+			cout << "=>maploaded" << endl;
+			command->saveEffect("maploaded");
 			return true;
 		}
+		else
+			cout << "=>command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
+		command->saveEffect("this command (" + command->CommandName + ") is not a valid command in the current state of the game");
+		    return false;
 	}
-	else if (comand->type == Command::CommandType::validatemap) {
-		if (state == GameState::map_loaded) {
+	else if (command->type == Command::CommandType::validatemap) {
+		if (gameEnginePtr->GetState() == maploaded) {
+			cout << "=>mapvalidated" << endl;
+			command->saveEffect("mapvalidated");
 			return true;
 		}
+		else
+			cout << "=>command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
+		command->saveEffect("this command (" + command->CommandName + ") is not a valid command in the current state of the game");
+		    return false;
+
 	}
-	else if (comand->type == Command::CommandType::tournament) {
-		if (state == GameState::start) {
+	else if (command->type == Command::CommandType::addplayer) {
+		if (gameEnginePtr->GetState() == mapvalidated || gameEnginePtr->GetState() == playersadded) {
+			cout << "=>playersadded" << endl;
+			command->saveEffect("playersadded");
 			return true;
 		}
+		else
+			cout << "=>command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
+		command->saveEffect("this command (" + command->CommandName + ") is not a valid command in the current state of the game");
+		    return false;
 	}
-	else if (comand->type == Command::CommandType::m) {
-		if (state == GameState::tournament_mode) {
+	else if (command->type == Command::CommandType::gamestart) {
+		if (gameEnginePtr->GetState() ==playersadded) {
+			cout << "=>assignreinforcement" << endl;
+			command->saveEffect("assignreinforcement");
 			return true;
 		}
+		else
+			cout << "=>command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
+		command->saveEffect("this command (" + command->CommandName + ") is not a valid command in the current state of the game");
+		    return false;
 	}
-	else if (comand->type == Command::CommandType::p) {
-		if (state == GameState::tournament_mode) {
+	else if (command->type == Command::CommandType::replay) {
+		if (gameEnginePtr->GetState() == win) {
+			cout << "=>start" << endl;
+			command->saveEffect("start");
+
 			return true;
 		}
+		else
+			cout << "=>command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
+		command->saveEffect("this command (" + command->CommandName + ") is not a valid command in the current state of the game");
+		    return false;
 	}
-	else if (comand->type == Command::CommandType::g) {
-		if (state == GameState::tournament_mode) {
+	else if (command->type == Command::CommandType::quit) {
+		if (gameEnginePtr->GetState() == win) {
+			cout << "=>exit program" << endl;
+			command->saveEffect("exit program");
 			return true;
 		}
+		else
+			cout << "=>command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
+		command->saveEffect("this command (" + command->CommandName + ") is not a valid command in the current state of the game");
+		    return false;
 	}
-	else if (comand->type == Command::CommandType::d) {
-		if (state == GameState::tournament_mode) {
-			return true;
-		}
+	if (command->CommandName != "maploaded" || command->CommandName != "validatemap" || command->CommandName != "addplayer" ||
+		command->CommandName != "gamestart" || command->CommandName != "replay" || command->CommandName != "quit")
+	{
+		cout << "this command (" + command->CommandName + ") is not a valid command!!" << endl;
+		command->saveEffect("this command (" + command->CommandName + ") is not a valid command!!");
+		return false;
 	}
-	else if (comand->type == Command::CommandType::addplayer) {
-		if (state == GameState::map_validated || state == GameState::players_added) {
-			return true;
-		}
-	}
-	else if (comand->type == Command::CommandType::gamestart) {
-		if (state == GameState::players_added) {
-			return true;
-		}
-	}
-	else if (comand->type == Command::CommandType::replay) {
-		if (state == GameState::win) {
-			return true;
-		}
-	}
-	else if (comand->type == Command::CommandType::quit) {
-		if (state == GameState::win) {
-			return true;
-		}
-	}
-	return false;
-}
-void CommandProcessor::setState(GameState state) {
-	state = state;
-}
-GameState CommandProcessor::getState()const {
-	return state;
+
 }
 
-string Command::getCommandName() {
-	return CommandName;
-}
+void CommandProcessor::printAllCommands() {
+	for (Command* c : commandObjects) {
+		cout << "Command Name: " << c->CommandName << " ,Command Effect: " << c->CommandEffect << endl;
+	}
 
+
+}
 // readFile the virtual method inherited from Subject class
 //string CommandProcessor::stringToLog() {
 //	return "Inputted command: " + commandObjects.back()->returnCommand();
@@ -246,7 +261,7 @@ string FileLineReader::readLineFromFile() {
 		throw "end of the file";
 	}
 }
-//============================== FileCommandProcessorAdaptor ((adapter))=====================================================
+//============================== FileCommandProcessorAdapter ((adapter))=====================================================
 // Constructors
 FileCommandProcessorAdapter::FileCommandProcessorAdapter() {
 }
@@ -258,8 +273,13 @@ FileCommandProcessorAdapter::~FileCommandProcessorAdapter() {
 	cout << "Destroying FileCommandProcessorAdapter." << endl;
 }
 // this class is inherited from CommandProcessor, so it can overwrite the getCommand()
-//and change the input source from console to file
+//and change the input source from console to file.
+void FileCommandProcessorAdapter::saveCommand(Command* command) {
+	commandObjects.push_back(command);
+}
 string FileCommandProcessorAdapter::readCommand() {
-	// use adaptee object to read commands from a file
+	// use adaptee object to read commands from a file.
+	Command* command = new Command(flr->readLineFromFile());
+	saveCommand(command);
 	return flr->readLineFromFile();
 }

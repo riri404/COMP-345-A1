@@ -175,7 +175,7 @@ void GameEngine::LoadMap() {
         // cin >> command;
         cout << "validation result: " << processor->validate(commandEntered)<< endl;
        
-        mapName = SelectName(commandEntered->getCommandName());
+        mapName = SelectName(commandEntered->GetCommandName());
 
         
 

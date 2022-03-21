@@ -27,6 +27,7 @@ enum  State{
 class GameEngine: public Subject, public ILoggable {
 
 public:
+	
 	// constructors
 	GameEngine();
 	GameEngine(GameEngine& engine);
@@ -80,12 +81,13 @@ public:
 	void GameStart();
 
 private:
+	State state;
 	Map* map;
 	vector<Player*> players;
 	Deck* deck;
 	int numberOfPlayers;
 	int NumberOfTerritories;
-	State state;
+	
 	vector<Territory*> mapTerritories;
 
 	string get_str_between_two_str(const string& s, const string& start_delim, const string& stop_delim);
