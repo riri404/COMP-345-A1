@@ -10,20 +10,6 @@
 
 
 int main() {
-
-    GameEngine* engine;
-    engine = new GameEngine;
-  //  CommandProcessor* commandProcessor = new CommandProcessor();
-   // engine->AddPlayer();
-   
-    engine->StartupPhase();
-
- //  cout<< engine->SelectName("loadmap <mapfile>");
-    
-    system("pause");
-    return 0;
-    
-
     
  /* std::cout << "-------------MAP DRIVER-------------" << std::endl;
   MapDriver();
@@ -32,7 +18,11 @@ int main() {
   std::cout << "-------------PLAYER DRIVER-------------" << std::endl;
   PlayerDriver();
   std::cout << "-------------ORDERS DRIVER-------------" << std::endl;
-  OrdersDriver();
+  OrdersDriver();*/
+
   std::cout << "-------------ENGINE DRIVER-------------" << std::endl;
-  EngineDriver();*/
+  EngineDriver();
+
+    system("pause");
+    return 0;
 }
