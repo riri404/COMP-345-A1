@@ -3,6 +3,8 @@
 #include "Orders.h"
 #include "Player.h"
 #include "GameEngine.h"
+#include "CommandProcessing.h"
+
 
 
 
@@ -11,18 +13,14 @@ int main() {
 
     GameEngine* engine;
     engine = new GameEngine;
-
+  //  CommandProcessor* commandProcessor = new CommandProcessor();
    // engine->AddPlayer();
-
+   
     engine->StartupPhase();
 
  //  cout<< engine->SelectName("loadmap <mapfile>");
     
-
     system("pause");
-
-
- //   cin.get();
     return 0;
     
 

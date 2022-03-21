@@ -1,5 +1,9 @@
+#pragma once
+
+
 #include "GameEngine.h"
 using namespace std;
+
 
 GameEngine::GameEngine()
 {
@@ -10,6 +14,9 @@ GameEngine::GameEngine()
     this->numberOfPlayers = 0;
     this->NumberOfTerritories = 0;
 
+    CommandProcessor* commandProcessor = new CommandProcessor();
+    processor = new CommandProcessor();
+    processor->gameEnginePtr = this;
 }
 
 // Creates a deep copy of this GameEngine, and all of its components.
@@ -27,7 +34,8 @@ GameEngine::GameEngine(GameEngine& engine)
     this->numberOfPlayers = engine.numberOfPlayers;
     this->NumberOfTerritories = engine.NumberOfTerritories;
     this->state = engine.state;
-
+    this->processor = engine.processor;
+    processor->gameEnginePtr = this;
 }
 
 GameEngine::~GameEngine()
@@ -37,6 +45,12 @@ GameEngine::~GameEngine()
     map = NULL;
     delete this->deck;
     deck = NULL;
+
+    delete this->processor->gameEnginePtr;
+    processor->gameEnginePtr = NULL;
+
+    delete this->processor;
+    processor = NULL;
 
     for (int i = 0; i < this->players.size(); i++)
     {
@@ -114,8 +128,13 @@ string GameEngine::SelectName(string command) {
     return GameEngine::get_str_between_two_str(command, "<", ">");
 }
 
+
+
 void GameEngine::StartupPhase() {
     cout << "Welcome to Warzone" << endl << endl;
+
+    
+   // string returnedCommand;
 
     Start();
     LoadMap();
@@ -123,9 +142,6 @@ void GameEngine::StartupPhase() {
     AddPlayers();
     GameStart();
 }
-
-
-
 
 
 //=================== StartUp Phase===================
@@ -137,110 +153,70 @@ void GameEngine::Start() {
 
     // show a list of available maps
     std::cout << "Available maps:"
-        << "\n---------------------------\n"
-        << "bigeurope" << endl
-        << "bigeurope2 (invalid)" << endl
-        << "invalid (lol)" << endl
-        << "sw_baltic"
-        << "\n---------------------------\n"
-        << endl;
-
-
-    
-    
+              << "\n---------------------------\n"
+              << "bigeurope" << endl
+              << "bigeurope2 (invalid)" << endl
+              << "invalid (lol)" << endl
+              << "sw_baltic"
+              << "\n---------------------------\n"
+              << endl; 
 }
 
 
 void GameEngine::LoadMap() {
  
-    // Select a map and load it
-    string command;
     string mapName;
     string fileName;
 
     do {
-        cout << "use the \"loadmap <filename>\" command to select a map" << endl << endl;
-
-        string returnedCommand;
-
-
-        Command* commandEntered{};
-        CommandProcessor* processor{};
-
-        processor = new CommandProcessor();
+        cout << "::Use the \"loadmap <filename>\" command to select a map" << endl << endl;
 
         commandEntered = processor->getCommand();
-      //  getline(cin, command);
+            
+        if (processor->validate(commandEntered)) {
 
-        // cin >> command;
-        cout << "validation result: " << processor->validate(commandEntered)<< endl;
-       
-        mapName = SelectName(commandEntered->GetCommandName());
+            mapName = SelectName(commandEntered->GetCommandName());
 
-        
+            fileName = "source_maps/" + mapName + ".map";
 
-        fileName = "source_maps/" + mapName + ".map";
+            map = new Map(fileName);
 
-        map = new Map(fileName);
-
-        if (map->isMapLoaded()) {
-            state = State::maploaded;
-            cout << endl << "GamePhase: map loaded" << endl << endl;
-            Notify(this);
+            if (map->isMapLoaded()) {
+                state = State::maploaded;
+                cout << endl << "GamePhase: map loaded" << endl << endl;
+                Notify(this);
+            }
         }
-
     } while (map == nullptr || !map->isMapLoaded());
 }
 
 bool GameEngine::ValidateMap() {
     
-
-    cout << "use the \"validatemap\" command to validate the map" << endl << endl;
- 
-
-
     bool validMap = false;
-    
-    validMap = map->validate();
- 
-      
-    if (!validMap)
-    {
-        cout << "Not a valid map, please try again\n"; 
-        return false;
-    }
-    else
-    {
-        state = State::mapvalidated;
-        cout << "GamePhase: map validated" << endl << endl;
-        Notify(this);
-        return true;
-    }
 
-}
+    do {
+        cout << "::Use the \"validatemap\" command to validate the map" << endl << endl;
 
-void GameEngine::AddPlayer() {
+        commandEntered = processor->getCommand();
 
-    string command;
-    string playerName;
+        if (processor->validate(commandEntered)) {
 
+            validMap = map->validate();
 
-    cout << "use the \"addplayer <playername>\" command to enter players in the game (2-6 players)" << endl << endl;
-
-    getline(cin, command);
-
-    playerName = SelectName(command);
-
-    Player* player = new Player();
-    numberOfPlayers++;
-    player->setName(playerName);
-    player->setPlayerID(numberOfPlayers);
-    player->addToReinforcePool(50);
-
-    players.push_back(player);
-
-    cout << "Player " << numberOfPlayers << " has been created. " << endl << endl;
-
+            if (!validMap)
+            {
+                cout << "Not a valid map, please try again\n";
+                return false;
+            }
+            else
+            {
+                state = State::mapvalidated;
+                cout << "GamePhase: map validated" << endl << endl;
+                Notify(this);
+                return true;
+            }
+        }
+    } while (!validMap);
 }
 
 void GameEngine::AddPlayers() {
@@ -248,13 +224,43 @@ void GameEngine::AddPlayers() {
     AddPlayer();
 
     state = State::playersadded;
-    cout << "GamePhase: players added" << endl << endl; 
+    cout << "GamePhase: players added" << endl << endl;
     Notify(this);
-    
+
     while (numberOfPlayers < 2) {
         AddPlayer();
     }
 
+}
+
+void GameEngine::AddPlayer() {
+
+   // string command;
+    string playerName;
+
+    bool playerAdded = false;
+
+    do {
+        cout << "::Use the \"addplayer <playername>\" command to enter players in the game (2-6 players)" << endl << endl;
+
+        commandEntered = processor->getCommand();
+
+        if (processor->validate(commandEntered)) {
+
+            playerName = SelectName(commandEntered->GetCommandName());
+
+            Player* player = new Player();
+            numberOfPlayers++;
+            playerAdded = true;
+            player->setName(playerName);
+            player->setPlayerID(numberOfPlayers);
+            player->addToReinforcePool(50);
+
+            players.push_back(player);
+
+            cout << "Player " << numberOfPlayers << " has been created. " << endl << endl;
+        }
+    } while (!playerAdded);
 }
 
 
@@ -265,11 +271,9 @@ void GameEngine::GameStart() {
    
     deck->create_deck();
 
-
    // cout << *map;
    // cout << players.size();
 
-  
 
     for (auto player : players)
     {
@@ -299,17 +303,14 @@ void GameEngine::GameStart() {
 
         p->AddCard(deck->draw());
 
-        cout << "Territories owned by " << p->GetPlayerName() << " are:" << endl;
-       
-
     }
 
 
     for (Player* p : players) {
 
-        cout << "Territories owned by " << p->GetPlayerName() << " are:" << endl;
+       // cout << endl <<"Territories owned by " << p->GetPlayerName() << " are:" << endl << endl;
         for (Territory* t : p->getTerritoryList()) {
-            cout << *t;
+          //  cout << *t;
         }
         
     }
@@ -364,7 +365,6 @@ void GameEngine::ReinforcementPhase() {
     cout << endl << "end of Reinforcement phase" << endl << endl;
     IssueOrdersPhase();
 }
-
 
 
 

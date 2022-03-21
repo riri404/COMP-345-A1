@@ -1,15 +1,18 @@
 #pragma once
+
+
+
 #include <iostream>
 #include <fstream>
 #include<vector>
 #include<string>
-#include "GameEngine.h"
+//#include "GameEngine.h"
 using namespace std;
-class gameEngine; //((client))
-class CommandProcessor;//((target))
-class Command;
-class FileCommandProcessorAdapter;//((Adaptor))
-class FileLineReader;//((Adaptee))
+class GameEngine; //((client))
+//class CommandProcessor;//((target))
+//class Command;
+//class FileCommandProcessorAdapter;//((Adaptor))
+//class FileLineReader;//((Adaptee))
 class ILoggable;
 class Observer;
 
@@ -82,43 +85,43 @@ public:
 };
 //================================= FileLineReader((adaptee)) =====================================================
 
-class FileLineReader
-{
-	ifstream ifs;
-public:
-	string fileName;
-	FileLineReader();
-	FileLineReader(string fileName);
-	FileLineReader(const FileLineReader& other);
-	~FileLineReader();
-	//Assignment operator
-	FileLineReader& operator =(const FileLineReader& other);
-	//Stream insertion
-	friend ostream& operator << (ostream& out, const FileLineReader& f);
-	//Method that reads one line(command) from file
-	string readLineFromFile();
-
-
-};
+//class FileLineReader
+//{
+//	ifstream ifs;
+//public:
+//	string fileName;
+//	FileLineReader();
+//	FileLineReader(string fileName);
+//	FileLineReader(const FileLineReader& other);
+//	~FileLineReader();
+//	//Assignment operator
+//	FileLineReader& operator =(const FileLineReader& other);
+//	//Stream insertion
+//	friend ostream& operator << (ostream& out, const FileLineReader& f);
+//	//Method that reads one line(command) from file
+//	string readLineFromFile();
+//
+//
+//};
 //============================== FileCommandProcessorAdaptor ((adapter))=====================================================
 // Adapter class implements the CommandProcessor .
 // this class should be designed usnig the adaptor design pattern.
 // class Command will do the same functionality of class CommandProcessor but it will
 //read it sequentially from a saved file instead of the console.
 
-class FileCommandProcessorAdapter :public CommandProcessor
-{
-private:
-	// Reference to the Adaptee:
-	FileLineReader* flr;
-public:
-	//Constructors
-	FileCommandProcessorAdapter();
-	FileCommandProcessorAdapter(string filename);
-	FileCommandProcessorAdapter(const FileCommandProcessorAdapter& other);
-	//Destructor
-	~FileCommandProcessorAdapter();
-	virtual string readCommand();
-	void saveCommand(Command* command);
-};
+//class FileCommandProcessorAdapter :public CommandProcessor
+//{
+//private:
+//	// Reference to the Adaptee:
+//	FileLineReader* flr;
+//public:
+//	//Constructors
+//	FileCommandProcessorAdapter();
+//	FileCommandProcessorAdapter(string filename);
+//	FileCommandProcessorAdapter(const FileCommandProcessorAdapter& other);
+//	//Destructor
+//	~FileCommandProcessorAdapter();
+//	virtual string readCommand();
+//	void saveCommand(Command* command);
+//};
 

@@ -52,3 +52,7 @@ x64/Debug/Assignment2-345.tlog/unsuccessfulbuild
 *.filters
 *.user
 driver.cpp
+x64/Debug/ASSIGNMENT2.ilk
+*.ilk
+*.enc
+x64/Debug/main.obj.enc

@@ -12,6 +12,10 @@
 #include "CommandProcessing.h"
 
 using namespace std;
+//
+//class CommandProcessor;//((target))
+//class Command;
+
 
 void EngineDriver();
 
@@ -79,6 +83,9 @@ public:
 	
 
 	void GameStart();
+	CommandProcessor* processor;
+	Command* commandEntered;
+
 
 private:
 	State state;
@@ -88,6 +95,8 @@ private:
 	int numberOfPlayers;
 	int NumberOfTerritories;
 	
+	
+
 	vector<Territory*> mapTerritories;
 
 	string get_str_between_two_str(const string& s, const string& start_delim, const string& stop_delim);
