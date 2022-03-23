@@ -1,9 +1,8 @@
 #pragma once
 
-
 #include "GameEngine.h"
-using namespace std;
 
+using namespace std;
 
 GameEngine::GameEngine()
 {
@@ -88,7 +87,6 @@ std::vector<Player*> GameEngine::GetPlayers()
 std::vector<Player*>* GameEngine::GetPlayersAdress() 
 { return &players; }
 
-
 // Returns a pointer to the game map.
 Map* GameEngine::GetMap() 
 { return map; }
@@ -105,7 +103,6 @@ ostream& operator<<(ostream& os, const GameEngine& gameEngine) {
         "\n    Players (" << gameEngine.numberOfPlayers << "): " << endl << p.substr(0, p.length() - 2) << endl<<
         "\n    Number of Territories : (" << gameEngine.NumberOfTerritories << ")" << endl;
 }
-
 
 
 // Get String between two delimiter String
@@ -129,18 +126,18 @@ string GameEngine::SelectName(string command) {
 }
 
 
-
 void GameEngine::StartupPhase() {
     cout << "Welcome to Warzone" << endl << endl;
-
-    
-   // string returnedCommand;
 
     Start();
     LoadMap();
     ValidateMap();
     AddPlayers();
     GameStart();
+}
+
+void GameEngine::TakeInput() {
+
 }
 
 
@@ -190,6 +187,7 @@ void GameEngine::LoadMap() {
     } while (map == nullptr || !map->isMapLoaded());
 }
 
+
 bool GameEngine::ValidateMap() {
     
     bool validMap = false;
@@ -221,76 +219,84 @@ bool GameEngine::ValidateMap() {
 
 void GameEngine::AddPlayers() {
 
-    AddPlayer();
+    bool startGame = false;
 
-    state = State::playersadded;
-    cout << "GamePhase: players added" << endl << endl;
-    Notify(this);
+    while (!startGame) {
 
-    while (numberOfPlayers < 2) {
-        AddPlayer();
+        cout << "::Use the \"addplayer <playername>\" command to enter players in the game (2-6 players)" << endl << endl;
+
+        if (numberOfPlayers > 1 && numberOfPlayers < 7) {
+
+            cout << "OR" << endl << endl;
+            cout << "::Use the \"gamestart\" to start the game play phase" << endl << endl;
+        }
+
+        commandEntered = processor->getCommand();
+
+        if (processor->validate(commandEntered)) {
+
+            if (commandEntered->type == Command::CommandType::addplayer) {
+
+                if (numberOfPlayers < 6) {
+
+                    AddPlayer();
+
+                }
+
+                else {
+
+                    cout << endl << "-< Maximum number of players is 6 >- " << endl;
+
+                    cout << endl << "::Use the \"gamestart\" command to start the game play phase" << endl;
+                }
+            }
+
+            if (commandEntered->type == Command::CommandType::gamestart) {
+
+                startGame = true;
+            }
+        }
     }
 
 }
 
 void GameEngine::AddPlayer() {
 
-   // string command;
     string playerName;
 
-    bool playerAdded = false;
+    playerName = SelectName(commandEntered->GetCommandName());
 
-    do {
-        cout << "::Use the \"addplayer <playername>\" command to enter players in the game (2-6 players)" << endl << endl;
+    Player* player = new Player();
 
-        commandEntered = processor->getCommand();
+    player->setName(playerName);
+    player->setPlayerID(numberOfPlayers);
+    
 
-        if (processor->validate(commandEntered)) {
+    players.push_back(player);
+    numberOfPlayers++;
 
-            playerName = SelectName(commandEntered->GetCommandName());
-
-            Player* player = new Player();
-            numberOfPlayers++;
-            playerAdded = true;
-            player->setName(playerName);
-            player->setPlayerID(numberOfPlayers);
-            player->addToReinforcePool(50);
-
-            players.push_back(player);
-
-            cout << "Player " << numberOfPlayers << " has been created. " << endl << endl;
-        }
-    } while (!playerAdded);
+    cout << "Player " << numberOfPlayers << ". " << playerName << " -> has been created. " << endl << endl;
+    state = State::playersadded;
+    cout << "GamePhase: players added" << endl << endl;
+    Notify(this);    
 }
 
-
-void GameEngine::GameStart() {
+void GameEngine::DistributeTerritories() {
 
     mapTerritories = map->GetMapTerritories();
     NumberOfTerritories = map->GetMapTerritoriesNumber();
-   
-    deck->create_deck();
-
-   // cout << *map;
-   // cout << players.size();
-
-
-    for (auto player : players)
-    {
-        cout << *player;
-    }
-
-    // Fairly distribute all the territories to the players
 
     int playerIndex = 0;
 
     for (int i = 0; i < NumberOfTerritories; i++) {
-        Player* tempPlayer = players.at(playerIndex);
-        mapTerritories[i]->setOwnerId(tempPlayer->GetPlayerID());
-        Territory* tempTerritory = new Territory(*mapTerritories[i]);
-        tempPlayer->addTerritory(tempTerritory);
 
-       // tempPlayer->getTerritoryList().push_back(tempTerritory);
+        Player* tempPlayer = players.at(playerIndex);
+
+        mapTerritories[i]->setOwnerId(tempPlayer->GetPlayerID());
+
+        Territory* tempTerritory = new Territory(*mapTerritories[i]);
+
+        tempPlayer->addTerritory(tempTerritory);
 
         playerIndex++;
 
@@ -298,39 +304,55 @@ void GameEngine::GameStart() {
             playerIndex = 0;
         }
     }
+}
 
-    for (Player* p : players) {
+void GameEngine::ShufflePlayers(vector<Player*> playersToShuffle) {
 
-        p->AddCard(deck->draw());
+    // obtain a time-based seed:
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine e(seed);
 
+    shuffle(begin(playersToShuffle), end(playersToShuffle), e);
+}
+
+void GameEngine::GameStart() {
+
+    DistributeTerritories();
+
+    ShufflePlayers(players);
+
+    deck->create_deck();
+
+    for (Player* player : players) {
+
+        for (int i = 0; i < 2; i++) {
+
+            player->AddCard(deck->draw());
+        }
+
+        player->addToReinforcePool(50);
+    }
+
+  
+    // cout << endl << "Map info ->" << endl << endl <<*map;
+
+    cout << endl << "Players of this game ->" << endl;
+
+    for (auto player : players)
+    {
+        
+        cout << endl << *player << endl;
     }
 
 
-    for (Player* p : players) {
+ /*   for (Player* player : players) {
 
-       // cout << endl <<"Territories owned by " << p->GetPlayerName() << " are:" << endl << endl;
-        for (Territory* t : p->getTerritoryList()) {
-          //  cout << *t;
+        cout << endl <<"Territories owned by " << player->GetPlayerName() << " -> " << endl << endl;
+        for (Territory* territory : player->getTerritoryList()) {
+          cout << *territory;
         }
         
-    }
-
-    for (Territory* t : map->GetMapTerritories()) {
-        //adjTerritories.push_back(t); // shallow copy
-       // cout << *t;
-    }
-
-
-    // Determine randomly the order of play of the players in the game
-
-   /* int* tempOrder = new int[players.size()];
-
-    for (int j = 0; j < players.size(); j++) {
-        tempOrder[j] = rand() % (player_list.size() - j) + j;
-    }
-
-    setPlayerOrder(tempOrder);*/
-
+    }*/
 }
 
 
@@ -403,18 +425,6 @@ void GameEngine::ExecuteOrdersPhase() {
 }
 
 
-//
-//void Engine::LoadDeck() {
-//
-//    /* 4. Create a deck of cards. */
-//    deck = new Deck();
-//    // deck->addCard(new BombCard(deck));
-//    // deck->addCard(new ReinforcementCard(deck));
-//
-//    // Displaying the deck information to the user
-//    std::cout << "\nA deck of 10 cards has been created. "
-//        << std::endl;
-//}
 
 void GameEngine::PlayerDrawCard(Player* player) {
 

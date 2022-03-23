@@ -6,6 +6,9 @@
 #include "Map.h"
 #include <vector>
 #include <string>
+#include <random>
+#include <algorithm>
+#include <chrono>       // std::chrono::system_clock
 //#include "Deck.h"
 //#include "MapLoader.h"
 #include "LoggingObserver.h"
@@ -85,6 +88,15 @@ public:
 	void GameStart();
 	CommandProcessor* processor;
 	Command* commandEntered;
+
+	void TakeInput();
+
+	// fairly distribute all the territories to the players
+	void DistributeTerritories();
+
+	// randomize the order of play of the players in the game
+	void ShufflePlayers(vector<Player*> players);
+
 
 
 private:
