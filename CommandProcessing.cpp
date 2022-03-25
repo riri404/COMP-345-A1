@@ -126,7 +126,7 @@ string CommandProcessor::readCommand() {
 	string input;
 	getline(cin, input);
 	Command* command = new Command(input);
-//	validate(command);
+	validate(command);
 	saveCommand(command);
 	return input;
 }
@@ -135,6 +135,9 @@ string CommandProcessor::readCommand() {
 // and then puts it into the collection of commands.
 void CommandProcessor::saveCommand(Command* command) {
 	commandObjects.push_back(command);
+	for (auto observer : *observers) {
+        command->Attach(observer);
+  }
 	Notify(this);//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>>>>>> part 5
 
 }

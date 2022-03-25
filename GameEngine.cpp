@@ -477,3 +477,10 @@ void GameEngine::AttachToOrdersList(LogObserver* observer) {
     }
 }
 
+void GameEngine::AttachToProcessor(LogObserver* observer) {
+    processor->Attach(observer);
+    for (auto i : processor->commandObjects) {
+        i->Attach(observer);
+    }
+}
+
