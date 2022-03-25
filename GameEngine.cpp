@@ -171,6 +171,7 @@ void GameEngine::LoadMap() {
         commandEntered = processor->getCommand();
             
         if (processor->validate(commandEntered)) {
+           
 
             mapName = SelectName(commandEntered->GetCommandName());
 

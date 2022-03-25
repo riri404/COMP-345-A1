@@ -24,8 +24,8 @@ Command::Command() {
 
 
 Command::Command(string commandInfo) : CommandName(commandInfo), CommandEffect("no Effect") {
-	regex loadMapRegex("loadmap<\\S+>");
-	regex addPlayerRegex("addplayer<\\S+>");
+	regex loadMapRegex("loadmap <\\S+>");
+	regex addPlayerRegex("addplayer <\\S+>");
 	// initialize command type
 	if( regex_match(commandInfo, loadMapRegex)){
 		type = CommandType::loadmap;
@@ -156,7 +156,7 @@ void CommandProcessor::printAllSavedCommands() {
 bool CommandProcessor::validate(Command* command) {
     	if (command->type == Command::CommandType::loadmap) {
 		if (gameEnginePtr->GetState() ==   start ||gameEnginePtr->GetState() == maploaded) {
-			cout << " => maploaded" << endl;
+		//	cout << " => maploaded" << endl;
 			command->saveEffect("maploaded");
 			//commandObjects.push_back(command);
 		return true;
