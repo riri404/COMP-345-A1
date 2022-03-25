@@ -98,6 +98,7 @@ public:
 	void ShufflePlayers(vector<Player*> players);
 
 	void AttachToOrdersList(LogObserver* observer);
+	void AttachToProcessor(LogObserver* observer);
 
 
 

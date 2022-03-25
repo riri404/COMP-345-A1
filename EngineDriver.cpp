@@ -6,6 +6,6 @@ void EngineDriver()
 {
     GameEngine* engine;
     engine = new GameEngine();
-    LogObserver* observer = new LogObserver(engine)
+    LogObserver* observer = new LogObserver(engine);
     engine->StartupPhase();
 }

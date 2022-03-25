@@ -126,7 +126,7 @@ string CommandProcessor::readCommand() {
 	string input;
 	getline(cin, input);
 	Command* command = new Command(input);
-//	validate(command);
+	// validate(command);
 	saveCommand(command);
 	return input;
 }
@@ -135,13 +135,16 @@ string CommandProcessor::readCommand() {
 // and then puts it into the collection of commands.
 void CommandProcessor::saveCommand(Command* command) {
 	commandObjects.push_back(command);
+	for (auto observer : *observers) {
+        command->Attach(observer);
+  }
 	Notify(this);//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>>>>>> part 5
 
 }
 // a public method to other objects such as the GameEngine or the Player.
 Command* CommandProcessor::getCommand() {
-	Command* command = new Command(readCommand());
-	return command;
+	readCommand();
+	return commandObjects.back();
 }
 void CommandProcessor::printAllSavedCommands() {
 	cout << "THE SAVED COMMANDS ARE : " << endl;
@@ -154,7 +157,6 @@ void CommandProcessor::printAllSavedCommands() {
 bool CommandProcessor::validate(Command* command) {
     	if (command->type == Command::CommandType::loadmap) {
 		if (gameEnginePtr->GetState() ==   start ||gameEnginePtr->GetState() == maploaded) {
-		//	cout << " => maploaded" << endl;
 			command->saveEffect("maploaded");
 			//commandObjects.push_back(command);
 		return true;

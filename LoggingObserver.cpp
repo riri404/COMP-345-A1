@@ -43,6 +43,7 @@ LogObserver::LogObserver(GameEngine* gameEngine) {
   gameEngine->Attach(this);
   this->gameEngine = gameEngine;
   gameEngine->AttachToOrdersList(this);
+  gameEngine->AttachToProcessor(this);
 }
 
 void LogObserver::Update(ILoggable* loggable) {
