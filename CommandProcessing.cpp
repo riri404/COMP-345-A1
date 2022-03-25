@@ -128,7 +128,7 @@ string CommandProcessor::readCommand() {
 	string input;
 	getline(cin, input);
 	Command* command = new Command(input);
-	validate(command);
+//	validate(command);
 	saveCommand(command);
 	return input;
 }
