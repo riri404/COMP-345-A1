@@ -364,26 +364,8 @@ void GameEngine::ReinforcementPhase() {
     Notify(this);
 
     cout << "Starting Reinforcement Phase..." << endl;
-    for (auto player : players)
-    {
-       // vector<Territory*> playerTerritories = player->GetTerritoryList();
-        //int baseArmySize = playerTerritories.size() / 3;
-        //Gent Bounus value
-        //int continentBonus = findContinentBonusTotal(player);
-        //int armiesToGive = continentBonus + baseArmySize;
-        //int reinforcementArmySize = baseArmySize;
-
-        //if (reinforcementArmySize < 3) reinforcementArmySize = 3;
-
-        // string message = "give armies";
-        // string armies = to_string(reinforcementArmySize);
-        // string id = to_string(player->GetPlayerID());
-        // string baseArmies = to_string(baseArmySize);
-        // string continentB = to_string(continentBonus);
-        // this->notify(message + " " + armies + " " + id + " " + baseArmies + " " + continentB);
-
-        // player->AddArmies(reinforcementArmySize); //Using add and not set because of the initial armies given from setup. Will always be 0 at start of a turn.
-
+    for (auto player : players) {
+        //
     }
     cout << endl << "end of Reinforcement phase" << endl << endl;
     IssueOrdersPhase();

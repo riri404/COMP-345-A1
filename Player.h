@@ -48,10 +48,10 @@ public:
 private:
 	//attributes/ variables
 	string* name;
+	int* reinforcementPool;
 	int* playerID;
 	vector<Territory*> territoryList;
 	OrdersList* orderList;
 	Hand* handCards;
 	int reinforcePool;
-
 };
