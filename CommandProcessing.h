@@ -4,6 +4,8 @@
 #include<vector>
 #include<string>
 #include "GameEngine.h"
+#include "LoggingObserver.h"
+
 using namespace std;
 class gameEngine; //((client))
 class CommandProcessor;//((target))
@@ -13,21 +15,20 @@ class FileLineReader;//((Adaptee))
 class ILoggable;
 class Observer;
 
-
 //================================ Command ========================================================================
-
-class Command //: public Iloggable, public Subject
+class Command : public ILoggable, public Subject
 {
-
 public:
 	enum class CommandType { loadmap, validatemap, addplayer, gamestart, replay, quit, none };
 	string CommandName;
 	string CommandEffect;
 	CommandType type;
+	GameEngine* gameEnginePtr;
 	//Constructor
 	Command();
 	Command(string commandInfo);
 	Command(const Command& other);
+	string getCommandText() { return CommandName; }
 	//Destructor
 	~Command();
 	void saveEffect(string command);
@@ -36,89 +37,73 @@ public:
 	//Stream insertion
 	friend ostream& operator << (ostream& out, const Command& c);
 	string GetCommandName();
-
+	string GetCommandType();
+	friend void CommandProcessorDriver();
 	// forced implementation of ILoggable interface's function
-	//string stringToLog();
-
+	string stringToLog();
 };
-
-
 //--------------------- CommandProcessor ((target))-----------------------
 //reads commands from the console
-class CommandProcessor// : public Iloggable, public Subject
+class CommandProcessor : public ILoggable, public Subject
 {
-private:
-
-	void saveCommand(Command* command);// saves the string of the command inside the command itself and then puts it into the collection of commands.
+protected:
+	virtual string readCommand();
+	void saveCommand( Command* command);// saves the string of the command inside the command itself and then
 public:
-	//****************
+	friend void CommandProcessorDriver();
 	GameEngine* gameEnginePtr;
-
-	// current game statesdf
-
-	// getter and setter
-	//void setState(GameState state);
-	//GameState getState(GameState state){return state;
-//	};
-	//****************
-	//GameState state;
 	vector<Command*> commandObjects;
 	//Constructor and Destructor
 	CommandProcessor();
 	CommandProcessor(const CommandProcessor& other);
 	~CommandProcessor();
-	virtual string readCommand();
-	Command* getCommand();// uses readCommand() that gets a string from the user.
-	bool validate(Command* comand);
-	// checks if a certain command has been entered is a valid command in the current state of the gane engine.if its not valid the error msg will be saved in the effect of the command.
 	//Assignment operator and Stream insertion
 	CommandProcessor& operator =(const CommandProcessor& other);
 	friend ostream& operator << (ostream& out, const CommandProcessor& cp);
-
-	void printAllCommands();
+	Command* getCommand();// uses readCommand() that gets a string from the user.
+	bool validate(Command* comand);
+	void printAllSavedCommands();
 	// forced implementation of ILoggable interface's function
-	//string stringToLog();
-
+	string stringToLog();
 };
 //================================= FileLineReader((adaptee)) =====================================================
 
-class FileLineReader
+class FileLineReader 
 {
-	ifstream ifs;
 public:
+	GameEngine* gameEnginePtr;
+	vector<string> commandObjects2;
 	string fileName;
 	FileLineReader();
-	FileLineReader(string fileName);
+	FileLineReader(const string& filename);
 	FileLineReader(const FileLineReader& other);
 	~FileLineReader();
 	//Assignment operator
 	FileLineReader& operator =(const FileLineReader& other);
 	//Stream insertion
 	friend ostream& operator << (ostream& out, const FileLineReader& f);
+	friend void CommandProcessorDriver();
 	//Method that reads one line(command) from file
-	string readLineFromFile();
-
+	void readLineFromFile(string fn);
 
 };
 //============================== FileCommandProcessorAdaptor ((adapter))=====================================================
-// Adapter class implements the CommandProcessor .
-// this class should be designed usnig the adaptor design pattern.
-// class Command will do the same functionality of class CommandProcessor but it will
-//read it sequentially from a saved file instead of the console.
-
 class FileCommandProcessorAdapter :public CommandProcessor
 {
-private:
-	// Reference to the Adaptee:
-	FileLineReader* flr;
 public:
+	GameEngine* gameEnginePtr;
 	//Constructors
 	FileCommandProcessorAdapter();
-	FileCommandProcessorAdapter(string filename);
+	FileCommandProcessorAdapter(FileLineReader* flr);
 	FileCommandProcessorAdapter(const FileCommandProcessorAdapter& other);
 	//Destructor
 	~FileCommandProcessorAdapter();
-	virtual string readCommand();
-	void saveCommand(Command* command);
+	friend void CommandProcessorDriver();
+	bool validate(Command* comand);
+protected:
+	 string readCommand();
+private:
+	// Reference to the Adaptee:
+	FileLineReader* flrReference;
 };
 
