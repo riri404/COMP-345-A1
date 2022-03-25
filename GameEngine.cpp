@@ -447,25 +447,25 @@ std::string GameEngine::stringToLog() {
     std::string log = "";
     switch (state) {
         case State::start:
-            log = "Starting game";
+            log = "State: Starting game";
             break;
         case State::maploaded:
-            log = "Map loaded";
+            log = "Phase: Map loaded";
             break;
         case State::mapvalidated:
-            log = "Map validated";
+            log = "Phase: Map validated";
             break;
         case State::playersadded:
-            log = "Players added";
+            log = "Phase: Players added";
             break;
         case State::reinforcementPhase:
-            log = "Reinforcement phase";
+            log = "Phase: Reinforcement";
             break;
         case State::issueOrderPhase:
-            log = "Issue order phase";
+            log = "Phase: Issue order";
             break;
         case State::executeOrderPhase:
-            log = "Execute order phase";
+            log = "Phase: Execute order";
             break;
     }
     return log;

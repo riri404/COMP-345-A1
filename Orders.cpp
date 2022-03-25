@@ -65,7 +65,7 @@ void Order::execute() {
 }
 
 string Order::stringToLog() {
-    return name + " executed";
+    return "Order " + name + " executed";
 }
 
 //--------------------------DEPLOY---------------------------
@@ -459,7 +459,7 @@ void OrdersList::remove(int index) {
 
 string OrdersList::stringToLog() {
     Order* latestOrder = listOfOrders.back();
-    return latestOrder->getName() + " added";
+    return "Order " + latestOrder->getName() + " added";
 }
 
 void OrdersList::notifyAddOrder(Order* order) {
