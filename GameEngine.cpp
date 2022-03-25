@@ -171,7 +171,6 @@ void GameEngine::LoadMap() {
         commandEntered = processor->getCommand();
             
         if (processor->validate(commandEntered)) {
-           
 
             mapName = SelectName(commandEntered->GetCommandName());
 
@@ -224,11 +223,11 @@ void GameEngine::AddPlayers() {
 
     while (!startGame) {
 
-        cout << "::Use the \"addplayer <playername>\" command to enter players in the game (2-6 players)" << endl << endl;
+        cout << "::Use the \"addplayer <playername>\" command to enter players in the game (2-6 players)" << endl;
 
         if (numberOfPlayers > 1 && numberOfPlayers < 7) {
 
-            cout << "OR" << endl << endl;
+            cout << "OR" << endl;
             cout << "::Use the \"gamestart\" to start the game play phase" << endl << endl;
         }
 
