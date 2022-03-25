@@ -1,0 +1,5 @@
+Starting game
+Map loaded
+Map validated
+Players added
+Players added

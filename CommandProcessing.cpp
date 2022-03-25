@@ -1,5 +1,3 @@
-
-#pragma once
 #include "CommandProcessing.h"
 #include "LoggingObserver.h"
 #include "GameEngine.h"
@@ -87,7 +85,7 @@ void Command::saveEffect(string effect) {
 }
 //virtual method inherited from Subject class
 string Command::stringToLog() {//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>>>>>> part 5
-	return "Command stringToLog: " + CommandEffect;
+	return CommandEffect;
 }
 //-------------------------------------------------- CommandProcessor ((target))-----------------------------------------------
 
@@ -240,9 +238,13 @@ bool CommandProcessor::validate(Command* command) {
 		//commandObjects.push_back(command);
 		return false;
 	}
+	return false;
 }
+
 string CommandProcessor::stringToLog() {                      //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>>>>>> part 5
-	return "CommandProcessor stringToLog: " + commandObjects.back()->getCommandText();
+	if (!commandObjects.empty())
+		return commandObjects.back()->getCommandText();
+	return "error occurred";
 }
 //================================= FileLineReader((adaptee)) =====================================================
 
@@ -393,4 +395,5 @@ bool FileCommandProcessorAdapter::validate(Command* command) {
 		//commandObjects.push_back(command);
 		return false;
 	}
+	return false;
 }

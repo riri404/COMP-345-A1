@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Map.h"
 #include "Cards.h"
+#include "LoggingObserver.h"
 #include <vector>
 #include <iostream>
 #include <string>
@@ -19,7 +20,7 @@ class Player
 public:
 	// contructors
 	Player(); // default constructor
-	Player(int* id, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
+	Player(int* id, int*, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
 	Player(const Player& p); //copy constructor
 	~Player(); //destructor
 
@@ -43,6 +44,7 @@ public:
 	void removeFromReinforcePool(int armies); // Remove from reinforcement pool
 	int getReinforcePool();
 	void AddCard(Cards*);
+	void Attach(LogObserver* observer);
 
 
 private:
@@ -53,5 +55,4 @@ private:
 	vector<Territory*> territoryList;
 	OrdersList* orderList;
 	Hand* handCards;
-	int reinforcePool;
 };
