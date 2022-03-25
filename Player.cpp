@@ -72,7 +72,9 @@ std::ostream& operator<<(std::ostream& outs, const Player& p1)
 {
 	outs << "Player ID: " << * (p1.playerID) << endl;
 	outs << "Player's name: " << * (p1.name) << endl;
-	outs << "Player's cards: " << p1.handCards << endl;
+	//outs << "Player's cards: " << p1.handCards << endl;
+	outs << "Player's cards: ";
+	p1.handCards->printHand();
 	//outs << (p1.territoryList);
 	//outs << p1.orderList;
 

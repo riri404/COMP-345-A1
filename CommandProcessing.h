@@ -1,4 +1,7 @@
 #pragma once
+
+
+
 #include <iostream>
 #include <fstream>
 #include<vector>
@@ -7,11 +10,11 @@
 #include "LoggingObserver.h"
 
 using namespace std;
-class gameEngine; //((client))
-class CommandProcessor;//((target))
-class Command;
-class FileCommandProcessorAdapter;//((Adaptor))
-class FileLineReader;//((Adaptee))
+class GameEngine; //((client))
+//class CommandProcessor;//((target))
+//class Command;
+//class FileCommandProcessorAdapter;//((Adaptor))
+//class FileLineReader;//((Adaptee))
 class ILoggable;
 class Observer;
 
@@ -68,7 +71,7 @@ public:
 };
 //================================= FileLineReader((adaptee)) =====================================================
 
-class FileLineReader 
+class FileLineReader
 {
 public:
 	GameEngine* gameEnginePtr;
@@ -106,4 +109,3 @@ private:
 	// Reference to the Adaptee:
 	FileLineReader* flrReference;
 };
-

@@ -297,7 +297,7 @@ bool MapLoader::readMap(const string& fileName) {
   string line = "";
   fstream fileObj(fileName);
   if (!fileObj.is_open()) {
-    cerr << "Could not open " << fileName << endl;
+    cerr << "Could not open " << fileName << endl << endl;
     return false;
   }
   // flags to keep track of which section we are reading

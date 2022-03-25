@@ -13,12 +13,16 @@ using namespace std;
 
 //class CommandProcessor;
 //================================ Command ========================================================================
+
 // Constructors
+
 Command::Command() {
 	CommandName = "Default";
 	CommandEffect = "Default";
 	type = CommandType::none;
 }
+
+
 Command::Command(string commandInfo) : CommandName(commandInfo), CommandEffect("no Effect") {
 	regex loadMapRegex("loadmap<\\S+>");
 	regex addPlayerRegex("addplayer<\\S+>");
@@ -44,24 +48,31 @@ Command::Command(string commandInfo) : CommandName(commandInfo), CommandEffect("
 	else {
 		type = CommandType::none;
 	//	cout << "Invalid command!" << endl;
-	} 
+	}
 }
+
 // Destructor
+
 Command::~Command() {
 }
+
 //Assignment operator
+
 Command& Command::operator =(const Command& other) {
 	CommandName = other.CommandName;
 	CommandEffect = other.CommandEffect;
 	type = other.type;
 	return *this;
 }
+
 Command::Command(const Command& other) {
 	CommandName = other.CommandName;
 	CommandEffect = other.CommandEffect;
 	type = other.type;
 }
+
 //Stream insertion
+
 ostream& operator << (ostream& out, const Command& c) {
 	out << "The command is " << c.CommandName << " and its Effect is " << c.CommandEffect << endl;
 	return out;
@@ -69,7 +80,7 @@ ostream& operator << (ostream& out, const Command& c) {
 string Command::GetCommandName() {
 	return CommandName;
 }
-//  saveEffect() method can be used to save the effect of the command as a string in the Command object. 
+//  saveEffect() method can be used to save the effect of the command as a string in the Command object.
 void Command::saveEffect(string effect) {
 	CommandEffect = effect;
 	Notify(this);              //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>>>>>> part 5
@@ -89,7 +100,9 @@ CommandProcessor::CommandProcessor(const CommandProcessor& other) {
 		commandObjects.push_back(temp);
 	}
 }
+
 //Destructor
+
 CommandProcessor::~CommandProcessor() {
 	//cout << "Destroying CommandProcessor." << endl;
 	for (auto p : commandObjects) {
@@ -97,7 +110,9 @@ CommandProcessor::~CommandProcessor() {
 	}
 	commandObjects.clear();
 }
+
 //Assignment operator
+
 CommandProcessor& CommandProcessor::operator =(const CommandProcessor& other) {
 	for (auto p : other.commandObjects) {
 		Command* temp = new Command(*p);
@@ -107,6 +122,7 @@ CommandProcessor& CommandProcessor::operator =(const CommandProcessor& other) {
 }
 // readCommand() reads a string from the console and
 // stores the command internally in a collection of Command objects using the saveCommand() method
+
 string CommandProcessor::readCommand() {
 	cout << "Please enter a command: " << endl;
 	string input;
@@ -122,9 +138,9 @@ string CommandProcessor::readCommand() {
 void CommandProcessor::saveCommand(Command* command) {
 	commandObjects.push_back(command);
 	Notify(this);//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>>>>>> part 5
-	
+
 }
-// a public method to other objects such as the GameEngine or the Player. 
+// a public method to other objects such as the GameEngine or the Player.
 Command* CommandProcessor::getCommand() {
 	Command* command = new Command(readCommand());
 	return command;
@@ -135,7 +151,7 @@ void CommandProcessor::printAllSavedCommands() {
 		cout << "Command Name: " << c->CommandName << " ,Command Effect: " << c->CommandEffect << endl;
 	}
 }
-// validate() checks if a certain command has been entered is a valid command in the current state of 
+// validate() checks if a certain command has been entered is a valid command in the current state of
 // the game engine. if its not valid the error msg will be saved in the effect of the command.
 bool CommandProcessor::validate(Command* command) {
     	if (command->type == Command::CommandType::loadmap) {
@@ -288,7 +304,7 @@ string FileCommandProcessorAdapter::readCommand() {
 		 validate(command);
 		 saveCommand(command);
 }
-	return "done"; 	
+	return "done";
 }
 bool FileCommandProcessorAdapter::validate(Command* command) {
 	if (command->type == Command::CommandType::loadmap) {
@@ -378,4 +394,3 @@ bool FileCommandProcessorAdapter::validate(Command* command) {
 		return false;
 	}
 }
-

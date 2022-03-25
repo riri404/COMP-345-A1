@@ -3,29 +3,13 @@
 #include "Orders.h"
 #include "Player.h"
 #include "GameEngine.h"
+#include "CommandProcessing.h"
+
 
 
 
 
 int main() {
-
-    GameEngine* engine;
-    engine = new GameEngine;
-
-   // engine->AddPlayer();
-
-    engine->StartupPhase();
-
- //  cout<< engine->SelectName("loadmap <mapfile>");
-    
-
-    system("pause");
-
-
- //   cin.get();
-    return 0;
-    
-
     
  /* std::cout << "-------------MAP DRIVER-------------" << std::endl;
   MapDriver();
@@ -34,7 +18,11 @@ int main() {
   std::cout << "-------------PLAYER DRIVER-------------" << std::endl;
   PlayerDriver();
   std::cout << "-------------ORDERS DRIVER-------------" << std::endl;
-  OrdersDriver();
+  OrdersDriver();*/
+
   std::cout << "-------------ENGINE DRIVER-------------" << std::endl;
-  EngineDriver();*/
+  EngineDriver();
+
+    system("pause");
+    return 0;
 }

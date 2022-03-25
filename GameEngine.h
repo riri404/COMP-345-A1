@@ -6,12 +6,19 @@
 #include "Map.h"
 #include <vector>
 #include <string>
+#include <random>
+#include <algorithm>
+#include <chrono>       // std::chrono::system_clock
 //#include "Deck.h"
 //#include "MapLoader.h"
 #include "LoggingObserver.h"
 #include "CommandProcessing.h"
 
 using namespace std;
+//
+//class CommandProcessor;//((target))
+//class Command;
+
 
 void EngineDriver();
 
@@ -79,6 +86,18 @@ public:
 	
 
 	void GameStart();
+	CommandProcessor* processor;
+	Command* commandEntered;
+
+	void TakeInput();
+
+	// fairly distribute all the territories to the players
+	void DistributeTerritories();
+
+	// randomize the order of play of the players in the game
+	void ShufflePlayers(vector<Player*> players);
+
+
 
 private:
 	State state;
@@ -88,6 +107,8 @@ private:
 	int numberOfPlayers;
 	int NumberOfTerritories;
 	
+	
+
 	vector<Territory*> mapTerritories;
 
 	string get_str_between_two_str(const string& s, const string& start_delim, const string& stop_delim);
