@@ -34,11 +34,10 @@ protected:
 class LogObserver: public Observer {
 public:
   ~LogObserver();
-  LogObserver(OrdersList*, GameEngine*);
+  LogObserver(GameEngine*);
   void Update(ILoggable*);
 private:
   std::ofstream logfile;
-  OrdersList* ordersList;
   GameEngine* gameEngine;
 };
 

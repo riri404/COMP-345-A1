@@ -1,5 +1,3 @@
-#pragma once
-
 #include "GameEngine.h"
 
 using namespace std;
@@ -215,6 +213,7 @@ bool GameEngine::ValidateMap() {
             }
         }
     } while (!validMap);
+    return false;
 }
 
 void GameEngine::AddPlayers() {
@@ -472,4 +471,9 @@ std::string GameEngine::stringToLog() {
     return log;
 }
 
+void GameEngine::AttachToOrdersList(LogObserver* observer) {
+    for (Player* p : players) {
+        p->Attach(observer);
+    }
+}
 

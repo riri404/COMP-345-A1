@@ -7,7 +7,7 @@ using namespace std;
 Player::Player()
 {
 	name = new string("");
-	int reinforcementPool = 0;
+	reinforcementPool = new int(0);
 	playerID = new int(-1);
 	territoryList = *(new vector<Territory*>);
 	handCards = new Hand();
@@ -17,7 +17,7 @@ Player::Player()
 Player::Player(int* playerID, int* reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
 {
 	this->playerID = playerID;
-	this->reinforcementPool= reinforcementPool;
+	this->reinforcementPool = reinforcementPool;
 	this->name = name;
 	this->territoryList = territoryList;
 	this->handCards = cards;
@@ -79,7 +79,8 @@ std::ostream& operator<<(std::ostream& outs, const Player& p1)
 	outs << "Player ID: " << * (p1.playerID) << endl;
 	outs << "Player's name: " << * (p1.name) << endl;
 	//outs << "Player's cards: " << p1.handCards << endl;
-	outs << "Player's cards: " << p1.handCards->printHand() << endl;
+	outs << "Player's cards: ";
+	p1.handCards->printHand();
 	outs << "Player's reinforcement pool" << *(p1.reinforcementPool) << endl;;
 	//outs << (p1.territoryList);
 	//outs << p1.orderList;
@@ -151,12 +152,8 @@ void Player::issueOrder()
 	std::cout << *order << std::endl;
 }*/
 
-int Player::getReinforcementPool() {
-	return this->reinforcementPool;
-}
-
-void Player::setReinforcementPool(int i) {
-	this->reinforcementPool = i;
+int Player::getReinforcePool() {
+	return *(this->reinforcementPool);
 }
 
 void Player::setName(const string& n) {
@@ -186,15 +183,19 @@ void Player::addTerritory(Territory* newTerritory) {
 }
 
 void Player::addToReinforcePool(int armies) {
-	reinforcePool += armies;
+	delete reinforcementPool;
+	reinforcementPool = new int(*reinforcementPool + armies);
 }
 
 void Player::removeFromReinforcePool(int armies) {
-	reinforcePool -= armies;
+	delete reinforcementPool;
+	reinforcementPool = new int(*reinforcementPool - armies);
 }
-
-int Player::getReinforcePool() { return reinforcePool; }
 
 void Player::AddCard(Cards* card) {
 	handCards->setHand(card);
+}
+
+void Player::Attach(LogObserver* observer) {
+	orderList->Attach(observer);
 }
