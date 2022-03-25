@@ -3,7 +3,8 @@
 
 void EngineDriver()
 {
-    Engine* engine;
-    engine = new Engine;
-    engine->StartGame();
+    GameEngine* engine;
+    engine = new GameEngine;
+    engine->StartupPhase();
+
 }

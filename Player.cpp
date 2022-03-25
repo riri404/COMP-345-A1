@@ -10,7 +10,7 @@ Player::Player()
 	int reinforcementPool = 0;
 	playerID = new int(-1);
 	territoryList = *(new vector<Territory*>);
-	cards = new Hand();
+	handCards = new Hand();
 	orderList = new OrdersList();
 }
 
@@ -20,7 +20,7 @@ Player::Player(int* playerID, int* reinforcementPool, string* name, vector<Terri
 	this->reinforcementPool= reinforcementPool;
 	this->name = name;
 	this->territoryList = territoryList;
-	this->cards = cards;
+	this->handCards = cards;
 	this->orderList = orderlist;
 }
 
@@ -30,7 +30,7 @@ Player::Player(const Player& p)
 	this->reinforcementPool = p.reinforcementPool;
 	this->name = p.name;
 	this->territoryList = p.territoryList;
-	this->cards = p.cards;
+	this->handCards = p.handCards;
 	this->orderList = p.orderList;
 }
 
@@ -40,10 +40,10 @@ Player::~Player()
 	playerID = nullptr;
 	delete name;
 	name = nullptr;
+	delete handCards;
+	handCards = nullptr;
 	delete reinforcementPool;
 	reinforcementPool = nullptr;
-	delete cards;
-	cards = nullptr;
 	delete orderList;
 	orderList = nullptr;
 	for (auto p : territoryList)
@@ -60,7 +60,7 @@ Player& Player::operator=(const Player& p)
 	this->name = p.name;
 	this->reinforcementPool = p.reinforcementPool;
 	this->territoryList = p.territoryList;
-	this->cards = p.cards;
+	this->handCards = p.handCards;
 	this->orderList = p.orderList;
 	return *this;
 }
@@ -76,10 +76,11 @@ Player& Player::operator=(const Player& p)
 
 std::ostream& operator<<(std::ostream& outs, const Player& p1)
 {
-	outs << *(p1.playerID);
-	outs << *(p1.name);
-	outs << p1.cards;
-	outs<< p1.reinforcementPool;
+	outs << "Player ID: " << * (p1.playerID) << endl;
+	outs << "Player's name: " << * (p1.name) << endl;
+	//outs << "Player's cards: " << p1.handCards << endl;
+	outs << "Player's cards: " << p1.handCards->printHand() << endl;
+	outs << "Player's reinforcement pool" << *(p1.reinforcementPool) << endl;;
 	//outs << (p1.territoryList);
 	//outs << p1.orderList;
 
@@ -162,6 +163,38 @@ void Player::setName(const string& n) {
 	*name = n;
 }
 
+void Player::setPlayerID(const int& ID) {
+	*playerID = ID;
+}
+
 vector<Territory*> Player::getTerritoryList() {
 	return territoryList;
+}
+
+
+string Player::GetPlayerName() const{
+	return *name;
+}
+
+int Player::GetPlayerID() const {
+	return *playerID;
+}
+
+void Player::addTerritory(Territory* newTerritory) {
+
+	territoryList.push_back(newTerritory);
+}
+
+void Player::addToReinforcePool(int armies) {
+	reinforcePool += armies;
+}
+
+void Player::removeFromReinforcePool(int armies) {
+	reinforcePool -= armies;
+}
+
+int Player::getReinforcePool() { return reinforcePool; }
+
+void Player::AddCard(Cards* card) {
+	handCards->setHand(card);
 }

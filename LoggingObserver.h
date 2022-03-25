@@ -6,7 +6,7 @@
 #include <fstream>
 
 class OrdersList;
-class Engine;
+class GameEngine;
 
 class ILoggable {
 public:
@@ -34,12 +34,12 @@ protected:
 class LogObserver: public Observer {
 public:
   ~LogObserver();
-  LogObserver(OrdersList*, Engine*);
+  LogObserver(OrdersList*, GameEngine*);
   void Update(ILoggable*);
 private:
   std::ofstream logfile;
   OrdersList* ordersList;
-  Engine* gameEngine;
+  GameEngine* gameEngine;
 };
 
 #endif

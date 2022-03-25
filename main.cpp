@@ -3,16 +3,26 @@
 #include "Orders.h"
 #include "Player.h"
 #include "GameEngine.h"
+#include "CommandProcessing.h"
+
+
+
+
 
 int main() {
-  std::cout << "-------------MAP DRIVER-------------" << std::endl;
+    
+ /* std::cout << "-------------MAP DRIVER-------------" << std::endl;
   MapDriver();
   std::cout << "-------------CARDS DRIVER-------------" << std::endl;
   CardsDriver();
   std::cout << "-------------PLAYER DRIVER-------------" << std::endl;
   PlayerDriver();
   std::cout << "-------------ORDERS DRIVER-------------" << std::endl;
-  OrdersDriver();
+  OrdersDriver();*/
+
   std::cout << "-------------ENGINE DRIVER-------------" << std::endl;
   EngineDriver();
+
+    system("pause");
+    return 0;
 }
