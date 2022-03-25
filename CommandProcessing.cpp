@@ -85,7 +85,7 @@ void Command::saveEffect(string effect) {
 }
 //virtual method inherited from Subject class
 string Command::stringToLog() {//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>>>>>> part 5
-	return CommandEffect;
+	return "Effect:" + CommandEffect;
 }
 //-------------------------------------------------- CommandProcessor ((target))-----------------------------------------------
 
@@ -245,7 +245,7 @@ bool CommandProcessor::validate(Command* command) {
 
 string CommandProcessor::stringToLog() {                      //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>>>>>> part 5
 	if (!commandObjects.empty())
-		return commandObjects.back()->getCommandText();
+		return "Command: " + commandObjects.back()->getCommandText();
 	return "error occurred";
 }
 //================================= FileLineReader((adaptee)) =====================================================
