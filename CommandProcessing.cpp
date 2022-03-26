@@ -1,3 +1,4 @@
+
 #include "CommandProcessing.h"
 #include "LoggingObserver.h"
 #include "GameEngine.h"
@@ -13,17 +14,15 @@ using namespace std;
 //================================ Command ========================================================================
 
 // Constructors
-
 Command::Command() {
 	CommandName = "Default";
 	CommandEffect = "Default";
 	type = CommandType::none;
 }
 
-
 Command::Command(string commandInfo) : CommandName(commandInfo), CommandEffect("no Effect") {
-	regex loadMapRegex("loadmap <\\S+>");
-	regex addPlayerRegex("addplayer <\\S+>");
+	regex loadMapRegex("loadmap \\S+");
+	regex addPlayerRegex("addplayer \\S+");
 	// initialize command type
 	if( regex_match(commandInfo, loadMapRegex)){
 		type = CommandType::loadmap;
@@ -50,12 +49,10 @@ Command::Command(string commandInfo) : CommandName(commandInfo), CommandEffect("
 }
 
 // Destructor
-
 Command::~Command() {
 }
 
 //Assignment operator
-
 Command& Command::operator =(const Command& other) {
 	CommandName = other.CommandName;
 	CommandEffect = other.CommandEffect;
@@ -68,7 +65,6 @@ Command::Command(const Command& other) {
 	CommandEffect = other.CommandEffect;
 	type = other.type;
 }
-
 //Stream insertion
 
 ostream& operator << (ostream& out, const Command& c) {
@@ -88,7 +84,6 @@ string Command::stringToLog() {//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 	return "Effect:" + CommandEffect;
 }
 //-------------------------------------------------- CommandProcessor ((target))-----------------------------------------------
-
 //Constructors
 CommandProcessor::CommandProcessor(){
 }
@@ -98,11 +93,8 @@ CommandProcessor::CommandProcessor(const CommandProcessor& other) {
 		commandObjects.push_back(temp);
 	}
 }
-
 //Destructor
-
 CommandProcessor::~CommandProcessor() {
-	//cout << "Destroying CommandProcessor." << endl;
 	for (auto p : commandObjects) {
 		delete p;
 	}
@@ -126,7 +118,7 @@ string CommandProcessor::readCommand() {
 	string input;
 	getline(cin, input);
 	Command* command = new Command(input);
-	// validate(command);
+	//validate(command);
 	saveCommand(command);
 	return input;
 }
@@ -158,86 +150,62 @@ bool CommandProcessor::validate(Command* command) {
     	if (command->type == Command::CommandType::loadmap) {
 		if (gameEnginePtr->GetState() ==   start ||gameEnginePtr->GetState() == maploaded) {
 			command->saveEffect("maploaded");
-			//commandObjects.push_back(command);
 		return true;
 		}
 		else
-		cout << " => Command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
 		command->saveEffect("Command (" + command->CommandName + ") is not a valid command in the current state of the game");
-		//commandObjects.push_back(command);
 		return false;
 	}
     	else if (command->type == Command::CommandType::addplayer) {
 		if (gameEnginePtr->GetState() == mapvalidated || gameEnginePtr->GetState() == playersadded) {
-			//cout << " => playersadded" << endl;
 			command->saveEffect("playersadded");
-			//commandObjects.push_back(command);
 		return true;
 		}
 		else
-			//cout << " => Command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
 		command->saveEffect("Command (" + command->CommandName + ") is not a valid command in the current state of the game");
-		//commandObjects.push_back(command);
 		return false;
 	}
 	else if (command->type == Command::CommandType::validatemap) {
 		if (gameEnginePtr->GetState() == maploaded) {
-			//cout << " => mapvalidated" << endl;
 			command->saveEffect("mapvalidated");
-			//commandObjects.push_back(command);
 		return true;
 		}
 		else
-			//cout << " => Command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
 		command->saveEffect("Command (" + command->CommandName + ") is not a valid command in the current state of the game");
-		//commandObjects.push_back(command);
 		return false;
 	}
 	else if (command->type == Command::CommandType::gamestart) {
 		if (gameEnginePtr->GetState() ==playersadded) {
-			//cout << " => assignreinforcement" << endl;
 			command->saveEffect("assignreinforcement");
-			//commandObjects.push_back(command);
 		return true;
 		}
 		else
-			//cout << " => Command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
 		command->saveEffect("Command (" + command->CommandName + ") is not a valid command in the current state of the game");
-		//commandObjects.push_back(command);
 		return false;
 	}
 	else if (command->type == Command::CommandType::replay) {
 		if (gameEnginePtr->GetState() == win) {
-			//cout << " => start" << endl;
 			command->saveEffect("start");
 			commandObjects.push_back(command);
 		return true;
 		}
 		else
-			//cout << " => Command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
 		command->saveEffect("Command (" + command->CommandName + ") is not a valid command in the current state of the game");
-		//commandObjects.push_back(command);
 		return false;
 	}
 	else if (command->type == Command::CommandType::quit) {
 		if (gameEnginePtr->GetState() == win) {
-			//cout << " => exit program" << endl;
 			command->saveEffect("exit program");
-			//commandObjects.push_back(command);
 			return true;
 		}
 		else
-			//cout << " => Command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
 		command->saveEffect("Command (" + command->CommandName + ") is not a valid command in the current state of the game");
-		//commandObjects.push_back(command);
 		    return false;
 	}
 	if (command->CommandName != "maploaded" || command->CommandName != "validatemap" || command->CommandName != "addplayer" ||
 		command->CommandName != "gamestart" || command->CommandName != "replay" || command->CommandName != "quit")
 	{
-		cout << "Command (" + command->CommandName + ") is not a valid command!!" << endl;
 		command->saveEffect("Command (" + command->CommandName + ") is not a valid command!!");
-		//commandObjects.push_back(command);
 		return false;
 	}
 	return false;
@@ -253,7 +221,7 @@ string CommandProcessor::stringToLog() {                      //=-=-=-=-=-=-=-=-
 //Constructors
 FileLineReader::FileLineReader(const string& filename) {
 	ifstream inFile(filename);
-	this->fileName = filename; // added this
+	this->fileName = filename;
 	if (!inFile) {
 		cout << "File does not exist or cannot be opened.\n";
 		cout << "Program will terminate.\n";
@@ -263,7 +231,6 @@ FileLineReader::FileLineReader(const string& filename) {
 }
 //Destructor
 FileLineReader::~FileLineReader() {
-	//cout << "Destroying FileLineReader." << endl;
 }
 FileLineReader::FileLineReader(const FileLineReader& other) {
 	fileName = other.fileName;
@@ -279,8 +246,8 @@ ostream& operator << (ostream& out, const FileLineReader& flr) {
 	return out;
 }
 // This method reads a file line by line
- void FileLineReader::readLineFromFile(string fn) {  // added the file name here as para
-	ifstream ifs;     // instead of this
+ void FileLineReader::readLineFromFile(string fn) {
+	ifstream ifs;
 	ifs.open(fn);
 	if (!ifs.eof()) {
 		string line;
@@ -298,7 +265,6 @@ FileCommandProcessorAdapter::FileCommandProcessorAdapter(FileLineReader* flr)
 
 //Destructor
 FileCommandProcessorAdapter::~FileCommandProcessorAdapter() {
-	//cout << "Destroying FileCommandProcessorAdapter." << endl;
 }
 //overriding the readCommand()
 string FileCommandProcessorAdapter::readCommand() {
@@ -315,78 +281,57 @@ bool FileCommandProcessorAdapter::validate(Command* command) {
 		if (gameEnginePtr->GetState() == start || gameEnginePtr->GetState() == maploaded) {
 			cout << " => maploaded" << endl;
 			command->saveEffect("maploaded");
-			//commandObjects.push_back(command);
 			return true;
 		}
 		else
 			cout << " => Command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
 		command->saveEffect("Command (" + command->CommandName + ") is not a valid command in the current state of the game");
-		//commandObjects.push_back(command);
 		return false;
 	}
 	else if (command->type == Command::CommandType::addplayer) {
 		if (gameEnginePtr->GetState() == mapvalidated || gameEnginePtr->GetState() == playersadded) {
-			//cout << " => playersadded" << endl;
 			command->saveEffect("playersadded");
-			//commandObjects.push_back(command);
 			return true;
 		}
 		else
-			//cout << " => Command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
 			command->saveEffect("Command (" + command->CommandName + ") is not a valid command in the current state of the game");
-		//commandObjects.push_back(command);
 		return false;
 	}
 	else if (command->type == Command::CommandType::validatemap) {
 		if (gameEnginePtr->GetState() == maploaded) {
-			//cout << " => mapvalidated" << endl;
 			command->saveEffect("mapvalidated");
-			//commandObjects.push_back(command);
 			return true;
 		}
 		else
-			//cout << " => Command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
 			command->saveEffect("Command (" + command->CommandName + ") is not a valid command in the current state of the game");
-		//commandObjects.push_back(command);
 		return false;
 	}
 	else if (command->type == Command::CommandType::gamestart) {
 		if (gameEnginePtr->GetState() == playersadded) {
-			//cout << " => assignreinforcement" << endl;
 			command->saveEffect("assignreinforcement");
-			//commandObjects.push_back(command);
 			return true;
 		}
 		else
-			//cout << " => Command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
 			command->saveEffect("Command (" + command->CommandName + ") is not a valid command in the current state of the game");
-		//commandObjects.push_back(command);
 		return false;
 	}
 	else if (command->type == Command::CommandType::replay) {
 		if (gameEnginePtr->GetState() == win) {
-			//cout << " => start" << endl;
 			command->saveEffect("start");
 			commandObjects.push_back(command);
 			return true;
 		}
 		else
-			//cout << " => Command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
 			command->saveEffect("Command (" + command->CommandName + ") is not a valid command in the current state of the game");
-		//commandObjects.push_back(command);
 		return false;
 	}
 	else if (command->type == Command::CommandType::quit) {
 		if (gameEnginePtr->GetState() == win) {
-			//cout << " => exit program" << endl;
 			command->saveEffect("exit program");
-			//commandObjects.push_back(command);
 			return true;
 		}
 		else
-			//cout << " => Command (" + command->CommandName + ") is not a valid command in the current state of the game" << endl;
 			command->saveEffect("Command (" + command->CommandName + ") is not a valid command in the current state of the game");
-		//commandObjects.push_back(command);
 		return false;
 	}
 	if (command->CommandName != "maploaded" || command->CommandName != "validatemap" || command->CommandName != "addplayer" ||
@@ -394,7 +339,6 @@ bool FileCommandProcessorAdapter::validate(Command* command) {
 	{
 		cout << "Command (" + command->CommandName + ") is not a valid command!!" << endl;
 		command->saveEffect("Command (" + command->CommandName + ") is not a valid command!!");
-		//commandObjects.push_back(command);
 		return false;
 	}
 	return false;

@@ -1,13 +1,13 @@
-loadmap<mapname>
+loadmap mapname
 validatemap
-addplayer<p1>
-addplayer<p2>
+addplayer player1
+addplayer player2
 gamestart
 replay
-loadmap<mapname2>
+loadmap <mapname2>
 incorrect command for testing!!
 validatemap
-addplayer<p3>
-addplayer<p4>
+addplayer player3
+addplayer player4
 gamestart
 quit
