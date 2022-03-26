@@ -1,5 +1,3 @@
-#pragma once
-
 #include "GameEngine.h"
 
 using namespace std;
@@ -171,7 +169,6 @@ void GameEngine::LoadMap() {
         commandEntered = processor->getCommand();
             
         if (processor->validate(commandEntered)) {
-           
 
             mapName = SelectName(commandEntered->GetCommandName());
 
@@ -216,6 +213,7 @@ bool GameEngine::ValidateMap() {
             }
         }
     } while (!validMap);
+    return false;
 }
 
 void GameEngine::AddPlayers() {
@@ -224,11 +222,11 @@ void GameEngine::AddPlayers() {
 
     while (!startGame) {
 
-        cout << "::Use the \"addplayer <playername>\" command to enter players in the game (2-6 players)" << endl << endl;
+        cout << "::Use the \"addplayer <playername>\" command to enter players in the game (2-6 players)" << endl;
 
         if (numberOfPlayers > 1 && numberOfPlayers < 7) {
 
-            cout << "OR" << endl << endl;
+            cout << "OR" << endl;
             cout << "::Use the \"gamestart\" to start the game play phase" << endl << endl;
         }
 
@@ -364,26 +362,8 @@ void GameEngine::ReinforcementPhase() {
     Notify(this);
 
     cout << "Starting Reinforcement Phase..." << endl;
-    for (auto player : players)
-    {
-       // vector<Territory*> playerTerritories = player->GetTerritoryList();
-        //int baseArmySize = playerTerritories.size() / 3;
-        //Gent Bounus value
-        //int continentBonus = findContinentBonusTotal(player);
-        //int armiesToGive = continentBonus + baseArmySize;
-        //int reinforcementArmySize = baseArmySize;
-
-        //if (reinforcementArmySize < 3) reinforcementArmySize = 3;
-
-        // string message = "give armies";
-        // string armies = to_string(reinforcementArmySize);
-        // string id = to_string(player->GetPlayerID());
-        // string baseArmies = to_string(baseArmySize);
-        // string continentB = to_string(continentBonus);
-        // this->notify(message + " " + armies + " " + id + " " + baseArmies + " " + continentB);
-
-        // player->AddArmies(reinforcementArmySize); //Using add and not set because of the initial armies given from setup. Will always be 0 at start of a turn.
-
+    for (auto player : players) {
+        //
     }
     cout << endl << "end of Reinforcement phase" << endl << endl;
     IssueOrdersPhase();
@@ -467,28 +447,40 @@ std::string GameEngine::stringToLog() {
     std::string log = "";
     switch (state) {
         case State::start:
-            log = "Starting game";
+            log = "State: Starting game";
             break;
         case State::maploaded:
-            log = "Map loaded";
+            log = "Phase: Map loaded";
             break;
         case State::mapvalidated:
-            log = "Map validated";
+            log = "Phase: Map validated";
             break;
         case State::playersadded:
-            log = "Players added";
+            log = "Phase: Players added";
             break;
         case State::reinforcementPhase:
-            log = "Reinforcement phase";
+            log = "Phase: Reinforcement";
             break;
         case State::issueOrderPhase:
-            log = "Issue order phase";
+            log = "Phase: Issue order";
             break;
         case State::executeOrderPhase:
-            log = "Execute order phase";
+            log = "Phase: Execute order";
             break;
     }
     return log;
 }
 
+void GameEngine::AttachToOrdersList(LogObserver* observer) {
+    for (Player* p : players) {
+        p->Attach(observer);
+    }
+}
+
+void GameEngine::AttachToProcessor(LogObserver* observer) {
+    processor->Attach(observer);
+    for (auto i : processor->commandObjects) {
+        i->Attach(observer);
+    }
+}
 

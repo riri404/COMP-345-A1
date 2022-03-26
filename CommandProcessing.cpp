@@ -81,7 +81,7 @@ void Command::saveEffect(string effect) {
 }
 //virtual method inherited from Subject class
 string Command::stringToLog() {//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>>>>>> part 5
-	return "Command stringToLog: " + CommandEffect;
+	return "Effect:" + CommandEffect;
 }
 //-------------------------------------------------- CommandProcessor ((target))-----------------------------------------------
 //Constructors
@@ -127,6 +127,9 @@ string CommandProcessor::readCommand() {
 // and then puts it into the collection of commands.
 void CommandProcessor::saveCommand(Command* command) {
 	commandObjects.push_back(command);
+	for (auto observer : *observers) {
+        command->Attach(observer);
+  }
 	Notify(this);//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>>>>>> part 5
 
 }
@@ -205,16 +208,20 @@ bool CommandProcessor::validate(Command* command) {
 		command->saveEffect("Command (" + command->CommandName + ") is not a valid command!!");
 		return false;
 	}
+	return false;
 }
+
 string CommandProcessor::stringToLog() {                      //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>>>>>> part 5
-	return "CommandProcessor stringToLog: " + commandObjects.back()->getCommandText();
+	if (!commandObjects.empty())
+		return "Command: " + commandObjects.back()->getCommandText();
+	return "error occurred";
 }
 //================================= FileLineReader((adaptee)) =====================================================
 
 //Constructors
 FileLineReader::FileLineReader(const string& filename) {
 	ifstream inFile(filename);
-	this->fileName = filename; 
+	this->fileName = filename;
 	if (!inFile) {
 		cout << "File does not exist or cannot be opened.\n";
 		cout << "Program will terminate.\n";
@@ -239,8 +246,8 @@ ostream& operator << (ostream& out, const FileLineReader& flr) {
 	return out;
 }
 // This method reads a file line by line
- void FileLineReader::readLineFromFile(string fn) {  
-	ifstream ifs;     
+ void FileLineReader::readLineFromFile(string fn) {
+	ifstream ifs;
 	ifs.open(fn);
 	if (!ifs.eof()) {
 		string line;
@@ -334,4 +341,5 @@ bool FileCommandProcessorAdapter::validate(Command* command) {
 		command->saveEffect("Command (" + command->CommandName + ") is not a valid command!!");
 		return false;
 	}
+	return false;
 }

@@ -182,4 +182,5 @@ public:
     //private:
         //The OrdersList class contains a list of Order objects
     vector<Order*> listOfOrders;        //vector of pointers to Order object
+
 };

@@ -3,6 +3,7 @@
 #include "Orders.h"
 #include "Player.h"
 #include "GameEngine.h"
+#include "LoggingObserver.h"
 #include "CommandProcessing.h"
 
 
@@ -21,8 +22,7 @@ int main() {
   OrdersDriver();*/
 
   std::cout << "-------------ENGINE DRIVER-------------" << std::endl;
+  
   EngineDriver();
-
-    system("pause");
-    return 0;
+  return 0;
 }

@@ -7,15 +7,17 @@ using namespace std;
 Player::Player()
 {
 	name = new string("");
+	reinforcementPool = new int(0);
 	playerID = new int(-1);
 	territoryList = *(new vector<Territory*>);
 	handCards = new Hand();
 	orderList = new OrdersList();
 }
 
-Player::Player(int* playerID, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
+Player::Player(int* playerID, int* reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
 {
 	this->playerID = playerID;
+	this->reinforcementPool = reinforcementPool;
 	this->name = name;
 	this->territoryList = territoryList;
 	this->handCards = cards;
@@ -25,6 +27,7 @@ Player::Player(int* playerID, string* name, vector<Territory*> territoryList, Ha
 Player::Player(const Player& p)
 {
 	this->playerID = p.playerID;
+	this->reinforcementPool = p.reinforcementPool;
 	this->name = p.name;
 	this->territoryList = p.territoryList;
 	this->handCards = p.handCards;
@@ -39,6 +42,8 @@ Player::~Player()
 	name = nullptr;
 	delete handCards;
 	handCards = nullptr;
+	delete reinforcementPool;
+	reinforcementPool = nullptr;
 	delete orderList;
 	orderList = nullptr;
 	for (auto p : territoryList)
@@ -53,6 +58,7 @@ Player& Player::operator=(const Player& p)
 {
 	this->playerID = p.playerID;
 	this->name = p.name;
+	this->reinforcementPool = p.reinforcementPool;
 	this->territoryList = p.territoryList;
 	this->handCards = p.handCards;
 	this->orderList = p.orderList;
@@ -75,6 +81,7 @@ std::ostream& operator<<(std::ostream& outs, const Player& p1)
 	//outs << "Player's cards: " << p1.handCards << endl;
 	outs << "Player's cards: ";
 	p1.handCards->printHand();
+	outs << "Player's reinforcement pool" << *(p1.reinforcementPool) << endl;;
 	//outs << (p1.territoryList);
 	//outs << p1.orderList;
 
@@ -145,6 +152,10 @@ void Player::issueOrder()
 	std::cout << *order << std::endl;
 }*/
 
+int Player::getReinforcePool() {
+	return *(this->reinforcementPool);
+}
+
 void Player::setName(const string& n) {
 	*name = n;
 }
@@ -172,15 +183,19 @@ void Player::addTerritory(Territory* newTerritory) {
 }
 
 void Player::addToReinforcePool(int armies) {
-	reinforcePool += armies;
+	delete reinforcementPool;
+	reinforcementPool = new int(*reinforcementPool + armies);
 }
 
 void Player::removeFromReinforcePool(int armies) {
-	reinforcePool -= armies;
+	delete reinforcementPool;
+	reinforcementPool = new int(*reinforcementPool - armies);
 }
-
-int Player::getReinforcePool() { return reinforcePool; }
 
 void Player::AddCard(Cards* card) {
 	handCards->setHand(card);
+}
+
+void Player::Attach(LogObserver* observer) {
+	orderList->Attach(observer);
 }

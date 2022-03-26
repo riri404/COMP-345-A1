@@ -37,7 +37,7 @@ void PlayerDriver(){
      
 
      std:: cout << "Creating player\n";
-     Player* player1 = new Player( id, n, territoryList, h, orderList);
+     Player* player1 = new Player( id, new int(10), n, territoryList, h, orderList);
      std::cout << *player1 << endl;
 
     //  testing toAttack()

@@ -8,21 +8,21 @@ void CommandProcessorDriver() {
     CommandProcessor commandProcessorObj;
     commandProcessorObj.gameEnginePtr = new GameEngine();
     FileCommandProcessorAdapter* adaptor;
-  
+
     cout << "Type >> console << to use the (-console)" << endl;
     cout << "Or type the >> file name << that you want to use (-file)." << endl;
     string userChoice;
     cout << endl;
     getline(cin, userChoice);
     //-----------------------------------------------------
-    // 
-        //************ READING FROM CONSOLE readCommand();************************ 
+    //
+        //************ READING FROM CONSOLE readCommand();************************
     if (userChoice == "console") {
         cout << "---------------------------------------------------------------------------"<< endl;
         cout << ">> testing readCommand() Method FROM CONSOLE << AND >> validate() METHOD <<" << endl;
         cout << "---------------------------------------------------------------------------" << endl;
        // STATE:          ITS VALID COMMANDS:
-   
+
         //start:          loadmap mapName.
         //maploaded:      loadmap mapName  or validatemap.
         //mapvalidated:   addplayer playerName.
@@ -57,7 +57,7 @@ void CommandProcessorDriver() {
         commandProcessorObj.gameEnginePtr->SetState(win);
         commandProcessorObj.readCommand();
         commandProcessorObj.validate(commandProcessorObj.commandObjects.back());
-        commandProcessorObj.printAllSavedCommands();      
+        commandProcessorObj.printAllSavedCommands();
         cout << endl;
     }
         //************ READING FROM FILE readCommand();****************************
@@ -67,9 +67,9 @@ void CommandProcessorDriver() {
         cout << "--------------------------------------------" << endl;
         cout << ">> testing readCommand() Method FROM file <<" << endl;
         cout << "--------------------------------------------" << endl;
-       
+
         adaptor->gameEnginePtr = new GameEngine();
-        adaptor->gameEnginePtr->SetState(start); 
+        adaptor->gameEnginePtr->SetState(start);
         adaptor->readCommand();
         adaptor->printAllSavedCommands();
         cout << endl;
