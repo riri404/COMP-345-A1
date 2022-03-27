@@ -1,15 +1,15 @@
-Starting game
-loadmap <bigeurope>
-maploaded
-Map loaded
-validatemap
-mapvalidated
-Map validated
-addplayer <jake>
-playersadded
-Players added
-addplayer <lol>
-playersadded
-Players added
-gamestart
-assignreinforcement
+State: Starting game
+Command: loadmap bigeurope
+Effect:maploaded
+Phase: Map loaded
+Command: validatemap
+Effect:mapvalidated
+Phase: Map validated
+Command: addplayer jake
+Effect:playersadded
+Phase: Players added
+Command: addplayer lol
+Effect:playersadded
+Phase: Players added
+Command: gamestart
+Effect:assignreinforcement

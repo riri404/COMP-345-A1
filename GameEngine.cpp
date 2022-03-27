@@ -1,4 +1,5 @@
 #include "GameEngine.h"
+#include <sstream>
 
 using namespace std;
 
@@ -21,7 +22,7 @@ GameEngine::GameEngine(GameEngine& engine)
 {
     state = State::null;
     this->map = new Map(*engine.map);
-    this->players;
+    // this->players;
     for (int i = 0; i < engine.players.size(); i++)
     {
         this->players.push_back(new Player(*engine.players.at(i)));
@@ -95,6 +96,7 @@ ostream& operator<<(ostream& os, const GameEngine& gameEngine) {
     for (Player* i : gameEngine.players) {
         p += (*i).GetPlayerName() + " | ";
     }
+  
 
     return os <<
         "GAME ENGINE: Current state: " << gameEngine.state <<
@@ -119,8 +121,11 @@ string GameEngine::get_str_between_two_str(const string& s,
 
 
 string GameEngine::SelectName(string command) {
-    
-    return GameEngine::get_str_between_two_str(command, "<", ">");
+    istringstream iss(command);
+    string garbage = "";
+    string name = "";
+    iss >> garbage >> name;
+    return name;
 }
 
 
@@ -370,7 +375,7 @@ void GameEngine::ReinforcementPhase() {
     {   //check if the player's terriotries
         temp = players[i]->getReinforcementPool();
 
-        for (int j = 0; j < players[i]->territoryList.size(); i++)
+        for (int j = 0; j < players[i]->getTerritoryList().size(); i++)
         {
             cout << "inside nested loop..." << endl;
             //count the terriorties number
@@ -391,7 +396,7 @@ void GameEngine::ReinforcementPhase() {
 
         temp += 3;
 
-        players[i]->setReinforcePool(temp);
+        players[i]->setReinforcementPool(temp);
         check = false;
         temp = 0;
         count = 0;
@@ -548,6 +553,10 @@ std::string GameEngine::stringToLog() {
         case State::executeOrderPhase:
             log = "Phase: Execute order";
             break;
+        default:
+            log = "Unknown phase";
+            break;
+        
     }
     return log;
 }
@@ -564,4 +573,3 @@ void GameEngine::AttachToProcessor(LogObserver* observer) {
         i->Attach(observer);
     }
 }
-

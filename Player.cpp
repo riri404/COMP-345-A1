@@ -1,7 +1,9 @@
+#include "Player.h"
+#include "Map.h"
+#include "Cards.h"
 #include <vector>
 #include <iostream>
 #include <string>
-#include "Player.h"
 using namespace std;
 
 Player::Player()
@@ -11,6 +13,7 @@ Player::Player()
 	playerID = new int(-1);
 	territoryList = *(new vector<Territory*>);
 	handCards = new Hand();
+  // list = (*new vector<Order>);
 	orderList = new OrdersList();
 }
 
@@ -52,6 +55,24 @@ Player::~Player()
 	}
 	territoryList.clear();
 
+	// Added by Justine & Jennifer
+	/*for (auto l : list) {
+		delete l;
+	}
+	list.clear();*/
+
+	/*for (auto n : playerNegociate) {
+		delete n;
+	}
+	playerNegociate.clear();*/
+
+	/*delete deck;
+	deck = nullptr;*/
+
+	/*for (auto lp : listOfPlayers) {
+		delete lp;
+	}
+	listOfPlayers.clear();*/
 }
 
 Player& Player::operator=(const Player& p)
@@ -301,11 +322,13 @@ bool Player::playerContinentBouns()
 }
 
 int Player::getReinforcementPool() {
-	return this->reinforcementPool;
+	return *(this->reinforcementPool);
 }
 
-void Player::setReinforcementPool(int i) {
-	this->reinforcementPool = i;
+void Player::setReinforcementPool(int r)
+{
+	//return int; // There is an error here
+	*this->reinforcementPool = r;
 }
 
 
@@ -325,6 +348,10 @@ vector<Territory*> Player::getTerritoryList() {
 
 string Player::GetPlayerName() const{
 	return *name;
+}
+
+Hand* Player::getPlayerHand() {
+	return handCards;
 }
 
 int Player::GetPlayerID() const {
@@ -352,4 +379,46 @@ void Player::AddCard(Cards* card) {
 
 void Player::Attach(LogObserver* observer) {
 	orderList->Attach(observer);
+}
+
+// Added by justine & jennifer
+void Player::setTerritory(Territory* newTerritory)
+{
+	territoryList.push_back(newTerritory);
+}
+
+void Player::removeTerritory(int i)
+{
+	this->territoryList.erase(this->territoryList.begin() + i);
+}
+
+OrdersList* Player::getOrdersList() {
+	return orderList;
+}
+
+void Player::setOrder(Order* order) {
+	orderList->addToListOfOrders(order);
+}
+
+void Player::addNegociate(Player* p) {
+	playerNegociate.push_back(p);
+}
+
+bool Player::isNegociating(Player* p) {
+	for (int i = 0; i < playerNegociate.size(); i++) {
+		if (playerNegociate.at(i) == p) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void Player::addPlayer(Player* p)
+{
+	players.push_back(p);
+}
+
+vector<Player*> Player::getListOfPlayers()
+{
+	return players;
 }
