@@ -70,9 +70,7 @@ void Territory::setOwnerId(int playerId) { this->ownerID = playerId; }
 int Territory::getId() const { return id; }
 int Territory::getPlayerId() const { return ownerID; }
 int Territory::getArmies() const { return armies; }
-string Territory::getContinent() { 
-
-}
+string Territory::getContinent() { return continentName; }
 string Territory::getName() const { return name; }
 vector<Territory*> Territory::getAdjTerritories() const {
     return adjTerritories;
@@ -539,4 +537,5 @@ string Map::getContinentNameById(int id) {
     for (auto continent : continents) {
         if (id == continent->getId()) return continent->getName();
     }
+    return "N/A";
 }

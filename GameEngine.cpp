@@ -1,4 +1,5 @@
 #include "GameEngine.h"
+#include <sstream>
 
 using namespace std;
 
@@ -21,7 +22,7 @@ GameEngine::GameEngine(GameEngine& engine)
 {
     state = State::null;
     this->map = new Map(*engine.map);
-    this->players;
+    // this->players;
     for (int i = 0; i < engine.players.size(); i++)
     {
         this->players.push_back(new Player(*engine.players.at(i)));
@@ -120,8 +121,11 @@ string GameEngine::get_str_between_two_str(const string& s,
 
 
 string GameEngine::SelectName(string command) {
-    
-    return GameEngine::get_str_between_two_str(command, "<", ">");
+    istringstream iss(command);
+    string garbage = "";
+    string name = "";
+    iss >> garbage >> name;
+    return name;
 }
 
 
@@ -501,6 +505,10 @@ std::string GameEngine::stringToLog() {
         case State::executeOrderPhase:
             log = "Phase: Execute order";
             break;
+        default:
+            log = "Unknown phase";
+            break;
+        
     }
     return log;
 }
