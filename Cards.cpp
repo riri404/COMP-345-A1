@@ -3,6 +3,7 @@
 #include <string>
 
 #include "Cards.h"
+
 using namespace std;
 
 Cards::Cards()
@@ -15,18 +16,16 @@ Cards::Cards(const Cards& c)
 	this->cardTypes = *new vector<string>(c.cardTypes);
 	this->type = new string(*(c.type));
 }
-
 // Assignment operator
 Cards& Cards::operator=(const Cards& c)
 {
-	//this->type = c.type;
 	this->cardTypes = *new vector<string>(c.cardTypes);
 	this->type = new string(*(c.type));
 
 	return *this;
 }
 
-vector<string>* Cards::getTypePtr()
+vector<string>* Cards::getTypePts()
 {
 	return &cardTypes;
 }
@@ -34,8 +33,7 @@ vector<string>* Cards::getTypePtr()
 void Cards::printType()
 {
 	cout << "The card types are: " << endl;
-	for (int i = 0; i < cardTypes.size(); i++)
-	{
+	for (int i = 0; i < cardTypes.size(); i++) {
 		cout << cardTypes.at(i) << endl;
 	}
 }
@@ -52,6 +50,8 @@ string* Cards::getCardType()
 
 Cards::~Cards()
 {
+	delete type;
+	type = nullptr;
 }
 
 // ------------------------------------------------------
@@ -62,7 +62,7 @@ Deck::Deck()
 }
 
 // Assignment operator
-Deck::Deck(const Deck& deck) : Cards(deck)
+Deck::Deck(const Deck& deck)
 {
 	this->myDeck = *new vector<Cards*>(deck.myDeck);
 	this->cardPtr = new Cards(*(deck.cardPtr));
@@ -75,7 +75,7 @@ Deck& Deck::operator=(const Deck& deck)
 	this->myDeck = *new vector<Cards*>(deck.myDeck);
 	this->cardPtr = new Cards(*(deck.cardPtr));
 	this->tempCard = new Cards(*(deck.tempCard));
-	
+
 	return *this;
 }
 
@@ -126,9 +126,10 @@ void Deck::create_deck()
 
 void Deck::printDeck()
 {
-	cout << "Deck contains " << myDeck.size() << "cards." << endl;
-	for (int i = 0; i < myDeck.size(); i++) {
-		cout <<"Card " << i << " is " << *myDeck.at(i)->getCardType() << endl;
+	cout << "Deck contains " << myDeck.size() << " cards." << endl;
+	for (int i = 0; i < myDeck.size(); i++)
+	{
+		cout << "Card " << i << " is " << *myDeck.at(i)->getCardType() << endl;
 	}
 }
 
@@ -161,7 +162,13 @@ void Deck::addCardDeck(Cards* card)
 
 Deck::~Deck()
 {
-	delete(cardPtr);
+	delete cardPtr;
+	cardPtr = nullptr;
+	delete tempCard;
+	tempCard = nullptr;
+	for (auto d : myDeck)
+		delete d;
+	myDeck.clear();
 }
 
 // ----------------------------------------------------------
@@ -183,7 +190,7 @@ Hand& Hand::operator=(const Hand& hand)
 {
 	this->myHand = *new vector<Cards*>(hand.myHand);
 	this->playCard = *new vector<Cards*>(hand.playCard);
-	
+
 	return *this;
 }
 
@@ -224,7 +231,6 @@ void Hand::play(Cards* c, Deck* d)
 	returnToDeck(d);
 
 	removePlayedCard(c);
-
 	playCard.pop_back();
 }
 
@@ -241,7 +247,7 @@ vector<Cards*>* Hand::getHand()
 	return &myHand;
 }
 
-vector<Cards*>* Hand::getPlayCard()
+vector<Cards*>* Hand::getPlayHand()
 {
 	return &playCard;
 }
@@ -253,7 +259,6 @@ void Hand::removePlayedCard(Cards* c)
 		if (*myHand.at(i)->getCardType() == *c->getCardType())
 		{
 			myHand.erase(myHand.begin() + i);
-			//cout << "Deleting card " << *c->getCardType() << " of hand..." << endl << endl;
 			return;
 		}
 	}
@@ -262,12 +267,16 @@ void Hand::removePlayedCard(Cards* c)
 void Hand::clearPlayCards()
 {
 	playCard.clear();
-
 	cout << "Play cards vector has been cleared." << endl << endl;
 }
 
 Hand::~Hand()
 {
-	for (int i = 0; i < myHand.size(); i++)
-		delete myHand[i];
+	for (auto h : myHand)
+		delete h;
+	myHand.clear();
+
+	for (auto p : playCard)
+		delete p;
+	playCard.clear();
 }

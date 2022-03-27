@@ -355,23 +355,3 @@ std::string Engine::stringToLog() {
     }
     return log;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

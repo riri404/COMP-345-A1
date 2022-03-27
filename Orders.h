@@ -5,12 +5,20 @@
 #include <vector>
 #include "Map.h"
 #include "Player.h"
+#include "LoggingObserver.h"
+#include "Cards.h"
+
 using namespace std;
 
 class Player;
 class Territory;
+class Cards;
+class Hand;
+class Deck;
 
-class Order {
+void OrdersDriver();
+
+class Order : public Subject, public ILoggable {
 public:
     //Constructor and destructor
     Order();
@@ -30,9 +38,16 @@ public:
     // I added virtual in front
     virtual bool validate() = 0; //pure virtual
     virtual void execute() = 0; //pure virtual
+
+    // Not working
+    void addPlayer(Player* p);
+    vector<Player*> getListOfPlayers();
+
+    string stringToLog() override;
 protected:
     string name;
     Player* player;
+    vector<Player*> listOfPlayers;
 };
 
 //A deploy order tells a certain number of armies taken from the reinforcement pool to deploy to a target territory owned 
@@ -55,18 +70,20 @@ public:
     //Member functions
     bool validate();
     void execute();
+
+    string stringToLog() override;
+
 private:
     int armies;
     Territory* target;
 };
-
 
 // An advance order tells a certain number of army units to move from a source territory to a target adjacent territory.
 class Advance : public Order {
 public:
     //Constructor and destructor
     Advance();
-    Advance(Player*, int, Territory*, Territory*);  //player, armies, source, target
+    Advance(Player*, int, Territory*, Territory*, Hand*, Deck*);  //player, armies, source, target
     ~Advance();
 
     //Copy constructor, assignement and stream insertion operator
@@ -80,10 +97,14 @@ public:
     //Member functions
     bool validate();
     void execute();
+
+    string stringToLog() override;
 private:
     int armies;
     Territory* source;
     Territory* target;
+    Hand* playerHand;
+    Deck* deck;
 };
 
 //A bomb order targets a territory owned by another player than the one issuing the order. Its result is
@@ -106,6 +127,9 @@ public:
     //Member functions
     bool validate();
     void execute();
+
+    string stringToLog() override;
+
 private:
     Territory* target;
     vector<Territory*> territoryList;
@@ -118,7 +142,7 @@ class Blockade : public Order {
 public:
     //Constructor and destructor
     Blockade();
-    Blockade(Player*, Territory*);  //player, target
+    Blockade(Player*, Player*, Territory*);  //player, target
     ~Blockade();
 
     //Copy constructor, assignement and stream insertion operator
@@ -132,8 +156,13 @@ public:
     //Member functions
     bool validate();
     void execute();
+
+    string stringToLog() override;
 private:
     Territory* target;
+    Player* neutralPlayer;
+    //vector<Player*> listOfPlayers;
+    Player* allPlayers;
 };
 
 //An airlift order tells a certain number of armies taken from a source territory to be moved to a target
@@ -157,6 +186,8 @@ public:
     //Member functions
     bool validate();
     void execute();
+
+    string stringToLog() override;
 private:
     int armies;
     Territory* source;
@@ -164,7 +195,7 @@ private:
 };
 
 //A negotiate order targets an enemy player. It results in the target player and the player issuing
-//the order to not be able to successfully attack each others’ territories for the remainder of the turn.The negotiate
+//the order to not be able to successfully attack each others� territories for the remainder of the turn.The negotiate
 //order can only be created by playing the diplomacy card.
 class Negotiate : public Order {
 public:
@@ -184,12 +215,13 @@ public:
     //Member functions
     bool validate();
     void execute();
+
+    string stringToLog() override;
 private:
     Player* enemyPlayer;
 };
 
-
-class OrdersList {
+class OrdersList : public Subject, public ILoggable {
 public:
     //Constructor and destructor
     OrdersList();
@@ -208,4 +240,6 @@ public:
 
     //private:
     vector<Order*> listOfOrders;
+
+    string stringToLog() override;
 };

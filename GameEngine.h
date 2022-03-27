@@ -15,6 +15,8 @@ void EngineDriver();
 
 using namespace std;
 
+class Deck;
+
 // enum Phase {StartUp, Play };
 
 enum class State {
@@ -22,7 +24,7 @@ enum class State {
 	reinforcementPhase, issueOrderPhase, executeOrderPhase, win
 };
 
-class Engine: public Subject, public ILoggable {
+class Engine : public Subject, public ILoggable {
 
 public:
 
@@ -39,7 +41,7 @@ public:
 	vector<Player*> GetPlayers();
 	vector<Player*>* GetPlayersAdress();
 	Map* GetMap();
-	Deck* GetDeck();
+	//Deck* GetDeck();
 	void SetState(State);
 	void SetNumberOfPlayers(int);
 
@@ -51,18 +53,18 @@ public:
 	bool ValidateMap();
 	void AddPlayer();
 	void IssueOrdersPhase();
-	void IssueOrdersPhase(Player* player);
+	//void IssueOrdersPhase(Player* player);
 
 	void MainGameLoop();
 	//void StartupPhase();
 	void ReinforcementPhase();
 
 	void ExecuteOrdersPhase();
-	void ExecuteOrdersPhase(Player* player);
+	//void ExecuteOrdersPhase(Player* player);
 
 
 	void PlayerDrawCard(Player* player);
-	
+
 	std::string stringToLog();
 
 private:

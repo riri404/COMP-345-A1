@@ -9,6 +9,7 @@ class Territory;
 class Continent;
 class Map;
 class MapLoader;
+class Player;
 
 void MapDriver();
 
@@ -16,27 +17,35 @@ void MapDriver();
 class Territory {
 	friend class MapLoader;
 	friend class Map;
-  string name;             	// territory name.
-  int id;                   // territory ID.
-  int playerId;             // territory owned by player with this id
-  int armies;               // # of armies
+	string name;				// territory name.
+	int id;						// territory ID.
+	int playerId;				// territory owned by player with this id
+	int armies;					// # of armies
 	vector<Territory*> adjTerritories;
-	void addAdjTerritory(Territory*);
-  /* constructors */
+	Player* player;
+	/* constructors */
 public:
-  ~Territory();					        // Destructor
+	void addAdjTerritory(Territory*);
+	~Territory();									// Destructor
 	Territory(); 									// Default Constructor
-  Territory(int, string);  			// Constructor
-  Territory(const Territory&);  // Copy Constructor
-  Territory& operator=(const Territory&);
+	Territory(int, string);  						// Constructor
+	Territory(const Territory&);					// Copy Constructor
+	Territory& operator=(const Territory&);
 	friend bool operator==(const Territory&, const Territory&);
-  friend ostream& operator<<(ostream&, const Territory&);
+	friend ostream& operator<<(ostream&, const Territory&);
 	void setPlayerId(int);
 	int getId() const;
 	int getPlayerId() const;
 	int getArmies() const;
 	string getName() const;
 	vector<Territory*> getAdjTerritories() const;
+
+	// Added by justine & Jennifer
+	bool isAdjacentTo(int);							// Ici a mis bool, mais dans .cpp, a mis int
+	void addArmies(int);							// Added by Justine
+	void removeArmies(int);							// Added by Justine
+	Player* getPlayerOwner();
+	void setPlayerOwner(Player* p);
 };
 
 //----------------------Continent--------------------------
@@ -51,7 +60,7 @@ class Continent {
 	/* constructors */
 public:
 	~Continent();                      // Destructor
-	Continent();					             // Default Constructor
+	Continent();					   // Default Constructor
 	Continent(int, int, string);       // Constructor
 	Continent(const Continent&);       // Copy Constructor
 	Continent& operator=(const Continent&);
@@ -83,7 +92,7 @@ class Map {
 	void clear(); // delete everything
 public:
 	~Map();                      // Destructor
-	Map(const string&);                      
+	Map(const string&);
 	Map(const Map&);             // Copy Constructor 
 	Map& operator=(const Map&);  // Assignment operator Overloading
 	friend ostream& operator<<(ostream&, const Map&);
