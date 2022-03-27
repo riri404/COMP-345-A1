@@ -239,7 +239,9 @@ public:
     void remove(int);
 
     //private:
-    vector<Order*> listOfOrders;
+    //The OrdersList class contains a list of Order objects
+    vector<Order*> listOfOrders;        //vector of pointers to Order object
 
     string stringToLog() override;
+
 };

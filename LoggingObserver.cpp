@@ -38,13 +38,13 @@ LogObserver::~LogObserver() {
     logfile.close();
 }
 
-LogObserver::LogObserver(OrdersList* ordersList, Engine* gameEngine) {
-    logfile.open("gamelog.txt", std::ofstream::out);
-    ordersList->Attach(this);
-    for (auto order : ordersList->listOfOrders) {
-        order->Attach(this);
-    }
-    gameEngine->Attach(this);
+
+LogObserver::LogObserver(GameEngine* gameEngine) {
+  logfile.open("gamelog.txt", std::ofstream::out);
+  gameEngine->Attach(this);
+  this->gameEngine = gameEngine;
+  gameEngine->AttachToOrdersList(this);
+  gameEngine->AttachToProcessor(this);
 }
 
 void LogObserver::Update(ILoggable* loggable) {

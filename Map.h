@@ -17,10 +17,10 @@ void MapDriver();
 class Territory {
 	friend class MapLoader;
 	friend class Map;
-	string name;				// territory name.
-	int id;						// territory ID.
-	int ownerId;				// territory owned by player with this id
-	int armies;					// # of armies
+  string name;             	// territory name.
+  int id;                   // territory ID.
+  int ownerID;             // territory owned by player with this id
+  int armies;               // # of armies
 	vector<Territory*> adjTerritories;
 	Player* player; // Added by Justine & Jennifer
 	/* constructors */
@@ -32,7 +32,7 @@ public:
 	Territory(const Territory&);					// Copy Constructor
 	Territory& operator=(const Territory&);
 	friend bool operator==(const Territory&, const Territory&);
-	friend ostream& operator<<(ostream&, const Territory&);
+  friend ostream& operator<<(ostream&, const Territory&);
 	void setOwnerId(int);
 	int getId() const;
 	int getPlayerId() const;

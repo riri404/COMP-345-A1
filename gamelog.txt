@@ -1,0 +1,15 @@
+Starting game
+loadmap <bigeurope>
+maploaded
+Map loaded
+validatemap
+mapvalidated
+Map validated
+addplayer <jake>
+playersadded
+Players added
+addplayer <lol>
+playersadded
+Players added
+gamestart
+assignreinforcement

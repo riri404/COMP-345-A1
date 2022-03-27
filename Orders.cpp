@@ -52,9 +52,8 @@ vector<Player*> Order::getListOfPlayers()
     return listOfPlayers;
 }
 
-string Order::stringToLog()
-{
-    return string();
+string Order::stringToLog() {
+    return "Order " + name + " executed";
 }
 
 //Remove validate and execute from Order (pure virtual)
@@ -652,7 +651,7 @@ Negotiate::Negotiate() {
 }
 
 //A negotiate order targets an enemy player. It results in the target player and the player issuing
-//the order to not be able to successfully attack each others’ territories for the remainder of the turn.The negotiate
+//the order to not be able to successfully attack each othersï¿½ territories for the remainder of the turn.The negotiate
 //order can only be created by playing the diplomacy card.
 Negotiate::Negotiate(Player* currentPlayer, Player* enemyPlayer) {
     this->name = "Negotiate";
@@ -762,9 +761,13 @@ ostream& operator<<(ostream& outs, const OrdersList& anOrdersList) {
     return outs;
 }
 
-void OrdersList::addToListOfOrders(Order* anOrder) {
-    listOfOrders.push_back(anOrder);                //Push order at the end of the list
-    cout << anOrder->getName() << " added" << endl;
+
+void OrdersList::addToListOfOrders(Order* order) {
+    listOfOrders.push_back(order);                //Push order at the end of the list
+    cout << stringToLog() << endl;
+    
+    notifyAddOrder(order);
+    Notify(this);
 }
 
 void OrdersList::move(int fromIndex, int toIndex) {
@@ -786,7 +789,14 @@ void OrdersList::remove(int index) {
     }
 }
 
-string OrdersList::stringToLog()
-{
-    return "OrdersList: Added " + listOfOrders.back()->getName() + " order.";
+
+string OrdersList::stringToLog() {
+    Order* latestOrder = listOfOrders.back();
+    return "Order " + latestOrder->getName() + " added";
+}
+
+void OrdersList::notifyAddOrder(Order* order) {
+    for (auto observer : *observers) {
+        order->Attach(observer);
+    }
 }

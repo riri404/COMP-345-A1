@@ -1,0 +1,3 @@
+loadmap mapname
+validatemap
+addplayer p1
