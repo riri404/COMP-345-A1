@@ -67,7 +67,7 @@ void Territory::addAdjTerritory(Territory* t) {
 
 // getter and setters
 void Territory::setOwnerId(int playerId) { this->ownerID = playerId; }
-void Territory::getOwnerId() { return ownerID; }
+int Territory::getOwnerId() { return ownerID; }
 int Territory::getId() const { return id; }
 int Territory::getPlayerId() const { return ownerID; }
 int Territory::getArmies() const { return armies; }
