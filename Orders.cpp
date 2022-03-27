@@ -133,8 +133,8 @@ void Deploy::execute() {
         cout << "Executing deploy..." << endl;
         target->addArmies(armies);
         cout << "Deploying " << armies << " units to territory " << target->getName() << endl;
-        player->removeReinforcementPool(armies);
-        cout << "Remaining reinforcement units: " << player->getReinforcementPool() << endl;
+        player->removeFromReinforcePool(armies);
+        cout << "Remaining reinforcement units: " << to_string(player->getReinforcePool()) << endl;
     }
     else {
         cout << "Cannot execute deploy." << endl;
@@ -144,7 +144,7 @@ void Deploy::execute() {
 
 string Deploy::stringToLog()
 {
-    return "Order: " + *player->getName() + " deployed " + to_string(armies) + " units to " + target->getName();
+    return "Order: " + player->GetPlayerName() + " deployed " + to_string(armies) + " units to " + target->getName();
 }
 
 //--------------------------ADVANCE---------------------------
@@ -174,10 +174,6 @@ Advance::~Advance() {
     source = nullptr;
     delete target;
     target = nullptr;
-    delete playerHand;
-    playerHand = nullptr;
-    delete deck;
-    deck = nullptr;
 }
 
 //Copy constructor
@@ -227,7 +223,7 @@ bool Advance::validate() {
     }
     else {
         if (player->isNegociating(this->target->getPlayerOwner()))
-            cout << "Players " << *player->getName() << " and " << *target->getPlayerOwner()->getName() << " are negociating. Advance order invalid." << endl;
+            cout << "Players " << player->GetPlayerName() << " and " << target->getPlayerOwner()->GetPlayerName() << " are negociating. Advance order invalid." << endl;
         cout << "Advance order is invalid" << endl;
     }
     return isValid;
@@ -241,7 +237,7 @@ void Advance::execute() {
         cout << "Executing advance..." << endl;
         //If the source and target territory both belong to the player that issued the order, the army units are moved from the source to the target territory.
         if (source->getPlayerOwner() == player && target->getPlayerOwner() == player) {
-            cout << "The target territory belongs to player " << *player->getName() << endl;
+            cout << "The target territory belongs to player " << player->GetPlayerName() << endl;
             source->removeArmies(armies);
             cout << "Amount of units remaining in source territory " << source->getName() << " is " << source->getArmies() << endl;
             target->addArmies(armies);
@@ -250,8 +246,6 @@ void Advance::execute() {
         //If the target territory belongs to another player than the player that issued the advance order, an attack is
         //simulated when the order is executed.An attack is simulated by the following battle simulation mechanism :
         else if (target->getPlayerOwner() != player) {
-
-
 
             bool noMoreArmies = false;
             cout << "source armies " << source->getArmies() << endl;
@@ -263,13 +257,13 @@ void Advance::execute() {
 
                 if (attChances >= 0 && attChances <= 59) {
                     target->removeArmies(1);
-                    cout << "Player " << *player->getName() << " has eliminated 1 unit of player " << *target->getPlayerOwner()->getName() << endl;
+                    cout << "Player " << player->GetPlayerName() << " has eliminated 1 unit of player " << target->getPlayerOwner()->GetPlayerName() << endl;
                 }
                 // At the same time, each defending army unit has 70 % chances of killing one attacking army unit.
                 if (defChances >= 0 && defChances <= 69) {
                     armies -= 1;
                     source->removeArmies(1);
-                    cout << "Player " << *target->getPlayerOwner()->getName() << " has eliminated 1 unit of player " << *player->getName() << endl;
+                    cout << "Player " << target->getPlayerOwner()->GetPlayerName() << " has eliminated 1 unit of player " << player->GetPlayerName() << endl;
                 }
                 if (source->getArmies() == 0 || target->getArmies() == 0) {
                     noMoreArmies = true;
@@ -280,17 +274,17 @@ void Advance::execute() {
             // If all the defender's armies are eliminated, the attacker captures the territory. 
             // The attacking army units that survived the battle then occupy the conquered territory.
             if (target->getArmies() == 0) {
-                cout << "Player " << *target->getPlayerOwner()->getName() << " has lost territory " << target->getName() << endl;
+                cout << "Player " << target->getPlayerOwner()->GetPlayerName() << " has lost territory " << target->getName() << endl;
                 target->setPlayerOwner(source->getPlayerOwner());
-                cout << "The new owner of territory " << target->getName() << " is " << *target->getPlayerOwner()->getName() << endl;
+                cout << "The new owner of territory " << target->getName() << " is " << target->getPlayerOwner()->GetPlayerName() << endl;
                 target->addArmies(armies);
                 cout << "The number of units in territory " << target->getName() << " is " << target->getArmies() << endl;
                 Cards* drawnCard = deck->draw();
                 player->getPlayerHand()->setHand(drawnCard); // Player receives card if they succesfully conquered at least one territory during their turn
-                cout << "Since player " << *target->getPlayerOwner()->getName() << " has successfully captured the territory, they have received the card " << *drawnCard->getCardType() << endl;
+                cout << "Since player " << target->getPlayerOwner()->GetPlayerName() << " has successfully captured the territory, they have received the card " << *drawnCard->getCardType() << endl;
             }
             else if (source->getArmies() == 0) {
-                cout << "Player " << *player->getName() << " has not been able to capture territory " << target->getName() << " and there remains " << target->getArmies() << " unit at that territory." << endl;
+                cout << "Player " << player->GetPlayerName() << " has not been able to capture territory " << target->getName() << " and there remains " << target->getArmies() << " unit at that territory." << endl;
             }
         }
     }
@@ -301,7 +295,7 @@ void Advance::execute() {
 
 string Advance::stringToLog()
 {
-    return "Order: " + *player->getName() + " advanced " + to_string(armies) + " from " + source->getName() + " to " + target->getName();
+    return "Order: " + player->GetPlayerName() + " advanced " + to_string(armies) + " from " + source->getName() + " to " + target->getName();
 }
 
 //--------------------------BOMB---------------------------
@@ -376,7 +370,7 @@ bool Bomb::validate() {
     }
     else {
         if (player->isNegociating(this->target->getPlayerOwner()))
-            cout << "Players " << *player->getName() << " and " << *target->getPlayerOwner()->getName() << " are negociating. Bomb order invalid." << endl;
+            cout << "Players " << player->GetPlayerName() << " and " << target->getPlayerOwner()->GetPlayerName() << " are negociating. Bomb order invalid." << endl;
         cout << "Bomb order is invalid" << endl;
     }
     return isValid;
@@ -398,7 +392,7 @@ void Bomb::execute() {
 
 string Bomb::stringToLog()
 {
-    return "Order: " + *player->getName() + " bombed " + target->getName();
+    return "Order: " + player->GetPlayerName() + " bombed " + target->getName();
 }
 
 //--------------------------BLOCKADE---------------------------
@@ -427,8 +421,7 @@ Blockade::~Blockade() {
     target = nullptr;
     delete neutralPlayer;
     neutralPlayer = nullptr;
-    delete allPlayers;
-    allPlayers = nullptr;
+    allPlayers->getListOfPlayers().clear();
 }
 
 //Copy constructor
@@ -473,7 +466,7 @@ bool Blockade::validate() {
     }
     else {
         if (player->isNegociating(this->target->getPlayerOwner()))
-            cout << "Players " << *player->getName() << " and " << *target->getPlayerOwner()->getName() << " are negociating. Blockade order invalid." << endl;
+            cout << "Players " << player->GetPlayerName() << " and " << target->getPlayerOwner()->GetPlayerName() << " are negociating. Blockade order invalid." << endl;
         cout << "Blockade order is invalid" << endl;
     }
     return isValid;
@@ -489,9 +482,9 @@ void Blockade::execute() {
         cout << "Number of armies added to target: " << target->getArmies() << endl;
 
         for (int i = 0; i < allPlayers->getListOfPlayers().size(); i++) {
-            if (*allPlayers->getListOfPlayers().at(i)->getName() == "Neutral Player") { // Verify if player in game engine list of players has a neutral player
+            if (allPlayers->getListOfPlayers().at(i)->GetPlayerName() == "Neutral Player") { // Verify if player in game engine list of players has a neutral player
                 allPlayers->getListOfPlayers().at(i)->getTerritoryList().push_back(target); // Transfer target ownership
-                cout << "The target territory " << target->getName() << "'s ownership has been transfered to " << *allPlayers->getListOfPlayers().at(i)->getName() << endl;
+                cout << "The target territory " << target->getName() << "'s ownership has been transfered to " << allPlayers->getListOfPlayers().at(i)->GetPlayerName() << endl;
 
                 /*cout << "Neutral Player's territories are: " << endl;
                 for (int j = 0; j < allPlayers->getListOfPlayers().at(i)->getTerritoryList().size(); j++) {
@@ -500,27 +493,27 @@ void Blockade::execute() {
                 break;
             }
             // if reach end of for loop and have not found a neutral player, then create a neutral player
-            else if (*allPlayers->getListOfPlayers().at(allPlayers->getListOfPlayers().size() - 1)->getName() != "Neutral Player") {
+            else if (allPlayers->getListOfPlayers().at(allPlayers->getListOfPlayers().size() - 1)->GetPlayerName() != "Neutral Player") {
                 // Create variables for neutral player
                 int* neutralID = new int(0);
-                int NeutralReinforcement = 0;
+                int* neutralReinforcement = new int(0);
                 string* neutralName = new string("Neutral Player");
                 vector<Territory*> neutralTerritoryList;
                 Hand* neutralHand = new Hand();
                 OrdersList* neutralOrdersList = new OrdersList();
 
                 // Create neutral player
-                neutralPlayer = new Player(neutralID, NeutralReinforcement, neutralName, neutralTerritoryList, neutralHand, neutralOrdersList);
+                neutralPlayer = new Player(neutralID, neutralReinforcement, neutralName, neutralTerritoryList, neutralHand, neutralOrdersList);
                 allPlayers->addPlayer(neutralPlayer); // Add neutral player to list of players in game engine
                 neutralPlayer->getTerritoryList().push_back(target); // Ownership of territory transferred to neutral player
                 cout << "A neutral player has been created." << endl;
-                cout << "The target territory " << target->getName() << "'s ownership has been transferred to " << *neutralPlayer->getName() << endl;
+                cout << "The target territory " << target->getName() << "'s ownership has been transferred to " << neutralPlayer->GetPlayerName() << endl;
                 /*cout << "Neutral Player's territories are: " << endl;
                 for (int j = 0; j < allPlayers->getListOfPlayers().at(allPlayers->getListOfPlayers().size()-1)->getTerritoryList().size(); j++) {
                     cout << allPlayers->getListOfPlayers().at(j)->getTerritoryList().at(j)->getName() << endl;
                 }*/
 
-                cout << allPlayers->getListOfPlayers().size() << endl;
+                //cout << allPlayers->getListOfPlayers().size() << endl;
                 break;
             }
         }
@@ -528,23 +521,20 @@ void Blockade::execute() {
         for (int i = 0; i < player->getTerritoryList().size(); i++) {
             if (player->getTerritoryList().at(i) == target) { // Remove territory that has been transferred to neutral player from player issuing order
                 player->removeTerritory(i);
-                cout << "Player " << *player->getName() << " no longer has ownership of territory " << target->getName() << endl;
-                cout << "Player " << *player->getName() << "'s territories are: " << endl;
+                cout << "Player " << player->GetPlayerName() << " no longer has ownership of territory " << target->getName() << endl;
+                cout << "Player " << player->GetPlayerName() << "'s territories are: " << endl;
                 for (int j = 0; j < player->getTerritoryList().size(); j++) {
                     cout << player->getTerritoryList().at(j)->getName() << endl;
                     if (player->getTerritoryList().size() == 0) {
-                        cout << "Player " << *player->getName() << " has no territories left." << endl;
+                        cout << "Player " << player->GetPlayerName() << " has no territories left." << endl;
                     }
                 }
                 if (player->getTerritoryList().size() == 0) {
-                    cout << "Player " << *player->getName() << " has no territories left." << endl;
+                    cout << "Player " << player->GetPlayerName() << " has no territories left." << endl;
                 }
                 break;
             }
         }
-
-
-        /*target->setPlayerId(neutralPlayer->getPlayerID());*/
     }
     else {
         cout << "Cannot execute blockade." << endl;
@@ -553,7 +543,7 @@ void Blockade::execute() {
 
 string Blockade::stringToLog()
 {
-    return "Order: " + *player->getName() + " blocked " + target->getName();
+    return "Order: " + player->GetPlayerName() + " blocked " + target->getName();
 }
 
 //--------------------------AIRLIFT---------------------------
@@ -561,6 +551,7 @@ string Blockade::stringToLog()
 Airlift::Airlift() {
     name = "Airlift";
     player = NULL;
+    armies = 0;
     source = NULL;
     target = NULL;
 }
@@ -636,10 +627,11 @@ void Airlift::execute() {
     bool isValid = validate();
     if (isValid) {
         cout << "Executing airlift..." << endl;
+        cout << source->getArmies() << endl;
         source->removeArmies(armies);
-        cout << "Source territory " << source->getName() << " has " << source->getArmies() << " units left." << endl;
+        cout << "Source territory " << source->getName() << " has " << to_string(source->getArmies()) << " units left." << endl;
         target->addArmies(armies);
-        cout << "Target territory " << target->getName() << " has " << armies << " units added. The total number of units is " << target->getArmies() << endl;
+        cout << "Target territory " << target->getName() << " has " << armies << " units added. The total number of units is " << to_string(target->getArmies()) << endl;
     }
     else {
         cout << "Cannot execute airlift." << endl;
@@ -648,7 +640,7 @@ void Airlift::execute() {
 
 string Airlift::stringToLog()
 {
-    return "Order: " + *player->getName() + " airlifted " + to_string(armies) + " from " + source->getName() + " to " + target->getName();
+    return "Order: " + player->GetPlayerName() + " airlifted " + to_string(armies) + " from " + source->getName() + " to " + target->getName();
 }
 
 //--------------------------NEGOTIATE---------------------------
@@ -670,8 +662,7 @@ Negotiate::Negotiate(Player* currentPlayer, Player* enemyPlayer) {
 
 //Destructor
 Negotiate::~Negotiate() {
-    delete enemyPlayer;
-    enemyPlayer = nullptr;
+
 }
 
 //Copy constructor
@@ -721,7 +712,7 @@ void Negotiate::execute() {
         cout << "Executing negotiate..." << endl;
         player->addNegociate(enemyPlayer);
         enemyPlayer->addNegociate(player);
-        cout << "Players " << *player->getName() << " and " << *enemyPlayer->getName() << " are negociating. No attacks can be done. " << endl;
+        //cout << "Players " << player->GetPlayerName() << " and " << enemyPlayer->GetPlayerName() << " are negociating. No attacks can be done. " << endl;
     }
     else {
         cout << "Cannot execute negotiate." << endl;
@@ -730,7 +721,7 @@ void Negotiate::execute() {
 
 string Negotiate::stringToLog()
 {
-    return "Order: " + *player->getName() + " is negociating with " + *enemyPlayer->getName();
+    return "Order: " + player->GetPlayerName() + " is negociating with " + enemyPlayer->GetPlayerName();
 }
 
 ////--------------------------ORDERSLIST---------------------------
@@ -746,10 +737,10 @@ OrdersList::OrdersList(vector<Order*> anOrdersList) {
 
 //Destructor
 OrdersList::~OrdersList() {
-    for (int i = 0; i < listOfOrders.size(); i++) {
-        delete listOfOrders[i];               //listOfOrders[i] is a pointer to an Order object
-        listOfOrders.clear();
+    for (auto l : listOfOrders) {
+        delete l;               //listOfOrders[i] is a pointer to an Order object
     }
+    listOfOrders.clear();
 }
 
 //Copy constructor

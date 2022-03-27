@@ -12,28 +12,38 @@ Player::Player()
 	name = NULL;
 	playerID = NULL;
 	territoryList = *(new vector<Territory*>);
-	cards = new Hand();
+	handCards = new Hand();
 	list;
 	//orderList = new OrdersList();
 }
 
-Player::Player(int* playerID, int reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
+Player::Player(int* playerID, int* reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
 {
 	this->playerID = playerID;
 	this->reinforcementPool = reinforcementPool;
 	this->name = name;
 	this->territoryList = territoryList;
-	this->cards = cards;
+	this->handCards = cards;
+	this->orderList = orderlist;
+}
+
+Player::Player(int* playerID, int reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
+{
+	this->playerID = playerID;
+	this->reinforcePool = reinforcementPool;
+	this->name = name;
+	this->territoryList = territoryList;
+	this->handCards = cards;
 	this->orderList = orderList;
 }
 
 Player::Player(const Player& p)
 {
 	this->playerID = p.playerID;
-	this->reinforcementPool = p.reinforcementPool;
+	this->reinforcePool = p.reinforcePool;
 	this->name = new string(*(p.name));
 	this->territoryList = p.territoryList;
-	this->cards = p.cards;
+	this->handCards = p.handCards;
 	this->orderList = p.orderList;
 }
 
@@ -43,8 +53,8 @@ Player::~Player()
 	playerID = nullptr;
 	delete name;
 	name = nullptr;
-	delete cards;
-	cards = nullptr;
+	delete handCards;
+	handCards = nullptr;
 	delete orderList;
 	orderList = nullptr;
 	for (auto p : territoryList)
@@ -54,32 +64,32 @@ Player::~Player()
 	territoryList.clear();
 
 	// Added by Justine & Jennifer
-	for (auto l : list) {
+	/*for (auto l : list) {
 		delete l;
 	}
-	list.clear();
+	list.clear();*/
 
-	for (auto n : playerNegociate) {
+	/*for (auto n : playerNegociate) {
 		delete n;
 	}
-	playerNegociate.clear();
+	playerNegociate.clear();*/
 
-	delete deck;
-	deck = nullptr;
+	/*delete deck;
+	deck = nullptr;*/
 
-	for (auto lp : listOfPlayers) {
+	/*for (auto lp : listOfPlayers) {
 		delete lp;
 	}
-	listOfPlayers.clear();
+	listOfPlayers.clear();*/
 }
 
 Player& Player::operator=(const Player& p)
 {
 	this->playerID = p.playerID;
 	this->name = new string(*(p.name));
-	this->reinforcementPool = p.reinforcementPool;
+	this->reinforcePool = p.reinforcePool;
 	this->territoryList = p.territoryList;
-	this->cards = p.cards;
+	this->handCards = p.handCards;
 	this->orderList = p.orderList;
 	return *this;
 }
@@ -97,30 +107,20 @@ std::ostream& operator<<(std::ostream& outs, const Player& p1)
 {
 	outs << p1.playerID;
 	outs << p1.name;
-	outs << p1.cards;
+	outs << p1.handCards;
 	//outs << (p1.territoryList);
 	//outs << p1.orderList;
 
 	return outs;
 }
 
-int Player::getPlayerID() {
-	return *playerID;
-}
-
-Hand* Player::getPlayerHand()
-{
-	return cards;
-}
-
 vector<Territory*> Player::toAttack()
 {
-
 	vector<Territory*> territoriesToAttack;
 	if (territoriesToAttack != territoryList) {
-		for (vector<Territory*>::iterator attcked = territoriesToAttack.begin(); attcked != territoriesToAttack.end(); ++attcked) {
-			territoriesToAttack.push_back(*attcked);
-			std::cout << *attcked << std::endl;
+		for (auto it = territoriesToAttack.begin(); it != territoriesToAttack.end(); ++it) {
+			territoriesToAttack.push_back(*it);
+			std::cout << *it << std::endl;
 		}
 	}
 
@@ -131,8 +131,9 @@ vector<Territory*> Player::toDefend()
 {
 
 	vector<Territory*> territoriesToDefend = territoryList;
-	for (vector<Territory*>::iterator defend = territoriesToDefend.begin(); defend != territoriesToDefend.end(); ++defend) {
-		territoriesToDefend.push_back(*defend);
+
+	for (auto defend = territoriesToDefend.begin(); defend != territoriesToDefend.end(); ++defend) {
+		// territoriesToDefend.push_back(*defend);
 		std::cout << *defend << std::endl;
 	}
 	return territoriesToDefend;
@@ -168,33 +169,149 @@ void Player::issueOrder(string order)
 		cout << "Error! Please enter one of the following orders: 1. Deploy, 2. Advance, 3. Bomb, 4. Blockade, 5 Airlift, 6. Negotiate." << endl;
 	}
 }
-void Player::setName(string* n)
-{
-	name = n;
+
+// to calculate continent bonus for reinforcement phase
+//bool Player::playerContinentBouns()
+//{
+//	string a = "NA";
+//	string b = "AS";
+//	string c = "SA";
+//	string d = "AU";
+//	string e = "EU";
+//	string f = "AF";
+//	int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0;
+//	for (int i = 0; i < territoryList.size(); i++)
+//	{
+//		if ((*territoryList[i]).getContinent().compare(a))
+//		{
+//			c1++;
+//		}
+//		if ((*territoryList[i]).getContinent().compare(b))
+//		{
+//			c2++;
+//		}
+//		if ((*territoryList[i]).getContinent().compare(c))
+//		{
+//			c3++;
+//		}
+//		if ((*territoryList[i]).getContinent().compare(d))
+//		{
+//			c4++;
+//		}
+//		if ((*territoryList[i]).getContinent().compare(e))
+//		{
+//			c5++;
+//		}
+//		if ((*territoryList[i]).getContinent().compare(f))
+//		{
+//			c6++;
+//		}
+//
+//
+//	}
+//	if (c1 == 3) {
+//		return true;
+//	}
+//
+//	if (c2 == 3) {
+//		return true;
+//	}
+//
+//	if (c3 == 1) {
+//		return true;
+//	}
+//	if (c4 == 1) {
+//		return true;
+//	}
+//	if (c5 == 1) {
+//		return true;
+//	}
+//	if (c6 == 1) {
+//		return true;
+//	}
+//
+//	return false;
+//}
+
+int Player::getReinforcePool() {
+	return *(this->reinforcementPool);
 }
+
+void Player::setReinforcePool(int r)
+{
+	//return int; // There is an error here
+	*this->reinforcementPool = r;
+}
+
+void Player::setName(const string& n)
+{
+	*name = n;
+}
+
+void Player::setPlayerID(const int& ID) {
+	*playerID = ID;
+}
+
+Hand* Player::getPlayerHand()
+{
+	return handCards;
+}
+
 vector<Territory*> Player::getTerritoryList()
 {
 	return territoryList;
 }
 
-int Player::getReinforcementPool()
-{
-	return reinforcementPool;
+string Player::GetPlayerName() const {
+	return *name;
 }
 
-void Player::addReinforcementPool(int i)
-{
-	reinforcementPool += i;
+int Player::GetPlayerID() const {
+	return *playerID;
 }
 
-void Player::removeReinforcementPool(int i) {
-	if (i > reinforcementPool) {
-		cout << "You don't have enough reinforcement." << endl;
-	}
-	else {
-		reinforcementPool -= i;
-	}
+void Player::addTerritory(Territory* newTerritory) {
+
+	territoryList.push_back(newTerritory);
 }
+
+void Player::addToReinforcePool(int armies) {
+	delete reinforcementPool;
+	reinforcementPool = new int(*reinforcementPool + armies);
+}
+
+void Player::removeFromReinforcePool(int armies) {
+	//delete reinforcementPool;
+	reinforcementPool = new int(*reinforcementPool - armies);
+}
+
+void Player::AddCard(Cards* card) {
+	handCards->setHand(card);
+}
+
+void Player::Attach(LogObserver* observer) {
+	orderList->Attach(observer);
+}
+
+// Added by justine & jennifer
+//int Player::getReinforcementPool()
+//{
+//	return reinforcePool;
+//}
+//
+//void Player::addReinforcementPool(int i)
+//{
+//	reinforcementPool += i;
+//}
+//
+//void Player::removeReinforcementPool(int i) {
+//	if (i > reinforcePool) {
+//		cout << "You don't have enough reinforcement." << endl;
+//	}
+//	else {
+//		reinforcePool -= i;
+//	}
+//}
 
 void Player::setTerritory(Territory* newTerritory)
 {
@@ -206,11 +323,11 @@ void Player::removeTerritory(int i)
 	this->territoryList.erase(this->territoryList.begin() + i);
 }
 
-vector<Orders*> Player::getOrdersList() {
+vector<Order*> Player::getOrdersList() {
 	return list;
 }
 
-void Player::setOrder(Orders* order) {
+void Player::setOrder(Order* order) {
 	list.push_back(order);
 }
 
@@ -227,18 +344,11 @@ bool Player::isNegociating(Player* p) {
 	return false;
 }
 
-string* Player::getName() {
-	return name;
-}
-
-void Player::setPlayerName(string* n) {
-	this->name = n;
-	this->pName = *name;
-}
 void Player::addPlayer(Player* p)
 {
 	listOfPlayers.push_back(p);
 }
+
 vector<Player*> Player::getListOfPlayers()
 {
 	return listOfPlayers;

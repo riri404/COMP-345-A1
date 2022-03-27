@@ -2,16 +2,17 @@
 #include "Player.h"
 #include "Map.h"
 #include "Cards.h"
+#include "LoggingObserver.h"
 #include <vector>
 #include <iostream>
 #include <string>
 using namespace std;
 
-class Orders;
+class Order;
 class OrdersList;
 class Cards;
 class Hand;
-class Deck;
+class Deck; // Added by Justine & Jennifer
 
 void PlayerDriver();
 
@@ -21,6 +22,8 @@ public:
 	// contructors
 	Player(); // default constructor
 	//Player(string);
+	Player(int* id, int* reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
+	// Added by Justine & Jennifer
 	Player(int* id, int reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
 	Player(const Player& p); //copy constructor
 	~Player(); //destructor
@@ -34,31 +37,32 @@ public:
 	vector<Territory*> toAttack(); // method to attck; returns orders list
 	vector<Territory*> toDefend(); // method to defend; returns ordrs list
 	void issueOrder(string order);
-	void setName(string* name);
+	void setName(const string& name);
+	void setPlayerID(const int& playerID);
 	vector<Territory*> getTerritoryList();
+	//bool playerContinentBouns();
 	//void setOrder(Orders*);
+	string GetPlayerName() const;
+	int GetPlayerID() const;
+	void addTerritory(Territory*);
+	void addToReinforcePool(int armies); // Add to reinforcement pool
+	void removeFromReinforcePool(int armies); // Remove from reinforcement pool
+	int getReinforcePool();
+	void setReinforcePool(int);
+	void AddCard(Cards*);
+	void Attach(LogObserver* observer);
 
-	// Added & modified by Jennifer 
-	int getReinforcementPool();
-	void addReinforcementPool(int i);
-	void removeReinforcementPool(int i);
 
-	// Added By Justine & Jennifer
+	// Added & modified by Justine & Jennifer 
 	void setTerritory(Territory*);
 	void removeTerritory(int i);
-	int getPlayerID();
 	Hand* getPlayerHand();
 
-	vector<Orders*> getOrdersList();
-	void setOrder(Orders* order);
-
+	vector<Order*> getOrdersList();
+	void setOrder(Order* order);
 
 	void addNegociate(Player* p);
 	bool isNegociating(Player* p);
-
-	string* getName();
-	void setPlayerName(string* n);
-	vector<Hand*> playerHand;
 
 	void addPlayer(Player* p);
 	vector<Player*> getListOfPlayers();
@@ -66,14 +70,15 @@ public:
 private:
 	//attributes/ variables
 	string* name;
-	int reinforcementPool; // Modified by Jennifer
+	int* reinforcementPool; // Modified by Jennifer
 	int* playerID;
 	vector<Territory*> territoryList;
 	OrdersList* orderList;
-	Hand* cards;
+	Hand* handCards;
 
 	// Added by Justine & Jennifer 
-	vector<Orders*> list;
+	int reinforcePool;
+	vector<Order*> list;
 	vector<Player*> playerNegociate;
 	Deck* deck;
 	string pName;

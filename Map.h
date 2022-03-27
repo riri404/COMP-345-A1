@@ -19,13 +19,13 @@ class Territory {
 	friend class Map;
 	string name;				// territory name.
 	int id;						// territory ID.
-	int playerId;				// territory owned by player with this id
+	int ownerId;				// territory owned by player with this id
 	int armies;					// # of armies
 	vector<Territory*> adjTerritories;
-	Player* player;
+	Player* player; // Added by Justine & Jennifer
 	/* constructors */
 public:
-	void addAdjTerritory(Territory*);
+	void addAdjTerritory(Territory*);				// Moved by Justine & Jennifer
 	~Territory();									// Destructor
 	Territory(); 									// Default Constructor
 	Territory(int, string);  						// Constructor
@@ -33,17 +33,19 @@ public:
 	Territory& operator=(const Territory&);
 	friend bool operator==(const Territory&, const Territory&);
 	friend ostream& operator<<(ostream&, const Territory&);
-	void setPlayerId(int);
+	void setOwnerId(int);
 	int getId() const;
 	int getPlayerId() const;
 	int getArmies() const;
 	string getName() const;
 	vector<Territory*> getAdjTerritories() const;
 
+	string getContinent(); // added for reinforcement phase
+
 	// Added by justine & Jennifer
-	bool isAdjacentTo(int);							// Ici a mis bool, mais dans .cpp, a mis int
-	void addArmies(int);							// Added by Justine
-	void removeArmies(int);							// Added by Justine
+	bool isAdjacentTo(int);
+	void addArmies(int);
+	void removeArmies(int);
 	Player* getPlayerOwner();
 	void setPlayerOwner(Player* p);
 };
@@ -101,6 +103,8 @@ public:
 	bool validate() const;
 	void load(const string&);
 	bool isMapLoaded();
+	vector<Territory*> GetMapTerritories();
+	int GetMapTerritoriesNumber();
 };
 
 //---------------------------Map loader--------------------------

@@ -10,21 +10,21 @@ using namespace std;
 Territory::~Territory() { } // map will handle memory
 
 Territory::Territory() {
-    playerId = -1;
+    ownerId = -1;
     armies = 0;
     id = -1;
     name = "";
 }
 
 Territory::Territory(int id, string name) {
-    playerId = -1;
+    ownerId = -1;
     armies = 0;
     this->id = id;
     this->name = name;
 }
 
 Territory::Territory(const Territory& other) {
-    playerId = other.playerId;
+    ownerId = other.ownerId;
     armies = other.armies;
     id = other.id;
     name = other.name;
@@ -34,7 +34,7 @@ Territory::Territory(const Territory& other) {
 }
 
 Territory& Territory::operator=(const Territory& rhs) {
-    playerId = rhs.playerId;
+    ownerId = rhs.ownerId;
     armies = rhs.armies;
     id = rhs.id;
     name = rhs.name;
@@ -52,7 +52,7 @@ bool operator==(const Territory& t1, const Territory& t2) {
 ostream& operator<<(ostream& out, const Territory& territory) {
     out << "Territory: " << territory.name << " (" << territory.id << ")" << endl;
     out << "Armies: " << territory.armies << endl;
-    out << "Owned by player " << territory.playerId;
+    out << "Owned by player " << territory.ownerId;
     return out;
 }
 
@@ -61,14 +61,16 @@ void Territory::addAdjTerritory(Territory* t) {
 }
 
 // getter and setters
-void Territory::setPlayerId(int playerId) { this->playerId = playerId; }
+void Territory::setOwnerId(int playerId) { this->ownerId = playerId; }
 int Territory::getId() const { return id; }
-int Territory::getPlayerId() const { return playerId; }
+int Territory::getPlayerId() const { return ownerId; }
 int Territory::getArmies() const { return armies; }
 string Territory::getName() const { return name; }
 vector<Territory*> Territory::getAdjTerritories() const {
     return adjTerritories;
 }
+
+// Added by Justine & Jennifer
 bool Territory::isAdjacentTo(int territoryID) {
     bool adjacent = false;
     for (int i = 0; i < adjTerritories.size(); i++) {
@@ -84,7 +86,7 @@ void Territory::addArmies(int numberOfArmies) {
         armies = armies + numberOfArmies;
     }
     else {
-        cout << "Cannot add negative or zero number of armies";
+        cout << "Cannot add negative or zero number of armies" << endl;
     }
 }
 
@@ -93,7 +95,7 @@ void Territory::removeArmies(int numberOfArmies) {
         armies = armies - numberOfArmies;
     }
     else {
-        cout << "Cannot remove negative or zero number of armies";
+        cout << "Cannot remove negative or zero number of armies" << endl;
     }
 }
 
@@ -317,6 +319,15 @@ void Map::load() {
     mapLoader->loadMap(this);
 }
 
+
+vector<Territory*> Map::GetMapTerritories() {
+    return territories;
+}
+
+int Map::GetMapTerritoriesNumber() {
+    return territories.size();
+}
+
 //---------------------------Map loader----------------------
 MapLoader::MapLoader() {
     mapName = "N/A"; // default name
@@ -326,7 +337,7 @@ bool MapLoader::readMap(const string& fileName) {
     string line = "";
     fstream fileObj(fileName);
     if (!fileObj.is_open()) {
-        cerr << "Could not open " << fileName << endl;
+        cerr << "Could not open " << fileName << endl << endl;
         return false;
     }
     // flags to keep track of which section we are reading
