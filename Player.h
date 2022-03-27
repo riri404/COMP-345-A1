@@ -8,10 +8,11 @@
 #include <string>
 using namespace std;
 
-class Orders;
-class OrderList;
+class Order;
+class OrdersList;
 class Cards;
 class Hand;
+class Deck; // Added by Justine & Jennifer
 
 void PlayerDriver();
 
@@ -44,10 +45,24 @@ public:
 	void addToReinforcePool(int armies); // Add to reinforcement pool
 	void removeFromReinforcePool(int armies); // Remove from reinforcement pool
 	int getReinforcePool();
-	int setReinforcePool(int);
+	void setReinforcePool(int);
 	void AddCard(Cards*);
 	void Attach(LogObserver* observer);
 
+
+	// Added & modified by Justine & Jennifer 
+	void setTerritory(Territory*);
+	void removeTerritory(int i);
+	Hand* getPlayerHand();
+
+	vector<Order*> getOrdersList();
+	void setOrder(Order* order);
+
+	void addNegociate(Player* p);
+	bool isNegociating(Player* p);
+
+	void addPlayer(Player* p);
+	vector<Player*> getListOfPlayers();
 
 private:
 	//attributes/ variables
@@ -57,7 +72,12 @@ private:
 	vector<Territory*> territoryList;
 	OrdersList* orderList;
 	Hand* handCards;
-
 	vector<Player*> players;
 
+	// Added by Justine & Jennifer 
+	int reinforcePool;
+	vector<Order*> list;
+	vector<Player*> playerNegociate;
+	Deck* deck;
+	string pName;
 };

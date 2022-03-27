@@ -9,6 +9,7 @@ class Territory;
 class Continent;
 class Map;
 class MapLoader;
+class Player;
 
 void MapDriver();
 
@@ -21,14 +22,15 @@ class Territory {
   int ownerID;             // territory owned by player with this id
   int armies;               // # of armies
 	vector<Territory*> adjTerritories;
-	void addAdjTerritory(Territory*);
-  /* constructors */
+	Player* player; // Added by Justine & Jennifer
+	/* constructors */
 public:
-  ~Territory();					        // Destructor
+	void addAdjTerritory(Territory*);				// Moved by Justine & Jennifer
+	~Territory();									// Destructor
 	Territory(); 									// Default Constructor
-  Territory(int, string);  			// Constructor
-  Territory(const Territory&);  // Copy Constructor
-  Territory& operator=(const Territory&);
+	Territory(int, string);  						// Constructor
+	Territory(const Territory&);					// Copy Constructor
+	Territory& operator=(const Territory&);
 	friend bool operator==(const Territory&, const Territory&);
   friend ostream& operator<<(ostream&, const Territory&);
 	void setOwnerId(int);
@@ -38,8 +40,14 @@ public:
 	string getName() const;
 	vector<Territory*> getAdjTerritories() const;
 
-	string getContinent();// added for reinforcement phase
+	string getContinent(); // added for reinforcement phase
 
+	// Added by justine & Jennifer
+	bool isAdjacentTo(int);
+	void addArmies(int);
+	void removeArmies(int);
+	Player* getPlayerOwner();
+	void setPlayerOwner(Player* p);
 };
 
 //----------------------Continent--------------------------
@@ -54,7 +62,7 @@ class Continent {
 	/* constructors */
 public:
 	~Continent();                      // Destructor
-	Continent();					             // Default Constructor
+	Continent();					   // Default Constructor
 	Continent(int, int, string);       // Constructor
 	Continent(const Continent&);       // Copy Constructor
 	Continent& operator=(const Continent&);
@@ -86,7 +94,7 @@ class Map {
 	void clear(); // delete everything
 public:
 	~Map();                      // Destructor
-	Map(const string&);                      
+	Map(const string&);
 	Map(const Map&);             // Copy Constructor 
 	Map& operator=(const Map&);  // Assignment operator Overloading
 	friend ostream& operator<<(ostream&, const Map&);

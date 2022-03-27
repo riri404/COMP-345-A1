@@ -1,7 +1,10 @@
+#pragma once
+#include "Player.h"
+#include "Map.h"
+#include "Cards.h"
 #include <vector>
 #include <iostream>
 #include <string>
-#include "Player.h"
 using namespace std;
 
 Player::Player()
@@ -11,6 +14,7 @@ Player::Player()
 	playerID = new int(-1);
 	territoryList = *(new vector<Territory*>);
 	handCards = new Hand();
+  list = (*new vector<Order>);
 	orderList = new OrdersList();
 }
 
@@ -22,6 +26,16 @@ Player::Player(int* playerID, int* reinforcementPool, string* name, vector<Terri
 	this->territoryList = territoryList;
 	this->handCards = cards;
 	this->orderList = orderlist;
+}
+
+Player::Player(int* playerID, int reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
+{
+	this->playerID = playerID;
+	this->reinforcePool = reinforcementPool;
+	this->name = name;
+	this->territoryList = territoryList;
+	this->handCards = cards;
+	this->orderList = orderList;
 }
 
 Player::Player(const Player& p)
@@ -52,6 +66,24 @@ Player::~Player()
 	}
 	territoryList.clear();
 
+	// Added by Justine & Jennifer
+	/*for (auto l : list) {
+		delete l;
+	}
+	list.clear();*/
+
+	/*for (auto n : playerNegociate) {
+		delete n;
+	}
+	playerNegociate.clear();*/
+
+	/*delete deck;
+	deck = nullptr;*/
+
+	/*for (auto lp : listOfPlayers) {
+		delete lp;
+	}
+	listOfPlayers.clear();*/
 }
 
 Player& Player::operator=(const Player& p)
@@ -211,9 +243,10 @@ int Player::getReinforcePool() {
 	return *(this->reinforcementPool);
 }
 
-int Player::setReinforcePool(int)
+void Player::setReinforcePool(int r)
 {
-	return int;
+	//return int; // There is an error here
+	*this->reinforcementPool = r;
 }
 
 
@@ -260,4 +293,46 @@ void Player::AddCard(Cards* card) {
 
 void Player::Attach(LogObserver* observer) {
 	orderList->Attach(observer);
+}
+
+// Added by justine & jennifer
+void Player::setTerritory(Territory* newTerritory)
+{
+	territoryList.push_back(newTerritory);
+}
+
+void Player::removeTerritory(int i)
+{
+	this->territoryList.erase(this->territoryList.begin() + i);
+}
+
+vector<Order*> Player::getOrdersList() {
+	return list;
+}
+
+void Player::setOrder(Order* order) {
+	list.push_back(order);
+}
+
+void Player::addNegociate(Player* p) {
+	playerNegociate.push_back(p);
+}
+
+bool Player::isNegociating(Player* p) {
+	for (int i = 0; i < playerNegociate.size(); i++) {
+		if (playerNegociate.at(i) == p) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void Player::addPlayer(Player* p)
+{
+	players.push_back(p);
+}
+
+vector<Player*> Player::getListOfPlayers()
+{
+	return players;
 }

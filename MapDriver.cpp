@@ -13,7 +13,7 @@ void MapDriver() {
     cout << test->validate() << endl;
 
     Map* map = new Map(name);             // valid map
-    if (map->validate()) cout <<"MAP : "<<name << " is valid !" << endl;
+    if (map->validate()) cout << "MAP : " << name << " is valid !" << endl;
     else cout << "MAP : " << name << " is not valid !!" << endl;
 
     Map* map1 = new Map(name1);          // invalid .map file
@@ -26,5 +26,5 @@ void MapDriver() {
 
     Map* map3 = new Map(name3);             // invalid .txt file
     if (map3->validate()) cout << "MAP : " << name3 << " is valid !" << endl;
-    else cout<<"MAP : " << name3<< " is not valid !!" << endl;
+    else cout << "MAP : " << name3 << " is not valid !!" << endl;
 }

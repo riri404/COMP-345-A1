@@ -24,6 +24,8 @@ void EngineDriver();
 
 
 
+class Deck;
+
 // enum Phase {StartUp, Play };
 
 enum  State{
@@ -56,8 +58,7 @@ public:
 	int GetNumberOfPlayers();
 	vector<Player*> GetPlayers();
 	vector<Player*>* GetPlayersAdress();
-	
-	
+
 	void SetNumberOfPlayers(int);
 
 	void AddPlayer();
@@ -68,14 +69,14 @@ public:
 	bool ValidateMap();
 	
 	void IssueOrdersPhase();
-	void IssueOrdersPhase(Player* player);
+	//void IssueOrdersPhase(Player* player);
 
 	void MainGameLoop();
 	void StartupPhase();
 	void ReinforcementPhase();
 
 	void ExecuteOrdersPhase();
-	void ExecuteOrdersPhase(Player* player);
+	//void ExecuteOrdersPhase(Player* player);
 
 
 	void PlayerDrawCard(Player* player);
@@ -99,8 +100,6 @@ public:
 
 	void AttachToOrdersList(LogObserver* observer);
 	void AttachToProcessor(LogObserver* observer);
-
-
 
 private:
 	State state;
