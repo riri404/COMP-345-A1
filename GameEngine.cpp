@@ -421,7 +421,7 @@ void GameEngine::IssueOrdersPhase(vector<Player*> players, vector<Territory*> m)
 
     for (auto player : players)
     {
-        players->issueOrder(m);
+        player->issueOrder(m);
     }
     cout << "end of issue orders phase" << endl << endl;
 
@@ -439,8 +439,9 @@ void GameEngine::ExecuteOrdersPhase() {
     cout << "Starting Execute Orders Phase..." << endl;
 
     for (Player* player : players)
+    auto orderList = player->getOrdersList()->listOfOrders;
     {
-        for (int i = 0; i < player->orderList.size(); i++)
+        for (int i = 0; i < orderList.size(); i++)
         {
             //execute and remove if its a deploy order
             if (player->orderList.at(i)->getName() == "Deploy Orders")

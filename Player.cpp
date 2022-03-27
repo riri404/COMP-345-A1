@@ -133,13 +133,13 @@ vector<Territory*> Player::toDefend()
 	for (int i = 0; i < territoryList.size(); i++)
 	{
 		cout << "Index " << i << " " << (*territoryList[i]).getName() << " " << (*territoryList[i]).getContinent() << endl;
-		temp = territory[i];
+		temp = territoryList[i];
 		DefendList.push_back(temp);
 	}
 	return DefendList;
 }
 
-void Player::issueOrder(string order)
+void Player::issueOrder(vector<Territory*> order)
 {
 	bool CanDeploy = false;
 	bool CanAdvance = false;
@@ -147,7 +147,7 @@ void Player::issueOrder(string order)
 
 
 	//Returns list of enemy territories that are neighbors that we can attack
-	toAttack();
+	toAttack(order);
 
 	//Returns list of  territories that belong to the player that we can defend
 	toDefend();
@@ -155,10 +155,10 @@ void Player::issueOrder(string order)
 
 
 	//Check for dpeloy
-	if (!this > reinforcement_pool == 0)
+	if (this->reinforcementPool > 0)
 	{
 		Deploy* d = new Deploy;
-		this->_OrderList.push_back(d);
+		this->getOrdersList()->addToListOfOrders(d);
 		CanDeploy = true;
 	}
 

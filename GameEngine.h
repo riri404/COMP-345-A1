@@ -67,7 +67,7 @@ public:
 	void LoadMap();
 	bool ValidateMap();
 	
-	void IssueOrdersPhase();
+	void IssueOrdersPhase(vector<Player*>, vector<Territory*>);
 	//void IssueOrdersPhase(Player* player);
 
 	void MainGameLoop();
