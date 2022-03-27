@@ -44,8 +44,8 @@ public:
 	void addTerritory(Territory*);
 	void addToReinforcePool(int armies); // Add to reinforcement pool
 	void removeFromReinforcePool(int armies); // Remove from reinforcement pool
-	int getReinforcePool();
-	void setReinforcePool(int);
+	int getReinforcementPool();
+	void setReinforcementPool(int);
 	void AddCard(Cards*);
 	void Attach(LogObserver* observer);
 
@@ -55,7 +55,7 @@ public:
 	void removeTerritory(int i);
 	Hand* getPlayerHand();
 
-	vector<Order*> getOrdersList();
+	OrdersList* getOrdersList();
 	void setOrder(Order* order);
 
 	void addNegociate(Player* p);
@@ -72,11 +72,11 @@ private:
 	vector<Territory*> territoryList;
 	OrdersList* orderList;
 	Hand* handCards;
+
 	vector<Player*> players;
 
 	// Added by Justine & Jennifer 
-	int reinforcePool;
-	vector<Order*> list;
+	// vector<Order*> list;  we already have orderList
 	vector<Player*> playerNegociate;
 	Deck* deck;
 	string pName;

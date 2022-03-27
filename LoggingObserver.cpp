@@ -38,7 +38,6 @@ LogObserver::~LogObserver() {
     logfile.close();
 }
 
-
 LogObserver::LogObserver(GameEngine* gameEngine) {
   logfile.open("gamelog.txt", std::ofstream::out);
   gameEngine->Attach(this);

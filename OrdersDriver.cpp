@@ -24,15 +24,15 @@ void OrdersDriver()
 	string* name1 = new string("Justine");
 	string* name2 = new string("Jennifer");
 
-	Territory* t1 = new Territory(1, "t1");
+	Territory* t1 = new Territory(1, "t1", "Turkey");
 	t1->addArmies(10);
-	Territory* t2 = new Territory(2, "t2");
+	Territory* t2 = new Territory(2, "t2", "Turkey");
 	t2->addArmies(10);
-	Territory* t3 = new Territory(3, "t3");
+	Territory* t3 = new Territory(3, "t3", "Turkey");
 	t3->addArmies(10);
-	Territory* t4 = new Territory(4, "t4");
+	Territory* t4 = new Territory(4, "t4", "Turkey");
 	t4->addArmies(10);
-	Territory* t5 = new Territory(5, "t5");
+	Territory* t5 = new Territory(5, "t5", "Turkey");
 	t5->addArmies(10);
 
 	t1->addAdjTerritory(t2);

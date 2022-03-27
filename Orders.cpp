@@ -133,7 +133,7 @@ void Deploy::execute() {
         target->addArmies(armies);
         cout << "Deploying " << armies << " units to territory " << target->getName() << endl;
         player->removeFromReinforcePool(armies);
-        cout << "Remaining reinforcement units: " << to_string(player->getReinforcePool()) << endl;
+        cout << "Remaining reinforcement units: " << to_string(player->getReinforcementPool()) << endl;
     }
     else {
         cout << "Cannot execute deploy." << endl;
@@ -720,7 +720,7 @@ void Negotiate::execute() {
 
 string Negotiate::stringToLog()
 {
-    return "Order: " + player->GetPlayerName() + " is negociating with " + enemyPlayer->GetPlayerName();
+    return "Order: " + player->GetPlayerName() + " is negotiating with " + enemyPlayer->GetPlayerName();
 }
 
 ////--------------------------ORDERSLIST---------------------------
@@ -761,7 +761,6 @@ ostream& operator<<(ostream& outs, const OrdersList& anOrdersList) {
     return outs;
 }
 
-
 void OrdersList::addToListOfOrders(Order* order) {
     listOfOrders.push_back(order);                //Push order at the end of the list
     cout << stringToLog() << endl;
@@ -788,7 +787,6 @@ void OrdersList::remove(int index) {
         cout << "Cannot remove: invalid index" << endl;
     }
 }
-
 
 string OrdersList::stringToLog() {
     Order* latestOrder = listOfOrders.back();

@@ -1,4 +1,3 @@
-#pragma once
 #include "Player.h"
 #include "Map.h"
 #include "Cards.h"
@@ -14,7 +13,7 @@ Player::Player()
 	playerID = new int(-1);
 	territoryList = *(new vector<Territory*>);
 	handCards = new Hand();
-  list = (*new vector<Order>);
+  // list = (*new vector<Order>);
 	orderList = new OrdersList();
 }
 
@@ -26,16 +25,6 @@ Player::Player(int* playerID, int* reinforcementPool, string* name, vector<Terri
 	this->territoryList = territoryList;
 	this->handCards = cards;
 	this->orderList = orderlist;
-}
-
-Player::Player(int* playerID, int reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
-{
-	this->playerID = playerID;
-	this->reinforcePool = reinforcementPool;
-	this->name = name;
-	this->territoryList = territoryList;
-	this->handCards = cards;
-	this->orderList = orderList;
 }
 
 Player::Player(const Player& p)
@@ -239,11 +228,11 @@ bool Player::playerContinentBouns()
 	return false;
 }
 
-int Player::getReinforcePool() {
+int Player::getReinforcementPool() {
 	return *(this->reinforcementPool);
 }
 
-void Player::setReinforcePool(int r)
+void Player::setReinforcementPool(int r)
 {
 	//return int; // There is an error here
 	*this->reinforcementPool = r;
@@ -266,6 +255,10 @@ vector<Territory*> Player::getTerritoryList() {
 
 string Player::GetPlayerName() const{
 	return *name;
+}
+
+Hand* Player::getPlayerHand() {
+	return handCards;
 }
 
 int Player::GetPlayerID() const {
@@ -306,12 +299,12 @@ void Player::removeTerritory(int i)
 	this->territoryList.erase(this->territoryList.begin() + i);
 }
 
-vector<Order*> Player::getOrdersList() {
-	return list;
+OrdersList* Player::getOrdersList() {
+	return orderList;
 }
 
 void Player::setOrder(Order* order) {
-	list.push_back(order);
+	orderList->addToListOfOrders(order);
 }
 
 void Player::addNegociate(Player* p) {

@@ -58,7 +58,6 @@ public:
 	int GetNumberOfPlayers();
 	vector<Player*> GetPlayers();
 	vector<Player*>* GetPlayersAdress();
-
 	void SetNumberOfPlayers(int);
 
 	void AddPlayer();

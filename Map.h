@@ -21,6 +21,7 @@ class Territory {
   int id;                   // territory ID.
   int ownerID;             // territory owned by player with this id
   int armies;               // # of armies
+	string continentName;
 	vector<Territory*> adjTerritories;
 	Player* player; // Added by Justine & Jennifer
 	/* constructors */
@@ -28,7 +29,7 @@ public:
 	void addAdjTerritory(Territory*);				// Moved by Justine & Jennifer
 	~Territory();									// Destructor
 	Territory(); 									// Default Constructor
-	Territory(int, string);  						// Constructor
+	Territory(int, string, string);  						// Constructor
 	Territory(const Territory&);					// Copy Constructor
 	Territory& operator=(const Territory&);
 	friend bool operator==(const Territory&, const Territory&);
@@ -89,6 +90,7 @@ class Map {
 	void validateGraph(vector<Territory*>&, Territory*) const;
 	void validateContinents(vector<Territory*>&, Territory*, Continent*) const;
 	bool validateTerritories() const; // check if each territory belong to only one continent
+	string getContinentNameById(int id);
 	friend bool contains(vector<Territory*>&, Territory*); // helper function for validating
 	void load(); // load from existing maploader
 	void clear(); // delete everything
