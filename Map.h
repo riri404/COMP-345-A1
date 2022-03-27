@@ -37,6 +37,9 @@ public:
 	int getArmies() const;
 	string getName() const;
 	vector<Territory*> getAdjTerritories() const;
+
+	string getContinent();// added for reinforcement phase
+
 };
 
 //----------------------Continent--------------------------

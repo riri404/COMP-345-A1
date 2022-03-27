@@ -361,12 +361,45 @@ void GameEngine::ReinforcementPhase() {
     state = State::reinforcementPhase;
     Notify(this);
 
+    bool check = false;
+    int temp = 0;
+    double count = 0;
+
     cout << "Starting Reinforcement Phase..." << endl;
-    for (auto player : players) {
-        //
+    for (int i = 0; i < players.size(); i++)
+    {   //check if the player's terriotries
+        temp = players[i]->getReinforcementPool();
+
+        for (int j = 0; j < players[i]->territoryList.size(); i++)
+        {
+            cout << "inside nested loop..." << endl;
+            //count the terriorties number
+            count++;
+        }
+        //calcuate the contient bouns
+        check = (*players[i]).playerContinentBouns();
+
+
+        if (check == true)
+        {
+            temp += 2 * (int)round(count / 3);
+        }
+        else
+        {
+            temp += (int)round(count / 3);
+        }
+
+        temp += 3;
+
+        players[i]->setReinforcePool(temp);
+        check = false;
+        temp = 0;
+        count = 0;
+
     }
+
     cout << endl << "end of Reinforcement phase" << endl << endl;
-    IssueOrdersPhase();
+    IssueOrdersPhase(); //why???
 }
 
 

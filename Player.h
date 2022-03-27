@@ -36,6 +36,7 @@ public:
 	void setName(const string& name);
 	void setPlayerID(const int& playerID);
 	vector<Territory*> getTerritoryList();
+	bool playerContinentBouns(); 
 	//void setOrder(Orders*);
 	string GetPlayerName() const;
 	int GetPlayerID() const;
@@ -43,6 +44,7 @@ public:
 	void addToReinforcePool(int armies); // Add to reinforcement pool
 	void removeFromReinforcePool(int armies); // Remove from reinforcement pool
 	int getReinforcePool();
+	int setReinforcePool(int);
 	void AddCard(Cards*);
 	void Attach(LogObserver* observer);
 
@@ -55,4 +57,7 @@ private:
 	vector<Territory*> territoryList;
 	OrdersList* orderList;
 	Hand* handCards;
+
+	vector<Player*> players;
+
 };

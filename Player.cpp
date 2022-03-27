@@ -144,17 +144,79 @@ void Player::issueOrder(string order)
 	}
 }
 
-/*
-void Player::issueOrder()
+// to calculate continent bonus for reinforcement phase
+bool Player::playerContinentBouns()
 {
-	Order* order = new Bomb();
-	orderList.push_back(order);
-	std::cout << *order << std::endl;
-}*/
+	string a = "NA";
+	string b = "AS";
+	string c = "SA";
+	string d = "AU";
+	string e = "EU";
+	string f = "AF";
+	int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0;
+	for (int i = 0; i < territoryList.size(); i++)
+	{
+		if ((*territoryList[i]).getContinent().compare(a))
+		{
+			c1++;
+		}
+		if ((*territoryList[i]).getContinent().compare(b))
+		{
+			c2++;
+		}
+		if ((*territoryList[i]).getContinent().compare(c))
+		{
+			c3++;
+		}
+		if ((*territoryList[i]).getContinent().compare(d))
+		{
+			c4++;
+		}
+		if ((*territoryList[i]).getContinent().compare(e))
+		{
+			c5++;
+		}
+		if ((*territoryList[i]).getContinent().compare(f))
+		{
+			c6++;
+		}
+
+
+	}
+	if (c1 == 3) { 
+		return true; 
+	}
+
+	if (c2 == 3) { 
+		return true;
+	}
+
+	if (c3 == 1) { 
+		return true; 
+	}
+	if (c4 == 1) { 
+		return true;
+	}
+	if (c5 == 1) { 
+		return true; 
+	}
+	if (c6 == 1) { 
+		return true; 
+	}
+
+	return false;
+}
 
 int Player::getReinforcePool() {
 	return *(this->reinforcementPool);
 }
+
+int Player::setReinforcePool(int)
+{
+	return int;
+}
+
+
 
 void Player::setName(const string& n) {
 	*name = n;

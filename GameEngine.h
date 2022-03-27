@@ -105,6 +105,7 @@ public:
 private:
 	State state;
 	Map* map;
+	MapLoader* mapLoader; //for reinforcement phase
 	vector<Player*> players;
 	Deck* deck;
 	int numberOfPlayers;
