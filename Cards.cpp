@@ -121,7 +121,7 @@ void Deck::create_deck()
 		}
 	}
 
-	cout << "Deck has been created." << endl << endl;
+	//cout << "Deck has been created." << endl << endl;
 }
 
 void Deck::printDeck()

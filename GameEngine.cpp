@@ -1,17 +1,23 @@
 #include "GameEngine.h"
 
-Engine::Engine()
+using namespace std;
+
+GameEngine::GameEngine()
 {
     state = State::null;
     this->map = nullptr;
     vector<Player*> players;
     this->deck = new Deck();
-    this->numOfPlayers = 0;
+    this->numberOfPlayers = 0;
+    this->NumberOfTerritories = 0;
 
+    CommandProcessor* commandProcessor = new CommandProcessor();
+    processor = new CommandProcessor();
+    processor->gameEnginePtr = this;
 }
 
 // Creates a deep copy of this GameEngine, and all of its components.
-Engine::Engine(Engine& engine)
+GameEngine::GameEngine(GameEngine& engine)
 {
     state = State::null;
     this->map = new Map(*engine.map);
@@ -22,19 +28,26 @@ Engine::Engine(Engine& engine)
     }
 
     this->deck = new Deck(*engine.deck);
-    this->numOfPlayers = engine.numOfPlayers;
+    this->numberOfPlayers = engine.numberOfPlayers;
+    this->NumberOfTerritories = engine.NumberOfTerritories;
     this->state = engine.state;
-
+    this->processor = engine.processor;
+    processor->gameEnginePtr = this;
 }
 
-
-Engine::~Engine()
+GameEngine::~GameEngine()
 {
 
     delete this->map;
     map = NULL;
     delete this->deck;
     deck = NULL;
+
+    delete this->processor->gameEnginePtr;
+    processor->gameEnginePtr = NULL;
+
+    delete this->processor;
+    processor = NULL;
 
     for (int i = 0; i < this->players.size(); i++)
     {
@@ -45,207 +58,355 @@ Engine::~Engine()
     this->players.clear();
 }
 
-
-State Engine::GetState()
+State GameEngine::GetState()
 {
     return state;
 }
 
-int Engine::GetNumberOfPlayers()
-{
-    return numOfPlayers;
-}
-
-void Engine::SetState(State state)
+void GameEngine::SetState(State state)
 {
     this->state = state;
 }
-void Engine::SetNumberOfPlayers(int x)
+
+int GameEngine::GetNumberOfPlayers()
 {
-    this->numOfPlayers = x;
+    return numberOfPlayers;
+}
+
+void GameEngine::SetNumberOfPlayers(int nop)
+{
+    this->numberOfPlayers = nop;
 }
 
 // Returns all the players in the game in their order of play.
-std::vector<Player*> Engine::GetPlayers() { return players; }
+std::vector<Player*> GameEngine::GetPlayers() 
+{ return players; }
 
-std::vector<Player*>* Engine::GetPlayersAdress() { return &players; }
-
+std::vector<Player*>* GameEngine::GetPlayersAdress() 
+{ return &players; }
 
 // Returns a pointer to the game map.
-Map* Engine::GetMap() { return map; }
+Map* GameEngine::GetMap() 
+{ return map; }
 
+// Stream insertion operator
+ostream& operator<<(ostream& os, const GameEngine& gameEngine) {
+    string p = "";
+    for (Player* i : gameEngine.players) {
+        p += (*i).GetPlayerName() + " | ";
+    }
 
-//=================== StartUp Phase===================================
-
-void Engine::StartGame() {
-
-    state = State::start;
-    cout << "Welcome to Warzone" << endl<< endl;
-
-    cout << "beginning start phase" << endl;
-    cout << "starting game..." << endl << endl;
-
-    Notify(this);
-
-    LoadMap();
-    AddPlayer();
+    return os <<
+        "GAME ENGINE: Current state: " << gameEngine.state <<
+        "\n    Players (" << gameEngine.numberOfPlayers << "): " << endl << p.substr(0, p.length() - 2) << endl<<
+        "\n    Number of Territories : (" << gameEngine.NumberOfTerritories << ")" << endl;
 }
 
 
-void Engine::LoadMap() {
-    cout << "Starting Load Map Phase..." << endl;
+// Get String between two delimiter String
+// https://stackoverflow.com/questions/18800796/c-get-string-between-two-delimiter-string
+string GameEngine::get_str_between_two_str(const string& s,
+                                              const string& start_delim,
+                                                const string& stop_delim)
+{
+    unsigned first_delim_pos = s.find(start_delim);
+    unsigned end_pos_of_first_delim = first_delim_pos + start_delim.length();
+    unsigned last_delim_pos = s.find(stop_delim);
 
-    // MapLoader* mapLoader = new MapLoader();
+    return s.substr(end_pos_of_first_delim,
+        last_delim_pos - end_pos_of_first_delim);
+}
 
-    /* 1. Select a map and load it. */
 
+string GameEngine::SelectName(string command) {
+    
+    return GameEngine::get_str_between_two_str(command, "<", ">");
+}
+
+
+void GameEngine::StartupPhase() {
+    cout << "Welcome to Warzone" << endl << endl;
+
+    Start();
+    LoadMap();
+    ValidateMap();
+    AddPlayers();
+    GameStart();
+}
+
+void GameEngine::TakeInput() {
+
+}
+
+
+//=================== StartUp Phase===================
+
+void GameEngine::Start() {
+    state = State::start;   
+    cout << "GamePhase: start" << endl << endl;
+    Notify(this);
+
+    // show a list of available maps
+    std::cout << "Available maps:"
+              << "\n---------------------------\n"
+              << "bigeurope" << endl
+              << "bigeurope2 (invalid)" << endl
+              << "invalid (lol)" << endl
+              << "sw_baltic"
+              << "\n---------------------------\n"
+              << endl; 
+}
+
+
+void GameEngine::LoadMap() {
+ 
     string mapName;
     string fileName;
 
+    do {
+        cout << "::Use the \"loadmap <filename>\" command to select a map" << endl << endl;
+
+        commandEntered = processor->getCommand();
+            
+        if (processor->validate(commandEntered)) {
+
+            mapName = SelectName(commandEntered->GetCommandName());
+
+            fileName = "source_maps/" + mapName + ".map";
+
+            map = new Map(fileName);
+
+            if (map->isMapLoaded()) {
+                state = State::maploaded;
+                cout << endl << "GamePhase: map loaded" << endl << endl;
+                Notify(this);
+            }
+        }
+    } while (map == nullptr || !map->isMapLoaded());
+}
+
+
+bool GameEngine::ValidateMap() {
+    
     bool validMap = false;
 
-    std::cout << "Available maps:"
-        << "\n---------------------------\n"
-        << "bigeurope" << endl
-        << "bigeurope2 (invalid)" << endl
-        << "invalid (lol)" << endl
-        << "sw_baltic"
-        << "\n---------------------------\n"
-        << endl;
-
-
-    // Loops until the user enters a valid map
     do {
-        cout << "\nEnter the name of a map to choose it: ";
-        cin >> mapName;
-        fileName = "source_maps/" + mapName + ".map";
-       // *map = mapLoader-> new Map(fileName);
-        map = new Map(fileName);
+        cout << "::Use the \"validatemap\" command to validate the map" << endl << endl;
 
-      //  map = mapLoader.loadMap(filename)
-       // map = map->load(fileName);
+        commandEntered = processor->getCommand();
 
-       // Map* map = new Map(name);             // valid map
-      /*  if (map->validate()) cout << "MAP : " << mapName << " is valid !" << endl;
-        else cout << "MAP : " << mapName << " is not valid !!" << endl;*/
-      //  bool mapLoaded = mapLoader->loadMap(map, fileName);
-        //if (false) // added for debugging
-        
-        
-       // if (map == nullptr)
-        if (!map->isMapLoaded())
-            cout << "Please try again." << endl;
-        else {
-            cout<< endl << "The chosen map has been loaded"<< endl;
-            cout << "end of load map phase" << endl<< endl;
-            state = State::mapLoaded;
-            Notify(this);
+        if (processor->validate(commandEntered)) {
 
-            validMap = Engine::ValidateMap();
+            validMap = map->validate();
+
+            if (!validMap)
+            {
+                cout << "Not a valid map, please try again\n";
+                return false;
+            }
+            else
+            {
+                state = State::mapvalidated;
+                cout << "GamePhase: map validated" << endl << endl;
+                Notify(this);
+                return true;
+            }
+        }
+    } while (!validMap);
+    return false;
+}
+
+void GameEngine::AddPlayers() {
+
+    bool startGame = false;
+
+    while (!startGame) {
+
+        cout << "::Use the \"addplayer <playername>\" command to enter players in the game (2-6 players)" << endl;
+
+        if (numberOfPlayers > 1 && numberOfPlayers < 7) {
+
+            cout << "OR" << endl;
+            cout << "::Use the \"gamestart\" to start the game play phase" << endl << endl;
         }
 
+        commandEntered = processor->getCommand();
 
+        if (processor->validate(commandEntered)) {
 
-    } while (map == nullptr || !validMap);
-   
-    // Delete the map loader
-  //  delete mapLoader;
+            if (commandEntered->type == Command::CommandType::addplayer) {
+
+                if (numberOfPlayers < 6) {
+
+                    AddPlayer();
+
+                }
+
+                else {
+
+                    cout << endl << "-< Maximum number of players is 6 >- " << endl;
+
+                    cout << endl << "::Use the \"gamestart\" command to start the game play phase" << endl;
+                }
+            }
+
+            if (commandEntered->type == Command::CommandType::gamestart) {
+
+                startGame = true;
+            }
+        }
+    }
+
 }
 
+void GameEngine::AddPlayer() {
 
-bool Engine::ValidateMap() {
-    cout << "Starting Validate Map Phase..." << endl;
+    string playerName;
 
-    cout << "Validating loaded map" << endl;
-    bool validMap = false;
+    playerName = SelectName(commandEntered->GetCommandName());
+
+    Player* player = new Player();
+
+    player->setName(playerName);
+    player->setPlayerID(numberOfPlayers);
     
-    validMap = map->validate();
-       // validMap = true; // added for debugging
-      
-    if (!validMap)
-    {
-        cout << "Not a valid map, please try again\n"; 
-        return false;
-    }
-    else
-    {
-        cout << "end of validate map phase" << endl<< endl;
-        state = State::mapValidated;
-        Notify(this);
-        return true;
-    }
 
-    AddPlayer();
+    players.push_back(player);
+    numberOfPlayers++;
 
+    cout << "Player " << numberOfPlayers << ". " << playerName << " -> has been created. " << endl << endl;
+    state = State::playersadded;
+    cout << "GamePhase: players added" << endl << endl;
+    Notify(this);    
 }
 
-void Engine::AddPlayer() {
+void GameEngine::DistributeTerritories() {
 
-    cout << "Starting Add Player Phase..." << endl;
+    mapTerritories = map->GetMapTerritories();
+    NumberOfTerritories = map->GetMapTerritoriesNumber();
 
-    cout << "Please enter the number of players" << endl;
-    cin >> this->numOfPlayers;
-    // Allocating the right number of space in the vector
-    players.reserve(numOfPlayers);
+    int playerIndex = 0;
 
-    for (int i = 0; i < numOfPlayers; i++) {
-        string name;
-        Player* player = new Player();
-        cout << endl << "Please enter the player's name" << endl;
-        cin >> name;
-     //   player->SetName(name);
-        players.push_back(player);
-        cout << "Player " << i + 1
-             << " has been created. " << endl;
+    for (int i = 0; i < NumberOfTerritories; i++) {
+
+        Player* tempPlayer = players.at(playerIndex);
+
+        mapTerritories[i]->setOwnerId(tempPlayer->GetPlayerID());
+
+        Territory* tempTerritory = new Territory(*mapTerritories[i]);
+
+        tempPlayer->addTerritory(tempTerritory);
+
+        playerIndex++;
+
+        if (playerIndex >= players.size()) {
+            playerIndex = 0;
+        }
     }
-    cout << endl << "end of add player phase" << endl<< endl;
-    state = State::playersAdded;
-    Notify(this);
-    ReinforcementPhase();
 }
 
+void GameEngine::ShufflePlayers(vector<Player*> playersToShuffle) {
+
+    // obtain a time-based seed:
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine e(seed);
+
+    shuffle(begin(playersToShuffle), end(playersToShuffle), e);
+}
+
+void GameEngine::GameStart() {
+
+    DistributeTerritories();
+
+    ShufflePlayers(players);
+
+    deck->create_deck();
+
+    for (Player* player : players) {
+
+        for (int i = 0; i < 2; i++) {
+
+            player->AddCard(deck->draw());
+        }
+
+        player->addToReinforcePool(50);
+    }
+
+  
+    // cout << endl << "Map info ->" << endl << endl <<*map;
+
+    cout << endl << "Players of this game ->" << endl;
+
+    for (auto player : players)
+    {
+        
+        cout << endl << *player << endl;
+    }
+
+
+ /*   for (Player* player : players) {
+
+        cout << endl <<"Territories owned by " << player->GetPlayerName() << " -> " << endl << endl;
+        for (Territory* territory : player->getTerritoryList()) {
+          cout << *territory;
+        }
+        
+    }*/
+}
 
 
 // Adds troops to a player's reinforcement pool at the start of the turn.
 
-void Engine::ReinforcementPhase() {
+void GameEngine::ReinforcementPhase() {
     state = State::reinforcementPhase;
     Notify(this);
 
+    bool check = false;
+    int temp = 0;
+    double count = 0;
+
     cout << "Starting Reinforcement Phase..." << endl;
-    for (auto player : players)
-    {
+    for (int i = 0; i < players.size(); i++)
+    {   //check if the player's terriotries
+        temp = players[i]->getReinforcementPool();
+
+        for (int j = 0; j < players[i]->getTerritoryList().size(); i++)
+        {
+            cout << "inside nested loop..." << endl;
+            //count the terriorties number
+            count++;
+        }
+        //calcuate the contient bouns
+        check = (*players[i]).playerContinentBouns();
 
 
+        if (check == true)
+        {
+            temp += 2 * (int)round(count / 3);
+        }
+        else
+        {
+            temp += (int)round(count / 3);
+        }
 
-        //vector<Territory*> playerTerritories = player->GetTerritoryList();
-        //int baseArmySize = playerTerritories.size() / 3;
-        //Gent Bounus value
-        //int continentBonus = findContinentBonusTotal(player);
-        //int armiesToGive = continentBonus + baseArmySize;
-        //int reinforcementArmySize = baseArmySize;
+        temp += 3;
 
-        //if (reinforcementArmySize < 3) reinforcementArmySize = 3;
-
-
-        // string message = "give armies";
-        // string armies = to_string(reinforcementArmySize);
-        // string id = to_string(player->GetPlayerID());
-        // string baseArmies = to_string(baseArmySize);
-        // string continentB = to_string(continentBonus);
-        // this->notify(message + " " + armies + " " + id + " " + baseArmies + " " + continentB);
-
-        // player->AddArmies(reinforcementArmySize); //Using add and not set because of the initial armies given from setup. Will always be 0 at start of a turn.
+        players[i]->setReinforcementPool(temp);
+        check = false;
+        temp = 0;
+        count = 0;
 
     }
+
     cout << endl << "end of Reinforcement phase" << endl << endl;
-    IssueOrdersPhase();
+    IssueOrdersPhase(); //why???
 }
+
 
 
 // Calls IssueOrder until all players have commited that they are done issuing orders.
 
-void Engine::IssueOrdersPhase() {
+void GameEngine::IssueOrdersPhase() {
     state = State::issueOrderPhase;
     Notify(this);
 
@@ -263,7 +424,7 @@ void Engine::IssueOrdersPhase() {
 
 // Calls ExecuteOrder() until all players have no more orders in their orders list.
 
-void Engine::ExecuteOrdersPhase() {
+void GameEngine::ExecuteOrdersPhase() {
     state = State::executeOrderPhase;
     Notify(this);
 
@@ -279,26 +440,13 @@ void Engine::ExecuteOrdersPhase() {
 
 
 
-//
-//void Engine::LoadDeck() {
-//
-//    /* 4. Create a deck of cards. */
-//    deck = new Deck();
-//    // deck->addCard(new BombCard(deck));
-//    // deck->addCard(new ReinforcementCard(deck));
-//
-//    // Displaying the deck information to the user
-//    std::cout << "\nA deck of 10 cards has been created. "
-//        << std::endl;
-//}
-
-void Engine::PlayerDrawCard(Player* player) {
+void GameEngine::PlayerDrawCard(Player* player) {
 
 }
 
 
 // ==============================Play Phase===================================
-void Engine::MainGameLoop() {
+void GameEngine::MainGameLoop() {
 
     cout << "Starting Main Game Loop..." << endl;
 
@@ -328,30 +476,44 @@ void Engine::MainGameLoop() {
     }
 }
 
-std::string Engine::stringToLog() {
+std::string GameEngine::stringToLog() {
     std::string log = "";
     switch (state) {
         case State::start:
-            log = "Starting game";
+            log = "State: Starting game";
             break;
-        case State::mapLoaded:
-            log = "Map loaded";
+        case State::maploaded:
+            log = "Phase: Map loaded";
             break;
-        case State::mapValidated:
-            log = "Map validated";
+        case State::mapvalidated:
+            log = "Phase: Map validated";
             break;
-        case State::playersAdded:
-            log = "Players added";
+        case State::playersadded:
+            log = "Phase: Players added";
             break;
         case State::reinforcementPhase:
-            log = "Reinforcement phase";
+            log = "Phase: Reinforcement";
             break;
         case State::issueOrderPhase:
-            log = "Issue order phase";
+            log = "Phase: Issue order";
             break;
         case State::executeOrderPhase:
-            log = "Execute order phase";
+            log = "Phase: Execute order";
             break;
     }
     return log;
 }
+
+void GameEngine::AttachToOrdersList(LogObserver* observer) {
+    for (Player* p : players) {
+        p->Attach(observer);
+    }
+}
+
+void GameEngine::AttachToProcessor(LogObserver* observer) {
+    processor->Attach(observer);
+    for (auto i : processor->commandObjects) {
+        i->Attach(observer);
+    }
+}
+

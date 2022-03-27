@@ -1,4 +1,3 @@
-#pragma once
 #include "Player.h"
 #include "Map.h"
 #include "Cards.h"
@@ -9,12 +8,12 @@ using namespace std;
 
 Player::Player()
 {
-	name = NULL;
-	playerID = NULL;
+	name = new string("");
+	reinforcementPool = new int(0);
+	playerID = new int(-1);
 	territoryList = *(new vector<Territory*>);
 	handCards = new Hand();
-	list;
-	//orderList = new OrdersList();
+	orderList = new OrdersList();
 }
 
 Player::Player(int* playerID, int* reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
@@ -34,14 +33,14 @@ Player::Player(int* playerID, int reinforcementPool, string* name, vector<Territ
 	this->name = name;
 	this->territoryList = territoryList;
 	this->handCards = cards;
-	this->orderList = orderList;
+	this->orderList = orderlist;
 }
 
 Player::Player(const Player& p)
 {
 	this->playerID = p.playerID;
-	this->reinforcePool = p.reinforcePool;
-	this->name = new string(*(p.name));
+	this->reinforcementPool = p.reinforcementPool;
+	this->name = p.name;
 	this->territoryList = p.territoryList;
 	this->handCards = p.handCards;
 	this->orderList = p.orderList;
@@ -55,6 +54,8 @@ Player::~Player()
 	name = nullptr;
 	delete handCards;
 	handCards = nullptr;
+	delete reinforcementPool;
+	reinforcementPool = nullptr;
 	delete orderList;
 	orderList = nullptr;
 	for (auto p : territoryList)
@@ -86,8 +87,8 @@ Player::~Player()
 Player& Player::operator=(const Player& p)
 {
 	this->playerID = p.playerID;
-	this->name = new string(*(p.name));
-	this->reinforcePool = p.reinforcePool;
+	this->name = p.name;
+	this->reinforcementPool = p.reinforcementPool;
 	this->territoryList = p.territoryList;
 	this->handCards = p.handCards;
 	this->orderList = p.orderList;
@@ -105,9 +106,12 @@ Player& Player::operator=(const Player& p)
 
 std::ostream& operator<<(std::ostream& outs, const Player& p1)
 {
-	outs << p1.playerID;
-	outs << p1.name;
-	outs << p1.handCards;
+	outs << "Player ID: " << * (p1.playerID) << endl;
+	outs << "Player's name: " << * (p1.name) << endl;
+	//outs << "Player's cards: " << p1.handCards << endl;
+	outs << "Player's cards: ";
+	p1.handCards->printHand();
+	outs << "Player's reinforcement pool" << *(p1.reinforcementPool) << endl;;
 	//outs << (p1.territoryList);
 	//outs << p1.orderList;
 
@@ -171,80 +175,81 @@ void Player::issueOrder(string order)
 }
 
 // to calculate continent bonus for reinforcement phase
-//bool Player::playerContinentBouns()
-//{
-//	string a = "NA";
-//	string b = "AS";
-//	string c = "SA";
-//	string d = "AU";
-//	string e = "EU";
-//	string f = "AF";
-//	int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0;
-//	for (int i = 0; i < territoryList.size(); i++)
-//	{
-//		if ((*territoryList[i]).getContinent().compare(a))
-//		{
-//			c1++;
-//		}
-//		if ((*territoryList[i]).getContinent().compare(b))
-//		{
-//			c2++;
-//		}
-//		if ((*territoryList[i]).getContinent().compare(c))
-//		{
-//			c3++;
-//		}
-//		if ((*territoryList[i]).getContinent().compare(d))
-//		{
-//			c4++;
-//		}
-//		if ((*territoryList[i]).getContinent().compare(e))
-//		{
-//			c5++;
-//		}
-//		if ((*territoryList[i]).getContinent().compare(f))
-//		{
-//			c6++;
-//		}
-//
-//
-//	}
-//	if (c1 == 3) {
-//		return true;
-//	}
-//
-//	if (c2 == 3) {
-//		return true;
-//	}
-//
-//	if (c3 == 1) {
-//		return true;
-//	}
-//	if (c4 == 1) {
-//		return true;
-//	}
-//	if (c5 == 1) {
-//		return true;
-//	}
-//	if (c6 == 1) {
-//		return true;
-//	}
-//
-//	return false;
-//}
+bool Player::playerContinentBouns()
+{
+	string a = "NA";
+	string b = "AS";
+	string c = "SA";
+	string d = "AU";
+	string e = "EU";
+	string f = "AF";
+	int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0;
+	for (int i = 0; i < territoryList.size(); i++)
+	{
+		if ((*territoryList[i]).getContinent().compare(a))
+		{
+			c1++;
+		}
+		if ((*territoryList[i]).getContinent().compare(b))
+		{
+			c2++;
+		}
+		if ((*territoryList[i]).getContinent().compare(c))
+		{
+			c3++;
+		}
+		if ((*territoryList[i]).getContinent().compare(d))
+		{
+			c4++;
+		}
+		if ((*territoryList[i]).getContinent().compare(e))
+		{
+			c5++;
+		}
+		if ((*territoryList[i]).getContinent().compare(f))
+		{
+			c6++;
+		}
 
-int Player::getReinforcePool() {
+
+	}
+	if (c1 == 3) { 
+		return true; 
+	}
+
+	if (c2 == 3) { 
+		return true;
+	}
+
+	if (c3 == 1) { 
+		return true; 
+	}
+	if (c4 == 1) { 
+		return true;
+	}
+	if (c5 == 1) { 
+		return true; 
+	}
+	if (c6 == 1) { 
+		return true; 
+	}
+
+	return false;
+}
+
+int Player::getReinforcementPool() {
 	return *(this->reinforcementPool);
 }
 
-void Player::setReinforcePool(int r)
+void Player::setReinforcementPool(int n)
 {
-	//return int; // There is an error here
-	*this->reinforcementPool = r;
+	delete reinforcementPool;
+	reinforcementPool = new int(n);
 }
 
-void Player::setName(const string& n)
-{
+
+
+void Player::setName(const string& n) {
 	*name = n;
 }
 
@@ -252,17 +257,12 @@ void Player::setPlayerID(const int& ID) {
 	*playerID = ID;
 }
 
-Hand* Player::getPlayerHand()
-{
-	return handCards;
-}
-
-vector<Territory*> Player::getTerritoryList()
-{
+vector<Territory*> Player::getTerritoryList() {
 	return territoryList;
 }
 
-string Player::GetPlayerName() const {
+
+string Player::GetPlayerName() const{
 	return *name;
 }
 
@@ -281,7 +281,7 @@ void Player::addToReinforcePool(int armies) {
 }
 
 void Player::removeFromReinforcePool(int armies) {
-	//delete reinforcementPool;
+	delete reinforcementPool;
 	reinforcementPool = new int(*reinforcementPool - armies);
 }
 
@@ -292,71 +292,3 @@ void Player::AddCard(Cards* card) {
 void Player::Attach(LogObserver* observer) {
 	orderList->Attach(observer);
 }
-
-// Added by justine & jennifer
-//int Player::getReinforcementPool()
-//{
-//	return reinforcePool;
-//}
-//
-//void Player::addReinforcementPool(int i)
-//{
-//	reinforcementPool += i;
-//}
-//
-//void Player::removeReinforcementPool(int i) {
-//	if (i > reinforcePool) {
-//		cout << "You don't have enough reinforcement." << endl;
-//	}
-//	else {
-//		reinforcePool -= i;
-//	}
-//}
-
-void Player::setTerritory(Territory* newTerritory)
-{
-	territoryList.push_back(newTerritory);
-}
-
-void Player::removeTerritory(int i)
-{
-	this->territoryList.erase(this->territoryList.begin() + i);
-}
-
-vector<Order*> Player::getOrdersList() {
-	return list;
-}
-
-void Player::setOrder(Order* order) {
-	list.push_back(order);
-}
-
-void Player::addNegociate(Player* p) {
-	playerNegociate.push_back(p);
-}
-
-bool Player::isNegociating(Player* p) {
-	for (int i = 0; i < playerNegociate.size(); i++) {
-		if (playerNegociate.at(i) == p) {
-			return true;
-		}
-	}
-	return false;
-}
-
-void Player::addPlayer(Player* p)
-{
-	listOfPlayers.push_back(p);
-}
-
-vector<Player*> Player::getListOfPlayers()
-{
-	return listOfPlayers;
-}
-/*
-void Player::issueOrder()
-{
-	Order* order = new Bomb();
-	orderList.push_back(order);
-	std::cout << *order << std::endl;
-}*/

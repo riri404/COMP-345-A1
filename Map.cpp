@@ -10,39 +10,39 @@ using namespace std;
 Territory::~Territory() { } // map will handle memory
 
 Territory::Territory() {
-    ownerId = -1;
-    armies = 0;
-    id = -1;
-    name = "";
+  ownerID = -1;
+  armies = 0;
+  id = -1;
+  name = "";
 }
 
 Territory::Territory(int id, string name) {
-    ownerId = -1;
-    armies = 0;
-    this->id = id;
-    this->name = name;
+  ownerID = -1;
+  armies = 0;
+  this->id = id;
+  this->name = name;
 }
 
 Territory::Territory(const Territory& other) {
-    ownerId = other.ownerId;
-    armies = other.armies;
-    id = other.id;
-    name = other.name;
-    for (Territory* t : other.adjTerritories) {
-        adjTerritories.push_back(t); // shallow copy
-    }
+  ownerID = other.ownerID;
+  armies = other.armies;
+  id = other.id;
+  name = other.name;
+  for (Territory* t : other.adjTerritories) {
+    adjTerritories.push_back(t); // shallow copy
+  }
 }
 
 Territory& Territory::operator=(const Territory& rhs) {
-    ownerId = rhs.ownerId;
-    armies = rhs.armies;
-    id = rhs.id;
-    name = rhs.name;
-    adjTerritories.clear();
-    for (Territory* t : rhs.adjTerritories) {
-        adjTerritories.push_back(t);
-    }
-    return *this;
+  ownerID = rhs.ownerID;
+  armies = rhs.armies;
+  id = rhs.id;
+  name = rhs.name;
+  adjTerritories.clear();
+  for (Territory* t : rhs.adjTerritories) {
+    adjTerritories.push_back(t);
+  }
+  return *this;
 }
 
 bool operator==(const Territory& t1, const Territory& t2) {
@@ -50,10 +50,10 @@ bool operator==(const Territory& t1, const Territory& t2) {
 }
 
 ostream& operator<<(ostream& out, const Territory& territory) {
-    out << "Territory: " << territory.name << " (" << territory.id << ")" << endl;
-    out << "Armies: " << territory.armies << endl;
-    out << "Owned by player " << territory.ownerId;
-    return out;
+  out << "Territory: " << territory.name << " (" << territory.id << ")" << endl;
+  out << "Armies: " << territory.armies << endl;
+  out << "Owned by player " << territory.ownerID << endl;
+  return out;
 }
 
 void Territory::addAdjTerritory(Territory* t) {
@@ -61,9 +61,9 @@ void Territory::addAdjTerritory(Territory* t) {
 }
 
 // getter and setters
-void Territory::setOwnerId(int playerId) { this->ownerId = playerId; }
+void Territory::setOwnerId(int playerId) { this->ownerID = playerId; }
 int Territory::getId() const { return id; }
-int Territory::getPlayerId() const { return ownerId; }
+int Territory::getPlayerId() const { return ownerID; }
 int Territory::getArmies() const { return armies; }
 string Territory::getName() const { return name; }
 vector<Territory*> Territory::getAdjTerritories() const {

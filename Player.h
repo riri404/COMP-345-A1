@@ -40,15 +40,15 @@ public:
 	void setName(const string& name);
 	void setPlayerID(const int& playerID);
 	vector<Territory*> getTerritoryList();
-	//bool playerContinentBouns();
+	bool playerContinentBouns(); 
 	//void setOrder(Orders*);
 	string GetPlayerName() const;
 	int GetPlayerID() const;
 	void addTerritory(Territory*);
 	void addToReinforcePool(int armies); // Add to reinforcement pool
 	void removeFromReinforcePool(int armies); // Remove from reinforcement pool
-	int getReinforcePool();
-	void setReinforcePool(int);
+	int getReinforcementPool();
+	void setReinforcementPool(int);
 	void AddCard(Cards*);
 	void Attach(LogObserver* observer);
 
@@ -75,6 +75,8 @@ private:
 	vector<Territory*> territoryList;
 	OrdersList* orderList;
 	Hand* handCards;
+
+	// vector<Player*> players;
 
 	// Added by Justine & Jennifer 
 	int reinforcePool;

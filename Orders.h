@@ -65,11 +65,11 @@ public:
     friend ostream& operator<<(ostream&, const Deploy&);
 
     //Getters and setters
-    string const getName();
+    string const getName() override;
 
     //Member functions
-    bool validate();
-    void execute();
+    bool validate() override;
+    void execute() override;
 
     string stringToLog() override;
 
@@ -92,11 +92,11 @@ public:
     friend ostream& operator<<(ostream&, const Advance&);
 
     //Getters and setters
-    string const getName();
+    string const getName() override;
 
     //Member functions
-    bool validate();
-    void execute();
+    bool validate() override;
+    void execute() override;
 
     string stringToLog() override;
 private:
@@ -122,11 +122,11 @@ public:
     friend ostream& operator<<(ostream&, const Bomb&);
 
     //Getters and setters
-    string const getName();
+    string const getName() override;
 
     //Member functions
-    bool validate();
-    void execute();
+    bool validate() override;
+    void execute() override;
 
     string stringToLog() override;
 
@@ -151,11 +151,11 @@ public:
     friend ostream& operator<<(ostream&, const Blockade&);
 
     //Getters and setters
-    string const getName();
+    string const getName() override;
 
     //Member functions
-    bool validate();
-    void execute();
+    bool validate() override; 
+    void execute() override;
 
     string stringToLog() override;
 private:
@@ -181,11 +181,11 @@ public:
     friend ostream& operator<<(ostream&, const Airlift&);
 
     //Getters and setters
-    string const getName();
+    string const getName() override;
 
     //Member functions
-    bool validate();
-    void execute();
+    bool validate() override;
+    void execute() override;
 
     string stringToLog() override;
 private:
@@ -210,11 +210,11 @@ public:
     friend ostream& operator<<(ostream&, const Negotiate&);
 
     //Getters and setters
-    string const getName();
+    string const getName() override;
 
     //Member functions
-    bool validate();
-    void execute();
+    bool validate() override;
+    void execute() override;
 
     string stringToLog() override;
 private:
@@ -237,9 +237,11 @@ public:
     void addToListOfOrders(Order*);
     void move(int, int);
     void remove(int);
+    string stringToLog();
+    void notifyAddOrder(Order* order);
 
     //private:
-    vector<Order*> listOfOrders;
+        //The OrdersList class contains a list of Order objects
+    vector<Order*> listOfOrders;        //vector of pointers to Order object
 
-    string stringToLog() override;
 };

@@ -1,8 +1,13 @@
 .vscode
-MapDriver.dSYM/
 .DS_Store
 bin
 .vs
-COMP345/COMP345/COMP345.vcxproj
 *.vcxproj
-/COMP345
+*.filters
+*.user
+x64/
+COMP345/
+Debug/
+x64/Debug/
+*.dSYM/
+*.sln
