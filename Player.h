@@ -21,10 +21,7 @@ class Player
 public:
 	// contructors
 	Player(); // default constructor
-	//Player(string);
-	Player(int* id, int* reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
-	// Added by Justine & Jennifer
-	Player(int* id, int reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
+	Player(int* id, int*, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
 	Player(const Player& p); //copy constructor
 	~Player(); //destructor
 
@@ -58,7 +55,7 @@ public:
 	void removeTerritory(int i);
 	Hand* getPlayerHand();
 
-	vector<Order*> getOrdersList();
+	OrdersList* getOrdersList();
 	void setOrder(Order* order);
 
 	void addNegociate(Player* p);
@@ -70,19 +67,17 @@ public:
 private:
 	//attributes/ variables
 	string* name;
-	int* reinforcementPool; // Modified by Jennifer
+	int* reinforcementPool;
 	int* playerID;
 	vector<Territory*> territoryList;
 	OrdersList* orderList;
 	Hand* handCards;
 
-	// vector<Player*> players;
+	vector<Player*> players;
 
 	// Added by Justine & Jennifer 
-	int reinforcePool;
-	vector<Order*> list;
+	// vector<Order*> list;  we already have orderList
 	vector<Player*> playerNegociate;
 	Deck* deck;
 	string pName;
-	vector<Player*> listOfPlayers;
 };

@@ -14,13 +14,15 @@ Territory::Territory() {
   armies = 0;
   id = -1;
   name = "";
+  continentName = "";
 }
 
-Territory::Territory(int id, string name) {
+Territory::Territory(int id, string name, string continentName) {
   ownerID = -1;
   armies = 0;
   this->id = id;
   this->name = name;
+  this->continentName = continentName;
 }
 
 Territory::Territory(const Territory& other) {
@@ -28,6 +30,7 @@ Territory::Territory(const Territory& other) {
   armies = other.armies;
   id = other.id;
   name = other.name;
+  continentName = other.continentName;
   for (Territory* t : other.adjTerritories) {
     adjTerritories.push_back(t); // shallow copy
   }
@@ -38,6 +41,7 @@ Territory& Territory::operator=(const Territory& rhs) {
   armies = rhs.armies;
   id = rhs.id;
   name = rhs.name;
+  continentName = rhs.continentName;
   adjTerritories.clear();
   for (Territory* t : rhs.adjTerritories) {
     adjTerritories.push_back(t);
@@ -51,6 +55,7 @@ bool operator==(const Territory& t1, const Territory& t2) {
 
 ostream& operator<<(ostream& out, const Territory& territory) {
   out << "Territory: " << territory.name << " (" << territory.id << ")" << endl;
+  cout << "Continent: " << territory.continentName << endl;
   out << "Armies: " << territory.armies << endl;
   out << "Owned by player " << territory.ownerID << endl;
   return out;
@@ -65,6 +70,9 @@ void Territory::setOwnerId(int playerId) { this->ownerID = playerId; }
 int Territory::getId() const { return id; }
 int Territory::getPlayerId() const { return ownerID; }
 int Territory::getArmies() const { return armies; }
+string Territory::getContinent() { 
+
+}
 string Territory::getName() const { return name; }
 vector<Territory*> Territory::getAdjTerritories() const {
     return adjTerritories;
@@ -411,7 +419,7 @@ void MapLoader::loadMap(Map* map) {
         string name = "";
         int continentId = 0;
         iss >> id >> name >> continentId; // reading first 3 tokens
-        Territory* t = new Territory(id, name);
+        Territory* t = new Territory(id, name, map->getContinentNameById(continentId));
         map->addTerritory(t);
         if (!map->addTerritoryToContinent(continentId, t)) {
             map->clear();
@@ -464,7 +472,7 @@ void MapLoader::loadMap(Map* map, const string& fileName) {
         string name = "";
         int continentId = 0;
         iss >> id >> name >> continentId; // reading first 3 tokens
-        Territory* t = new Territory(id, name);
+        Territory* t = new Territory(id, name, map->getContinentNameById(continentId));
         map->addTerritory(t);
         // if territory's continent does not exist, invalid map
         if (!map->addTerritoryToContinent(continentId, t)) {
@@ -525,4 +533,10 @@ Map* MapLoader::loadMap(const string& filename) {
 
 bool Map::isMapLoaded() {
     return isLoaded;
+}
+
+string Map::getContinentNameById(int id) {
+    for (auto continent : continents) {
+        if (id == continent->getId()) return continent->getName();
+    }
 }

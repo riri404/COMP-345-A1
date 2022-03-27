@@ -95,6 +95,7 @@ ostream& operator<<(ostream& os, const GameEngine& gameEngine) {
     for (Player* i : gameEngine.players) {
         p += (*i).GetPlayerName() + " | ";
     }
+  
 
     return os <<
         "GAME ENGINE: Current state: " << gameEngine.state <<
@@ -516,4 +517,3 @@ void GameEngine::AttachToProcessor(LogObserver* observer) {
         i->Attach(observer);
     }
 }
-

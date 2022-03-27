@@ -58,7 +58,6 @@ public:
 	int GetNumberOfPlayers();
 	vector<Player*> GetPlayers();
 	vector<Player*>* GetPlayersAdress();
-	//Deck* GetDeck();
 	void SetNumberOfPlayers(int);
 
 	void AddPlayer();
@@ -100,8 +99,6 @@ public:
 
 	void AttachToOrdersList(LogObserver* observer);
 	void AttachToProcessor(LogObserver* observer);
-
-
 
 private:
 	State state;
