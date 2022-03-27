@@ -404,7 +404,7 @@ void GameEngine::ReinforcementPhase() {
     }
 
     cout << endl << "end of Reinforcement phase" << endl << endl;
-    IssueOrdersPhase(); //why????????????????????????????
+    // IssueOrdersPhase(); //why????????????????????????????
 }
 
 
@@ -425,7 +425,7 @@ void GameEngine::IssueOrdersPhase(vector<Player*> players, vector<Territory*> m)
     }
     cout << "end of issue orders phase" << endl << endl;
 
-    ExecuteOrdersPhase(); // why????
+    // ExecuteOrdersPhase(); // why????
 }
 
 
@@ -438,7 +438,7 @@ void GameEngine::ExecuteOrdersPhase() {
 
     cout << "Starting Execute Orders Phase..." << endl;
 
-    for each (Player * player in players)
+    for (Player* player : players)
     {
         for (int i = 0; i < player->orderList.size(); i++)
         {
