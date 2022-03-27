@@ -399,26 +399,28 @@ void GameEngine::ReinforcementPhase() {
     }
 
     cout << endl << "end of Reinforcement phase" << endl << endl;
-    IssueOrdersPhase(); //why???
+    IssueOrdersPhase(); //why????????????????????????????
 }
 
 
 
 // Calls IssueOrder until all players have commited that they are done issuing orders.
 
-void GameEngine::IssueOrdersPhase() {
+void GameEngine::IssueOrdersPhase(vector<Player*> players, vector<Territory*> m) {
     state = State::issueOrderPhase;
     Notify(this);
 
     cout << "Starting Issue Orders Phase..." << endl;
 
+
+
     for (auto player : players)
     {
-        // player->issueOrder(this, map, deck);
+        players->issueOrder(m);
     }
     cout << "end of issue orders phase" << endl << endl;
 
-    ExecuteOrdersPhase();
+    ExecuteOrdersPhase(); // why????
 }
 
 
@@ -431,13 +433,59 @@ void GameEngine::ExecuteOrdersPhase() {
 
     cout << "Starting Execute Orders Phase..." << endl;
 
-    for (auto player : players)
+    for each (Player * player in players)
     {
-        // player->ExecuteOrders(this, map, deck);
+        for (int i = 0; i < player->orderList.size(); i++)
+        {
+            //execute and remove if its a deploy order
+            if (player->orderList.at(i)->getName() == "Deploy Orders")
+            {
+                //validate, excute and delete order
+                player->orderList.at(i)->validate(true);
+                player->orderList.at(i)->execute();
+                player->orderList.erase(player->orderList.begin() + i);
+                i--;
+            }
+        }
     }
+
+    //there should be no more deploy orders
+
+    for each (Player * player in players)
+    {
+        while (!player->orderList.empty())
+        {
+            //validate, excute and delete order
+            player->orderList.at(0)->validate(true);
+            player->orderList.at(0)->execute();
+            player->orderList.erase(player->orderList.begin());
+        }
+    } //order list should be empty
+
+
     cout << "end of execute orders phase" << endl;
 }
 
+void GameEngine::ExecuteOrders() {
+
+
+    cout << "Enter \"win\" to win,  Enter \"executeOrder\" to repeat executeOrder Enter \"new\"to go back to issue new order" << endl;
+    string a;
+    cin >> a;
+    if (a == "win") {
+
+        state = changeState(6);
+    }
+    else if (a == "executeOrder") {
+        executeOrderPhase();
+        state = changeState(5);
+
+    }
+    else if (a == "new") {
+        state = changeState(4);
+        issueOrder();
+    }
+}
 
 
 void GameEngine::PlayerDrawCard(Player* player) {

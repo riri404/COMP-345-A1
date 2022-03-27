@@ -30,7 +30,7 @@ public:
 	friend ostream& operator <<(ostream& outs, const Player& p);
 
 	//methods
-	vector<Territory*> toAttack(); // method to attck; returns orders list
+	vector<Territory*> toAttack(vector<Territory*> attack); // method to attck; returns orders list
 	vector<Territory*> toDefend(); // method to defend; returns ordrs list
 	void issueOrder(string order);
 	void setName(const string& name);
@@ -43,8 +43,8 @@ public:
 	void addTerritory(Territory*);
 	void addToReinforcePool(int armies); // Add to reinforcement pool
 	void removeFromReinforcePool(int armies); // Remove from reinforcement pool
-	int getReinforcePool();
-	int setReinforcePool(int);
+	int getReinforcementPool();
+	int setReinforcementPool(int);
 	void AddCard(Cards*);
 	void Attach(LogObserver* observer);
 

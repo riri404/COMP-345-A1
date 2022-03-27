@@ -70,6 +70,11 @@ vector<Territory*> Territory::getAdjTerritories() const {
   return adjTerritories; 
 }
 
+string Territory::getContinent()
+{
+    return string();
+}
+
 //----------------------Continent--------------------------
 Continent::~Continent() { } // map will handle memory
 
