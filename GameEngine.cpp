@@ -411,14 +411,15 @@ void GameEngine::ReinforcementPhase() {
 
 // Calls IssueOrder until all players have commited that they are done issuing orders.
 
-void GameEngine::IssueOrdersPhase(vector<Player*> players, vector<Territory*> m) {
+void GameEngine::IssueOrdersPhase() {
     state = State::issueOrderPhase;
     Notify(this);
 
     cout << "Starting Issue Orders Phase..." << endl;
 
 
-
+    auto m = map->GetMapTerritories();
+    
     for (auto player : players)
     {
         player->issueOrder(m);
@@ -439,17 +440,17 @@ void GameEngine::ExecuteOrdersPhase() {
     cout << "Starting Execute Orders Phase..." << endl;
 
     for (Player* player : players)
-    auto orderList = player->getOrdersList()->listOfOrders;
     {
+        auto orderList = player->getOrdersList()->listOfOrders;
         for (int i = 0; i < orderList.size(); i++)
         {
             //execute and remove if its a deploy order
-            if (player->orderList.at(i)->getName() == "Deploy Orders")
+            if (orderList.at(i)->getName() == "Deploy Orders")
             {
                 //validate, excute and delete order
-                player->orderList.at(i)->validate(true);
-                player->orderList.at(i)->execute();
-                player->orderList.erase(player->orderList.begin() + i);
+                orderList.at(i)->validate();
+                orderList.at(i)->execute();
+                orderList.erase(orderList.begin() + i);
                 i--;
             }
         }
@@ -457,14 +458,15 @@ void GameEngine::ExecuteOrdersPhase() {
 
     //there should be no more deploy orders
 
-    for each (Player * player in players)
+    for (Player* player : players)
     {
-        while (!player->orderList.empty())
+        auto orderList = player->getOrdersList()->listOfOrders;
+        while (!orderList.empty())
         {
             //validate, excute and delete order
-            player->orderList.at(0)->validate(true);
-            player->orderList.at(0)->execute();
-            player->orderList.erase(player->orderList.begin());
+            orderList.at(0)->validate();
+            orderList.at(0)->execute();
+            orderList.erase(orderList.begin());
         }
     } //order list should be empty
 
@@ -479,17 +481,19 @@ void GameEngine::ExecuteOrders() {
     string a;
     cin >> a;
     if (a == "win") {
-
-        state = changeState(6);
+        state = State::win;
+        Notify(this);
     }
     else if (a == "executeOrder") {
-        executeOrderPhase();
-        state = changeState(5);
+        ExecuteOrdersPhase();
+        state = State::executeOrderPhase;
+        Notify(this);
 
     }
     else if (a == "new") {
-        state = changeState(4);
-        issueOrder();
+        state = State::issueOrderPhase;
+        Notify(this);
+        IssueOrdersPhase();
     }
 }
 

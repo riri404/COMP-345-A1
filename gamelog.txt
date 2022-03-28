@@ -1,15 +1,15 @@
 State: Starting game
 Command: loadmap bigeurope
-Effect:maploaded
+Effect: maploaded
 Phase: Map loaded
 Command: validatemap
-Effect:mapvalidated
+Effect: mapvalidated
 Phase: Map validated
 Command: addplayer jake
-Effect:playersadded
+Effect: playersadded
 Phase: Players added
 Command: addplayer lol
-Effect:playersadded
+Effect: playersadded
 Phase: Players added
 Command: gamestart
-Effect:assignreinforcement
+Effect: assignreinforcement

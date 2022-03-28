@@ -51,6 +51,7 @@ public:
 
 	// Mutators
 	void SetState(State);
+	void ExecuteOrders();
 	State GetState();
 	Map* GetMap();
 	Deck* GetDeck();
@@ -67,7 +68,7 @@ public:
 	void LoadMap();
 	bool ValidateMap();
 	
-	void IssueOrdersPhase(vector<Player*>, vector<Territory*>);
+	void IssueOrdersPhase();
 	//void IssueOrdersPhase(Player* player);
 
 	void MainGameLoop();
