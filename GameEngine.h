@@ -51,6 +51,7 @@ public:
 
 	// Mutators
 	void SetState(State);
+	void ExecuteOrders();
 	State GetState();
 	Map* GetMap();
 	Deck* GetDeck();

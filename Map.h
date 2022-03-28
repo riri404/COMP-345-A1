@@ -35,6 +35,7 @@ public:
 	friend bool operator==(const Territory&, const Territory&);
   friend ostream& operator<<(ostream&, const Territory&);
 	void setOwnerId(int);
+	int getOwnerId(); // to compare to owner of land 
 	int getId() const;
 	int getPlayerId() const;
 	int getArmies() const;

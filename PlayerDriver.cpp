@@ -42,7 +42,7 @@ void PlayerDriver(){
 
     //  testing toAttack()
      std::cout << "testing toAttack() method---------------------------------\n";
-     player1->toAttack();
+     player1->toAttack(territoryList);
      cout << "Attack successful" << endl;
 
 
@@ -54,7 +54,7 @@ void PlayerDriver(){
 
 
        std::cout << "testing issueOrder() method---------------------------------\n";
-       player1->issueOrder("Bomb"); 
+       player1->issueOrder(territoryList); 
        cout << "Order issued" <<endl;
     
     

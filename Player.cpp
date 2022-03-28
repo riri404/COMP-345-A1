@@ -109,60 +109,153 @@ std::ostream& operator<<(std::ostream& outs, const Player& p1)
 	return outs;
 }
 
-vector<Territory*> Player::toAttack()
+vector<Territory*> Player::toAttack(vector<Territory*> attack)
 {
-	vector<Territory*> territoriesToAttack;
-	if (territoriesToAttack != territoryList) {
-		for (auto it = territoriesToAttack.begin(); it != territoriesToAttack.end(); ++it) {
-			territoriesToAttack.push_back(*it);
-			std::cout << *it << std::endl;
-		}
-	}
+	vector<Territory*> AttackList;
+	if (AttackList!= territoryList) {
+		AttackList = getNeighbourTerritories();
 
-	return territoriesToAttack;
+		cout << "The list of territories that are be Attack" << endl;
+		for (int i = 0; i < AttackList.size(); i++)
+		{
+			cout << "Index " << i << " " << (*AttackList[i]).getName() << " " << (*AttackList[i]).getContinent() << endl;
+		}
+		// return AttackList;
+	}
+	return AttackList;
 }
 
 vector<Territory*> Player::toDefend()
 {
 
-	vector<Territory*> territoriesToDefend = territoryList;
-
-	for (auto defend = territoriesToDefend.begin(); defend != territoriesToDefend.end(); ++defend) {
-		// territoriesToDefend.push_back(*defend);
-		std::cout << *defend << std::endl;
+	vector<Territory*> DefendList;
+	Territory* temp = NULL;
+	cout << "The list of territories that are be defended" << endl;
+	for (int i = 0; i < territoryList.size(); i++)
+	{
+		cout << "Index " << i << " " << (*territoryList[i]).getName() << " " << (*territoryList[i]).getContinent() << endl;
+		temp = territoryList[i];
+		DefendList.push_back(temp);
 	}
-	return territoriesToDefend;
+	return DefendList;
 }
 
-void Player::issueOrder(string order)
+void Player::issueOrder(vector<Territory*> order)
 {
-	if (order == "Deploy") {
-		Deploy* deploy = new Deploy();
-		orderList->addToListOfOrders(deploy);
+	bool CanDeploy = false;
+	bool CanAdvance = false;
+	bool SpecialOrder = false;
+
+
+	//Returns list of enemy territories that are neighbors that we can attack
+	toAttack(order);
+
+	//Returns list of  territories that belong to the player that we can defend
+	toDefend();
+
+
+
+	//Check for dpeloy
+	if (*(this->reinforcementPool) > 0)
+	{
+		Deploy* d = new Deploy;
+		this->getOrdersList()->addToListOfOrders(d);
+		CanDeploy = true;
 	}
-	else if (order == "Advance") {
-		Advance* advance = new Advance();
-		orderList->addToListOfOrders(advance);
+
+	//Check for Advance
+	bool AdvanceAttack = true;
+	if (this->toAttack(order).size() == 0)
+		AdvanceAttack = false;
+
+	bool AdvanceDeploy = true;
+	if (this->toDefend().size() == 0)
+		AdvanceDeploy = false;
+
+	if (AdvanceAttack || AdvanceDeploy) {
+		Advance* d = new Advance;
+		this->getOrdersList()->addToListOfOrders(d);
+		CanAdvance = true;
 	}
-	else if (order == "Bomb") {
-		Bomb* bomb = new Bomb();
-		orderList->addToListOfOrders(bomb);
-	}
-	else if (order == "Blockade") {
-		Blockade* block = new Blockade();
-		orderList->addToListOfOrders(block);
-	}
-	else if (order == "Airlift") {
-		Airlift* air = new Airlift();
-		orderList->addToListOfOrders(air);
-	}
-	else if (order == "Negotiate") {
-		Negotiate* negotiate = new Negotiate();
-		orderList->addToListOfOrders(negotiate);
+
+
+	//Verify for the Execution of a Special Order
+
+	auto hand = this->getPlayerHand()->getPlayHand();
+	//Monitor if we have already pushed a  Card
+
+	//Play will remove the Card from the player Hand
+	string CardType;
+	if (hand->size() != 0) {
+		// for (auto c : *hand) {
+
+		// 	CardType = c->getCardType();
+
+		// 	if (CardType == "Bomb") {
+		// 		//Plays the Card
+		// 		c->play(CardType);
+		// 		// This breaks out of the loop so we can push one Card at a time
+		// 		break;
+		// 	}
+
+		// 	if (CardType == "Airlift") {
+		// 		c->play(CardType);
+
+		// 		// This breaks out of the loop so we can push one Card at a time
+		// 		break;
+		// 	}
+
+		// 	if (CardType == "Diplomacy") {
+		// 		c->play(CardType);
+
+		// 		// This breaks out of the loop so we can push one Card at a time
+		// 		break;
+		// 	}
+
+		// 	if (CardType == "Blockade") {
+		// 		c->play(CardType);
+
+		// 		// This breaks out of the loop so we can push one Card at a time
+		// 		break;
+		// 	}
+		// }
 	}
 	else {
-		cout << "Error! Please enter one of the following orders: 1. Deploy, 2. Advance, 3. Bomb, 4. Blockade, 5 Airlift, 6. Negotiate." << endl;
+		cout << "We have Used all the cards inside the player's hand" << endl;
+		SpecialOrder = true;
 	}
+
+	if (CanDeploy && CanAdvance && SpecialOrder) {
+		// this->FinishedIssueOrder = true;
+		return;
+	}
+}
+
+//check if territories are neighbour
+vector<Territory*> Player::getNeighbourTerritories() //help with this!!!!!!!!!!!!!!!!!!!1
+{
+	vector<Territory*> neighbourTerrritories;
+
+	// for (int i = 0; i < territoryList.size(); i++)
+	// {
+	// 	for (int j = 0; j < Map.size(); j++)
+	// 	{
+	// 		if (!territoryList[i]->getOwnerId() == Map[j]->getOwnerId())
+	// 		{
+	// 			for (int k = 0; k < neighbourTerrritories.size(); k++)
+	// 			{
+	// 				if (!neighbourTerrritories[k]->getOwnerId() == Map[j]->getOwnerId() || neighbouring_terrritories.empty())
+	// 				{
+	// 					neighbourTerrritories.push_back(Map[j]);
+	// 				}
+	// 			}
+
+	// 		}
+	// 	}
+	// }
+
+	return neighbourTerrritories;
+
 }
 
 // to calculate continent bonus for reinforcement phase
