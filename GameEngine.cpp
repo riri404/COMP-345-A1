@@ -608,3 +608,9 @@ string GameEngine::tournamentLog() {
     }
     return oss.str();
 }
+// returns true if the load was successfull, otherwise false
+bool GameEngine::loadAnotherMap(string file) {
+    map->clear();
+    map->load(file);
+    return map->validate();
+}
