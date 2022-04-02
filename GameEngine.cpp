@@ -558,6 +558,10 @@ std::string GameEngine::stringToLog() {
         case State::executeOrderPhase:
             log = "Phase: Execute order";
             break;
+        case State::tournamentStart:
+            log = "Phase: Starting tournament"
+        case State::tournamentEnd:
+            log = tournamentLog();
         default:
             log = "Unknown phase";
             break;
@@ -579,6 +583,31 @@ void GameEngine::AttachToProcessor(LogObserver* observer) {
     }
 }
 
+
+string GameEngine::tournamentLog() {
+    ostringstream oss;
+    // logging tournament parameters
+    oss << "Tournament mode:" << endl;
+    oss << "M: ";
+    for (auto map : tournamentMaps) oss << map << " ";
+    oss << endl;
+    oss << "P: ";
+    // TODO: replace player->GetPlayerName() by getter for strategy name
+    for (auto player : players) oss << player->GetPlayerName() << " ";
+    oss << endl;
+    oss << "G: " << tournamentNumOfGames << endl;
+    oss << "D: " << tournamentMaxturns << endl << endl;
+    // logging results
+    oss << "Results: " << endl;
+    for (int i = 0; i < tournamentNumOfGames; ++i) {
+        oss << "Game " << i + 1 << endl;
+        for (int j = 0; j < tournamentMaps.size(); ++ j) {
+            auto player = tournamentPlayersWon.at(i * tournamentMaps.size() + j);
+            oss << "\t" << "Map: " << tournamentMaps.at(j) << ", Won by " << player->GetPlayerName() << endl;
+        }
+    }
+    return oss.str();
+}
 // returns true if the load was successfull, otherwise false
 bool GameEngine::loadAnotherMap(string file) {
     map->clear();

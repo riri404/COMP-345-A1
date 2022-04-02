@@ -5,7 +5,6 @@
 #include <list>
 #include <fstream>
 
-class OrdersList;
 class GameEngine;
 
 class ILoggable {
