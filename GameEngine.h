@@ -113,6 +113,7 @@ private:
 	// tournament mode
 	// all of these should be reset for each game
 	vector<string> tournamentMaps; // vector of map names
+	vector<string> tournamentPlayers; // vector of player strategies, used to initialize players
 	int tournamentNumOfGames;
 	int tournamentMaxturns;
 	vector<Player*> tournamentPlayersWon; // push_back winning player after each game
