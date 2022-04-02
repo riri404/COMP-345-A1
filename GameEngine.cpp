@@ -298,9 +298,10 @@ void GameEngine::DistributeTerritories() {
 
         mapTerritories[i]->setOwnerId(tempPlayer->GetPlayerID());
 
-        Territory* tempTerritory = new Territory(*mapTerritories[i]);
+        // Territory* tempTerritory = new Territory(*mapTerritories[i]);
+        // just add the territory no need to copy
 
-        tempPlayer->addTerritory(tempTerritory);
+        tempPlayer->addTerritory(mapTerritories[i]);
 
         playerIndex++;
 
@@ -620,6 +621,7 @@ void GameEngine::reset() {
     for (auto p : players) delete p;
     players.clear();
     map->clear();
+    mapTerritories.clear();
     state = State::null;
     delete deck;
     deck = new Deck();
