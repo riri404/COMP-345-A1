@@ -628,3 +628,21 @@ void GameEngine::reset() {
     NumberOfTerritories = 0;
     numberOfPlayers = 0;
 }
+
+void GameEngine::playTournament() {
+    state = State::tournamentStart;
+    Notify(this);
+    for (int i = 0; i < tournamentNumOfGames; ++i) {
+        for (int j = 0; j < tournamentMaps.size(); ++i) {
+            reset();
+            // initialize(); feature6 to add
+            map->load("source_maps/" + tournamentMaps[i] + ".map");
+            // play game
+            // GameStart(); is this the correct function?
+            Player* playerWon = new Player(); // get player who won
+            tournamentPlayersWon.push_back(playerWon);
+        }
+    }
+    state = State::tournamentEnd;
+    Notify(this);
+}
