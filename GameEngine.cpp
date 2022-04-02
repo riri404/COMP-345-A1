@@ -640,7 +640,7 @@ void GameEngine::playTournament() {
             // play game
             // GameStart(); is this the correct function?
             Player* playerWon = new Player(); // get player who won
-            tournamentPlayersWon.push_back();
+            tournamentPlayersWon.push_back(playerWon);
         }
     }
     state = State::tournamentEnd;
