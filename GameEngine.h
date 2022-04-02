@@ -30,7 +30,7 @@ class Deck;
 
 enum  State{
 	null, start, maploaded, mapvalidated, playersadded,
-	reinforcementPhase, issueOrderPhase, executeOrderPhase, win
+	reinforcementPhase, issueOrderPhase, executeOrderPhase, win, tournamentEnd, tournamentStart
 };
 
 class GameEngine: public Subject, public ILoggable {
@@ -109,10 +109,18 @@ private:
 	Deck* deck;
 	int numberOfPlayers;
 	int NumberOfTerritories;
+
+	// tournament mode
+	// all of these should be reset for each game
+	vector<string> tournamentMaps; // vector of map names
+	int tournamentNumOfGames;
+	int tournamentMaxturns;
+	vector<Player*> tournamentPlayersWon; // push_back winning player after each game
 	
 	
 
 	vector<Territory*> mapTerritories;
 
 	string get_str_between_two_str(const string& s, const string& start_delim, const string& stop_delim);
+	string tournamentLog();
 };

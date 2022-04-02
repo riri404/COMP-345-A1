@@ -6,7 +6,6 @@
 #include <fstream>
 #include <vector>
 
-class OrdersList;
 class GameEngine;
 
 class ILoggable {
@@ -37,7 +36,6 @@ public:
   ~LogObserver();
   LogObserver(GameEngine*);
   void Update(ILoggable*);
-	void Notify(vector<string>*, vector<string>*, vector<string>*, int, int);
 private:
   std::ofstream logfile;
   GameEngine* gameEngine;

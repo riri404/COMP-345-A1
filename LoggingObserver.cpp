@@ -49,25 +49,3 @@ LogObserver::LogObserver(GameEngine* gameEngine) {
 void LogObserver::Update(ILoggable* loggable) {
     logfile << loggable->stringToLog() << std::endl;
 }
-
-void LogObserver::Notify(vector<string>* playersWon, vector<string>* maps, vector<string>* players, int numOfGames, int maxTurns) {
-    // logging tournament parameters
-    logfile << "Tournament mode:" << endl;
-    logfile << "M: ";
-    for (auto map : *maps) logfile << map << " ";
-    logfile << endl;
-    logfile << "P: ";
-    for (auto player : *players) logfile << player << " ";
-    logfile << endl;
-    logfile << "G: " << numOfGames << endl;
-    logfile << "D: " << maxturns << endl << endl;
-    // logging results
-    logfile << "Results: " << endl;
-    for (int i = 0; i < numOfGames; ++i) {
-        logfile << "Game " << i + 1 << endl;
-        for (int j = 0; j < maps->size(); ++ j) {
-            string player = (*players)[i * maps->size() + j];
-            logfile << "\t" << "Map: " << map << ", Won by " << player << endl;
-        }
-    }
-}
