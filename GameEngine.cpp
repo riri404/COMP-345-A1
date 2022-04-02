@@ -298,9 +298,10 @@ void GameEngine::DistributeTerritories() {
 
         mapTerritories[i]->setOwnerId(tempPlayer->GetPlayerID());
 
-        Territory* tempTerritory = new Territory(*mapTerritories[i]);
+        // Territory* tempTerritory = new Territory(*mapTerritories[i]);
+        // just add the territory no need to copy
 
-        tempPlayer->addTerritory(tempTerritory);
+        tempPlayer->addTerritory(mapTerritories[i]);
 
         playerIndex++;
 
@@ -559,7 +560,7 @@ std::string GameEngine::stringToLog() {
             log = "Phase: Execute order";
             break;
         case State::tournamentStart:
-            log = "Phase: Starting tournament"
+            log = "Phase: Starting tournament";
         case State::tournamentEnd:
             log = tournamentLog();
         default:
@@ -610,7 +611,20 @@ string GameEngine::tournamentLog() {
 }
 // returns true if the load was successfull, otherwise false
 bool GameEngine::loadAnotherMap(string file) {
-    map->clear();
     map->load(file);
     return map->validate();
+}
+
+void GameEngine::reset() {
+    // NOTE: All of these should be reloaded on each game in the tournament
+    tournamentPlayersWon.clear();
+    for (auto p : players) delete p;
+    players.clear();
+    map->clear();
+    mapTerritories.clear();
+    state = State::null;
+    delete deck;
+    deck = new Deck();
+    NumberOfTerritories = 0;
+    numberOfPlayers = 0;
 }
