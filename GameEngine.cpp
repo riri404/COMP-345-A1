@@ -560,7 +560,7 @@ std::string GameEngine::stringToLog() {
             log = "Phase: Execute order";
             break;
         case State::tournamentStart:
-            log = "Phase: Starting tournament"
+            log = "Phase: Starting tournament";
         case State::tournamentEnd:
             log = tournamentLog();
         default:
