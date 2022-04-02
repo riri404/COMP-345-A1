@@ -125,4 +125,5 @@ private:
 	string get_str_between_two_str(const string& s, const string& start_delim, const string& stop_delim);
 	string tournamentLog();
 	bool loadAnotherMap(string file);
+	void reset();
 };
