@@ -126,4 +126,5 @@ private:
 	string tournamentLog();
 	bool loadAnotherMap(string file);
 	void reset();
+	void playTournament();
 };
