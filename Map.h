@@ -94,7 +94,6 @@ class Map {
 	string getContinentNameById(int id);
 	friend bool contains(vector<Territory*>&, Territory*); // helper function for validating
 	void load(); // load from existing maploader
-	void clear(); // delete everything
 public:
 	~Map();                      // Destructor
 	Map(const string&);
@@ -108,6 +107,7 @@ public:
 	bool isMapLoaded();
 	vector<Territory*> GetMapTerritories();
 	int GetMapTerritoriesNumber();
+	void clear(); // delete everything
 };
 
 //---------------------------Map loader--------------------------

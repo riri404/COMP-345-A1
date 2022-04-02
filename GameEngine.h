@@ -115,4 +115,5 @@ private:
 	vector<Territory*> mapTerritories;
 
 	string get_str_between_two_str(const string& s, const string& start_delim, const string& stop_delim);
+	bool loadAnotherMap(string file);
 };

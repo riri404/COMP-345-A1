@@ -578,3 +578,10 @@ void GameEngine::AttachToProcessor(LogObserver* observer) {
         i->Attach(observer);
     }
 }
+
+// returns true if the load was successfull, otherwise false
+bool GameEngine::loadAnotherMap(string file) {
+    map->clear();
+    map->load(file);
+    return map->validate();
+}
