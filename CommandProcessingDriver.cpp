@@ -9,6 +9,14 @@ void CommandProcessorDriver() {
     commandProcessorObj.gameEnginePtr = new GameEngine();
     FileCommandProcessorAdapter* adaptor;
 
+
+
+    //Cheater Neutral Aggressive Benevolent
+    commandProcessorObj.TournamentFunctionInput("tournament M map1 map2 map3 map4 map5 map6 P Aggressive sami wrong blabla the5th G 2 D 100");
+
+    commandProcessorObj.TournamentValidation();
+    
+    cout << endl;
     cout << "Type >> console << to use the (-console)" << endl;
     cout << "Or type the >> file name << that you want to use (-file)." << endl;
     string userChoice;
