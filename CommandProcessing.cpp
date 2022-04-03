@@ -9,6 +9,22 @@
 #include <regex>
 #include <utility>
 using namespace std;
+// This free function split a string to several components according to the delimiter
+//source: https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
+vector<string> split(string s, string delimiter) {
+	size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+	string token;
+	vector<string> res;
+
+	while ((pos_end = s.find(delimiter, pos_start)) != string::npos) {
+		token = s.substr(pos_start, pos_end - pos_start);
+		pos_start = pos_end + delim_len;
+		res.push_back(token);
+	}
+
+	res.push_back(s.substr(pos_start));
+	return res;
+}
 
 //class CommandProcessor;
 //================================ Command ========================================================================
@@ -23,8 +39,12 @@ Command::Command() {
 Command::Command(string commandInfo) : CommandName(commandInfo), CommandEffect("no Effect") {
 	regex loadMapRegex("loadmap \\S+");
 	regex addPlayerRegex("addplayer \\S+");
-	// initialize command type
-	if( regex_match(commandInfo, loadMapRegex)){
+	// initialize command type  
+
+     if (commandInfo == "tournament") {
+	    type = CommandType::tournament;
+	}
+	else if( regex_match(commandInfo, loadMapRegex)){
 		type = CommandType::loadmap;
 	}
 	else if (commandInfo=="validatemap") {
@@ -113,6 +133,9 @@ CommandProcessor& CommandProcessor::operator =(const CommandProcessor& other) {
 // readCommand() reads a string from the console and
 // stores the command internally in a collection of Command objects using the saveCommand() method
 
+
+
+
 string CommandProcessor::readCommand() {
 	cout << "Please enter a command: " << endl;
 	string input;
@@ -146,6 +169,7 @@ void CommandProcessor::printAllSavedCommands() {
 }
 // validate() checks if a certain command has been entered is a valid command in the current state of
 // the game engine. if its not valid the error msg will be saved in the effect of the command.
+
 bool CommandProcessor::validate(Command* command) {
     	if (command->type == Command::CommandType::loadmap) {
 		if (gameEnginePtr->GetState() ==   start ||gameEnginePtr->GetState() == maploaded) {
@@ -156,6 +180,15 @@ bool CommandProcessor::validate(Command* command) {
 		command->saveEffect("Command (" + command->CommandName + ") is not a valid command in the current state of the game");
 		return false;
 	}
+		else if (command->type == Command::CommandType::tournament) {
+			if (gameEnginePtr->GetState() == start ) {
+				command->saveEffect("Tournament Mode activated.");
+				return true;
+			}
+			else
+				command->saveEffect("Command (" + command->CommandName + ") is not a valid command in the current state of the game");
+			return false;
+		}
     	else if (command->type == Command::CommandType::addplayer) {
 		if (gameEnginePtr->GetState() == mapvalidated || gameEnginePtr->GetState() == playersadded) {
 			command->saveEffect("playersadded");
@@ -210,6 +243,104 @@ bool CommandProcessor::validate(Command* command) {
 	}
 	return false;
 }
+//0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+void CommandProcessor::TournamentFunctionInput(string input) {
+	vector<string> enteredTournamentString = split(input, " ");
+	int i = 1; // skip the first word "tournament"
+	while (i < enteredTournamentString.size()) {
+		if (enteredTournamentString[i] == "M") {
+			while (enteredTournamentString[++i] != "P") {
+				allMaps.push_back(enteredTournamentString[i]);
+
+			}
+		}
+		else if (enteredTournamentString[i] == "P") {
+			while (enteredTournamentString[++i] != "G") {
+				allPlayerStrategies.push_back(enteredTournamentString[i]);
+			}
+
+		}
+		else if (enteredTournamentString[i] == "G") {
+			i++;
+			string temp;
+			temp = enteredTournamentString[i++];
+			if (!isdigit(temp[0])) {
+				cout << "The number of games has to be a digit" << endl;
+				exit(0);
+			}
+			numberOfGames = stoi(temp);
+
+		}
+		else if (enteredTournamentString[i] == "D") {
+			i++;
+			string temp;
+			temp = enteredTournamentString[i++];
+			if (!isdigit(temp[0])) {
+				cout << "The max number of turns has to be a digit" << endl;
+				exit(0);
+			}
+			maxNumberOfTurns = stoi(temp);
+		}
+	}
+
+	// output to check result
+	cout << ">> MAPS ENTERED <<" << endl;
+	for (string s : allMaps)
+		cout << s <<endl;
+	cout << endl;
+	cout << ">> PLAYER STRATEGIES ENTERED <<" << endl;
+	for (string s : allPlayerStrategies)
+		cout << s <<endl;
+	cout << endl;
+	cout << ">> NUMBER OF GAMES <<" << endl<< numberOfGames << endl;
+	cout << ">> MAX NUMBER OF TURNS <<" << endl << maxNumberOfTurns << endl;
+	cout << endl;
+}
+
+bool CommandProcessor::TournamentValidation() {
+	bool allGood = true;
+	if (allMaps.size() < 1 || allMaps.size() > 5) {
+		cout << "Please enter 1-5 maps" << endl;
+		allGood = false;
+	}
+	if (allPlayerStrategies.size() < 2 || allPlayerStrategies.size() > 4) {
+		cout << "Please enter 2-4 players strategies" << endl;
+		allGood = false;
+	}
+	if (numberOfGames < 1 || numberOfGames > 5) {
+		cout << "Please enter a number among 1,2,3,4,5 for number of games" << endl;
+		allGood = false;
+	}
+	if (maxNumberOfTurns < 10 || maxNumberOfTurns > 50) {
+		cout << "Please enter a number between 10 and 50 for max number of turns" << endl;
+		allGood = false;
+	}
+	// validate strategy
+	string strategies[4] = { "Aggressive" , "Benevolent" , "Neutral", "Cheater" };
+	int invalidStrategyCounter = 0;
+	//bool isStrategyValid = false;
+	for (int i = 0; i < allPlayerStrategies.size(); i++) {
+		for (int j = 0; j < 4; j++) {
+			if (allPlayerStrategies[i] == strategies[j]) {
+				break;
+			//isStrategyValid = true;
+		}
+			else if (allPlayerStrategies[i] != strategies[j]&& j==3) {
+				cout << allPlayerStrategies[i] +" X NOT VALID" << endl;
+				invalidStrategyCounter++;
+			}
+		}
+	}
+	if (invalidStrategyCounter>0) {
+		cout << invalidStrategyCounter;
+		cout << " Players Strategies entered are NOT valid" << endl;
+		allGood = false;
+	}
+	return allGood;
+}
+//0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+
 
 string CommandProcessor::stringToLog() {                      //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>>>>>> part 5
 	if (!commandObjects.empty())

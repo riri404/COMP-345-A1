@@ -11,7 +11,7 @@
 
 
 int main() {
-    
+    CommandProcessorDriver();
  /* std::cout << "-------------MAP DRIVER-------------" << std::endl;
   MapDriver();
   std::cout << "-------------CARDS DRIVER-------------" << std::endl;

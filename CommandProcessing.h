@@ -4,15 +4,10 @@
 #include <fstream>
 #include<vector>
 #include<string>
-//#include "GameEngine.h"
 #include "LoggingObserver.h"
 
 using namespace std;
-class GameEngine; //((client))
-//class CommandProcessor;//((target))
-//class Command;
-//class FileCommandProcessorAdapter;//((Adaptor))
-//class FileLineReader;//((Adaptee))
+class GameEngine; //((client)
 class ILoggable;
 class Observer;
 
@@ -20,7 +15,7 @@ class Observer;
 class Command : public ILoggable, public Subject
 {
 public:
-	enum class CommandType { loadmap, validatemap, addplayer, gamestart, replay, quit, none };
+	enum class CommandType { tournament,loadmap, validatemap, addplayer, gamestart, replay, quit, none };
 	string CommandName;
 	string CommandEffect;
 	CommandType type;
@@ -48,9 +43,20 @@ public:
 class CommandProcessor : public ILoggable, public Subject
 {
 protected:
+
 	virtual string readCommand();
 	void saveCommand( Command* command);// saves the string of the command inside the command itself and then
 public:
+	//000000000000000000000000000000000000000000000000000000000
+
+	vector <string> allMaps;
+	vector <string> allPlayerStrategies;
+	int numberOfGames = 0;
+	int maxNumberOfTurns = 0;
+
+	void TournamentFunctionInput(string);
+	bool TournamentValidation();
+	//000000000000000000000000000000000000000000000000000000000
 	friend void CommandProcessorDriver();
 	GameEngine* gameEnginePtr;
 	vector<Command*> commandObjects;
