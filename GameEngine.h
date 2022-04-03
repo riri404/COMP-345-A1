@@ -127,4 +127,6 @@ private:
 	bool loadAnotherMap(string file);
 	void reset();
 	void playTournament();
+	void initTournamentParams();
+	void initTournament(); // @Bero do this part
 };

@@ -12,7 +12,7 @@ void CommandProcessorDriver() {
 
 
     //Cheater Neutral Aggressive Benevolent
-    commandProcessorObj.TournamentFunctionInput("tournament M map1 map2 map3 map4 map5 map6 P Aggressive sami wrong blabla the5th G 2 D 100");
+    commandProcessorObj.TournamentFunctionInput("tournament -M map1 map2 map3 map4 map5 map6 -P Aggressive sami wrong blabla the5th -G 2 -D 100");
 
     commandProcessorObj.TournamentValidation();
     
