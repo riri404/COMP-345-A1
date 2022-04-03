@@ -1,7 +1,9 @@
+#include "Player.h"
+#include "Map.h"
+#include "Cards.h"
 #include <vector>
 #include <iostream>
 #include <string>
-#include "Player.h"
 using namespace std;
 
 Player::Player()
@@ -11,6 +13,7 @@ Player::Player()
 	playerID = new int(-1);
 	territoryList = *(new vector<Territory*>);
 	handCards = new Hand();
+  // list = (*new vector<Order>);
 	orderList = new OrdersList();
 }
 
@@ -52,6 +55,24 @@ Player::~Player()
 	}
 	territoryList.clear();
 
+	// Added by Justine & Jennifer
+	/*for (auto l : list) {
+		delete l;
+	}
+	list.clear();*/
+
+	/*for (auto n : playerNegociate) {
+		delete n;
+	}
+	playerNegociate.clear();*/
+
+	/*delete deck;
+	deck = nullptr;*/
+
+	/*for (auto lp : listOfPlayers) {
+		delete lp;
+	}
+	listOfPlayers.clear();*/
 }
 
 Player& Player::operator=(const Player& p)
@@ -88,73 +109,229 @@ std::ostream& operator<<(std::ostream& outs, const Player& p1)
 	return outs;
 }
 
-vector<Territory*> Player::toAttack()
+vector<Territory*> Player::toAttack(vector<Territory*> attack)
 {
-	vector<Territory*> territoriesToAttack;
-	if (territoriesToAttack != territoryList) {
-		for (auto it = territoriesToAttack.begin(); it != territoriesToAttack.end(); ++it) {
-			territoriesToAttack.push_back(*it);
-			std::cout << *it << std::endl;
-		}
-	}
+	vector<Territory*> AttackList;
+	if (AttackList!= territoryList) {
+		AttackList = getNeighbourTerritories();
 
-	return territoriesToAttack;
+		cout << "The list of territories that are be Attack" << endl;
+		for (int i = 0; i < AttackList.size(); i++)
+		{
+			cout << "Index " << i << " " << (*AttackList[i]).getName() << " " << (*AttackList[i]).getContinent() << endl;
+		}
+		// return AttackList;
+	}
+	return AttackList;
 }
 
 vector<Territory*> Player::toDefend()
 {
 
-	vector<Territory*> territoriesToDefend = territoryList;
-
-	for (auto defend = territoriesToDefend.begin(); defend != territoriesToDefend.end(); ++defend) {
-		// territoriesToDefend.push_back(*defend);
-		std::cout << *defend << std::endl;
+	vector<Territory*> DefendList;
+	Territory* temp = NULL;
+	cout << "The list of territories that are be defended" << endl;
+	for (int i = 0; i < territoryList.size(); i++)
+	{
+		cout << "Index " << i << " " << (*territoryList[i]).getName() << " " << (*territoryList[i]).getContinent() << endl;
+		temp = territoryList[i];
+		DefendList.push_back(temp);
 	}
-	return territoriesToDefend;
+	return DefendList;
 }
 
-void Player::issueOrder(string order)
+void Player::issueOrder(vector<Territory*> order)
 {
-	if (order == "Deploy") {
-		Deploy* deploy = new Deploy();
-		orderList->addToListOfOrders(deploy);
+	bool CanDeploy = false;
+	bool CanAdvance = false;
+	bool SpecialOrder = false;
+
+
+	//Returns list of enemy territories that are neighbors that we can attack
+	toAttack(order);
+
+	//Returns list of  territories that belong to the player that we can defend
+	toDefend();
+
+
+
+	//Check for dpeloy
+	if (*(this->reinforcementPool) > 0)
+	{
+		Deploy* d = new Deploy;
+		this->getOrdersList()->addToListOfOrders(d);
+		CanDeploy = true;
 	}
-	else if (order == "Advance") {
-		Advance* advance = new Advance();
-		orderList->addToListOfOrders(advance);
+
+	//Check for Advance
+	bool AdvanceAttack = true;
+	if (this->toAttack(order).size() == 0)
+		AdvanceAttack = false;
+
+	bool AdvanceDeploy = true;
+	if (this->toDefend().size() == 0)
+		AdvanceDeploy = false;
+
+	if (AdvanceAttack || AdvanceDeploy) {
+		Advance* d = new Advance;
+		this->getOrdersList()->addToListOfOrders(d);
+		CanAdvance = true;
 	}
-	else if (order == "Bomb") {
-		Bomb* bomb = new Bomb();
-		orderList->addToListOfOrders(bomb);
-	}
-	else if (order == "Blockade") {
-		Blockade* block = new Blockade();
-		orderList->addToListOfOrders(block);
-	}
-	else if (order == "Airlift") {
-		Airlift* air = new Airlift();
-		orderList->addToListOfOrders(air);
-	}
-	else if (order == "Negotiate") {
-		Negotiate* negotiate = new Negotiate();
-		orderList->addToListOfOrders(negotiate);
+
+
+	//Verify for the Execution of a Special Order
+
+	auto hand = this->getPlayerHand()->getPlayHand();
+	//Monitor if we have already pushed a  Card
+
+	//Play will remove the Card from the player Hand
+	string CardType;
+	if (hand->size() != 0) {
+		// for (auto c : *hand) {
+
+		// 	CardType = c->getCardType();
+
+		// 	if (CardType == "Bomb") {
+		// 		//Plays the Card
+		// 		c->play(CardType);
+		// 		// This breaks out of the loop so we can push one Card at a time
+		// 		break;
+		// 	}
+
+		// 	if (CardType == "Airlift") {
+		// 		c->play(CardType);
+
+		// 		// This breaks out of the loop so we can push one Card at a time
+		// 		break;
+		// 	}
+
+		// 	if (CardType == "Diplomacy") {
+		// 		c->play(CardType);
+
+		// 		// This breaks out of the loop so we can push one Card at a time
+		// 		break;
+		// 	}
+
+		// 	if (CardType == "Blockade") {
+		// 		c->play(CardType);
+
+		// 		// This breaks out of the loop so we can push one Card at a time
+		// 		break;
+		// 	}
+		// }
 	}
 	else {
-		cout << "Error! Please enter one of the following orders: 1. Deploy, 2. Advance, 3. Bomb, 4. Blockade, 5 Airlift, 6. Negotiate." << endl;
+		cout << "We have Used all the cards inside the player's hand" << endl;
+		SpecialOrder = true;
+	}
+
+	if (CanDeploy && CanAdvance && SpecialOrder) {
+		// this->FinishedIssueOrder = true;
+		return;
 	}
 }
 
-/*
-void Player::issueOrder()
+//check if territories are neighbour
+vector<Territory*> Player::getNeighbourTerritories() //help with this!!!!!!!!!!!!!!!!!!!1
 {
-	Order* order = new Bomb();
-	orderList.push_back(order);
-	std::cout << *order << std::endl;
-}*/
+	vector<Territory*> neighbourTerrritories;
 
-int Player::getReinforcePool() {
+	// for (int i = 0; i < territoryList.size(); i++)
+	// {
+	// 	for (int j = 0; j < Map.size(); j++)
+	// 	{
+	// 		if (!territoryList[i]->getOwnerId() == Map[j]->getOwnerId())
+	// 		{
+	// 			for (int k = 0; k < neighbourTerrritories.size(); k++)
+	// 			{
+	// 				if (!neighbourTerrritories[k]->getOwnerId() == Map[j]->getOwnerId() || neighbouring_terrritories.empty())
+	// 				{
+	// 					neighbourTerrritories.push_back(Map[j]);
+	// 				}
+	// 			}
+
+	// 		}
+	// 	}
+	// }
+
+	return neighbourTerrritories;
+
+}
+
+// to calculate continent bonus for reinforcement phase
+bool Player::playerContinentBouns()
+{
+	string a = "NA";
+	string b = "AS";
+	string c = "SA";
+	string d = "AU";
+	string e = "EU";
+	string f = "AF";
+	int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0;
+	for (int i = 0; i < territoryList.size(); i++)
+	{
+		if ((*territoryList[i]).getContinent().compare(a))
+		{
+			c1++;
+		}
+		if ((*territoryList[i]).getContinent().compare(b))
+		{
+			c2++;
+		}
+		if ((*territoryList[i]).getContinent().compare(c))
+		{
+			c3++;
+		}
+		if ((*territoryList[i]).getContinent().compare(d))
+		{
+			c4++;
+		}
+		if ((*territoryList[i]).getContinent().compare(e))
+		{
+			c5++;
+		}
+		if ((*territoryList[i]).getContinent().compare(f))
+		{
+			c6++;
+		}
+
+
+	}
+	if (c1 == 3) { 
+		return true; 
+	}
+
+	if (c2 == 3) { 
+		return true;
+	}
+
+	if (c3 == 1) { 
+		return true; 
+	}
+	if (c4 == 1) { 
+		return true;
+	}
+	if (c5 == 1) { 
+		return true; 
+	}
+	if (c6 == 1) { 
+		return true; 
+	}
+
+	return false;
+}
+
+int Player::getReinforcementPool() {
 	return *(this->reinforcementPool);
 }
+
+void Player::setReinforcementPool(int r)
+{
+	//return int; // There is an error here
+	*this->reinforcementPool = r;
+}
+
+
 
 void Player::setName(const string& n) {
 	*name = n;
@@ -171,6 +348,10 @@ vector<Territory*> Player::getTerritoryList() {
 
 string Player::GetPlayerName() const{
 	return *name;
+}
+
+Hand* Player::getPlayerHand() {
+	return handCards;
 }
 
 int Player::GetPlayerID() const {
@@ -198,4 +379,46 @@ void Player::AddCard(Cards* card) {
 
 void Player::Attach(LogObserver* observer) {
 	orderList->Attach(observer);
+}
+
+// Added by justine & jennifer
+void Player::setTerritory(Territory* newTerritory)
+{
+	territoryList.push_back(newTerritory);
+}
+
+void Player::removeTerritory(int i)
+{
+	this->territoryList.erase(this->territoryList.begin() + i);
+}
+
+OrdersList* Player::getOrdersList() {
+	return orderList;
+}
+
+void Player::setOrder(Order* order) {
+	orderList->addToListOfOrders(order);
+}
+
+void Player::addNegociate(Player* p) {
+	playerNegociate.push_back(p);
+}
+
+bool Player::isNegociating(Player* p) {
+	for (int i = 0; i < playerNegociate.size(); i++) {
+		if (playerNegociate.at(i) == p) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void Player::addPlayer(Player* p)
+{
+	players.push_back(p);
+}
+
+vector<Player*> Player::getListOfPlayers()
+{
+	return players;
 }

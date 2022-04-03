@@ -8,10 +8,11 @@
 #include <string>
 using namespace std;
 
-class Orders;
-class OrderList;
+class Order;
+class OrdersList;
 class Cards;
 class Hand;
+class Deck; // Added by Justine & Jennifer
 
 void PlayerDriver();
 
@@ -30,22 +31,39 @@ public:
 	friend ostream& operator <<(ostream& outs, const Player& p);
 
 	//methods
-	vector<Territory*> toAttack(); // method to attck; returns orders list
+	vector<Territory*> toAttack(vector<Territory*> attack); // method to attck; returns orders list
 	vector<Territory*> toDefend(); // method to defend; returns ordrs list
-	void issueOrder(string order);
+	void issueOrder(vector<Territory*>);
 	void setName(const string& name);
 	void setPlayerID(const int& playerID);
 	vector<Territory*> getTerritoryList();
+	vector<Territory*> getNeighbourTerritories();
+	bool playerContinentBouns(); 
 	//void setOrder(Orders*);
 	string GetPlayerName() const;
 	int GetPlayerID() const;
 	void addTerritory(Territory*);
 	void addToReinforcePool(int armies); // Add to reinforcement pool
 	void removeFromReinforcePool(int armies); // Remove from reinforcement pool
-	int getReinforcePool();
+	int getReinforcementPool();
+	void setReinforcementPool(int);
 	void AddCard(Cards*);
 	void Attach(LogObserver* observer);
 
+
+	// Added & modified by Justine & Jennifer 
+	void setTerritory(Territory*);
+	void removeTerritory(int i);
+	Hand* getPlayerHand();
+
+	OrdersList* getOrdersList();
+	void setOrder(Order* order);
+
+	void addNegociate(Player* p);
+	bool isNegociating(Player* p);
+
+	void addPlayer(Player* p);
+	vector<Player*> getListOfPlayers();
 
 private:
 	//attributes/ variables
@@ -55,4 +73,12 @@ private:
 	vector<Territory*> territoryList;
 	OrdersList* orderList;
 	Hand* handCards;
+
+	vector<Player*> players;
+
+	// Added by Justine & Jennifer 
+	// vector<Order*> list;  we already have orderList
+	vector<Player*> playerNegociate;
+	Deck* deck;
+	string pName;
 };

@@ -4,38 +4,38 @@
 #include <iostream>
 
 Observer::Observer() {
-  std::cout << "bla" << std::endl;
+    std::cout << "bla" << std::endl;
 };
 
 Observer::~Observer() {
-  std::cout << "bla" << std::endl;
+    std::cout << "bla" << std::endl;
 };
 
 Subject::Subject() {
-  observers = new std::list<Observer*>;
+    observers = new std::list<Observer*>;
 }
 
 Subject::~Subject() {
-  for (auto observer : *observers) delete observer;
-  delete observers;
+    for (auto observer : *observers) delete observer;
+    delete observers;
 }
 
 void Subject::Attach(Observer* o) {
-  observers->push_back(o);
+    observers->push_back(o);
 };
 
 void Subject::Detach(Observer* o) {
-  observers->remove(o);
+    observers->remove(o);
 };
 
 void Subject::Notify(ILoggable* loggable) {
-  for (auto i = observers->begin(); i != observers->end(); ++i) {
-    (*i)->Update(loggable);
-  }
+    for (auto i = observers->begin(); i != observers->end(); ++i) {
+        (*i)->Update(loggable);
+    }
 };
 
 LogObserver::~LogObserver() {
-  logfile.close();
+    logfile.close();
 }
 
 LogObserver::LogObserver(GameEngine* gameEngine) {
@@ -47,5 +47,5 @@ LogObserver::LogObserver(GameEngine* gameEngine) {
 }
 
 void LogObserver::Update(ILoggable* loggable) {
-  logfile << loggable->stringToLog() << std::endl;
+    logfile << loggable->stringToLog() << std::endl;
 }

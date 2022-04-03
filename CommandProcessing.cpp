@@ -2,10 +2,10 @@
 #include "CommandProcessing.h"
 #include "LoggingObserver.h"
 #include "GameEngine.h"
-#include<limits>
-#include<vector>
-#include<string>
-#include<fstream>
+#include <limits>
+#include <vector>
+#include <string>
+#include <fstream>
 #include <regex>
 #include <utility>
 using namespace std;
@@ -101,7 +101,7 @@ void Command::saveEffect(string effect) {
 }
 //virtual method inherited from Subject class
 string Command::stringToLog() {//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>>>>>> part 5
-	return "Effect:" + CommandEffect;
+	return "Effect: " + CommandEffect;
 }
 //-------------------------------------------------- CommandProcessor ((target))-----------------------------------------------
 //Constructors

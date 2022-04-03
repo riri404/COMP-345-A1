@@ -5,9 +5,9 @@ bin
 *.vcxproj
 *.filters
 *.user
-x64/
+x64/*
 COMP345/
 Debug/
-x64/Debug/
+x64/Debug/*
 *.dSYM/
 *.sln

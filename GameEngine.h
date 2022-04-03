@@ -24,11 +24,13 @@ void EngineDriver();
 
 
 
+class Deck;
+
 // enum Phase {StartUp, Play };
 
 enum  State{
 	null, start, maploaded, mapvalidated, playersadded,
-	reinforcementPhase, issueOrderPhase, executeOrderPhase, win
+	reinforcementPhase, issueOrderPhase, executeOrderPhase, win, tournamentEnd, tournamentStart
 };
 
 class GameEngine: public Subject, public ILoggable {
@@ -49,6 +51,7 @@ public:
 
 	// Mutators
 	void SetState(State);
+	void ExecuteOrders();
 	State GetState();
 	Map* GetMap();
 	Deck* GetDeck();
@@ -56,8 +59,6 @@ public:
 	int GetNumberOfPlayers();
 	vector<Player*> GetPlayers();
 	vector<Player*>* GetPlayersAdress();
-	
-	
 	void SetNumberOfPlayers(int);
 
 	void AddPlayer();
@@ -68,14 +69,14 @@ public:
 	bool ValidateMap();
 	
 	void IssueOrdersPhase();
-	void IssueOrdersPhase(Player* player);
+	//void IssueOrdersPhase(Player* player);
 
 	void MainGameLoop();
 	void StartupPhase();
 	void ReinforcementPhase();
 
 	void ExecuteOrdersPhase();
-	void ExecuteOrdersPhase(Player* player);
+	//void ExecuteOrdersPhase(Player* player);
 
 
 	void PlayerDrawCard(Player* player);
@@ -100,19 +101,30 @@ public:
 	void AttachToOrdersList(LogObserver* observer);
 	void AttachToProcessor(LogObserver* observer);
 
-
-
 private:
 	State state;
 	Map* map;
+	MapLoader* mapLoader; //for reinforcement phase
 	vector<Player*> players;
 	Deck* deck;
 	int numberOfPlayers;
 	int NumberOfTerritories;
+
+	// tournament mode
+	// all of these should be reset for each game
+	vector<string> tournamentMaps; // vector of map names
+	vector<string> tournamentPlayers; // vector of player strategies, used to initialize players
+	int tournamentNumOfGames;
+	int tournamentMaxturns;
+	vector<Player*> tournamentPlayersWon; // push_back winning player after each game
 	
 	
 
 	vector<Territory*> mapTerritories;
 
 	string get_str_between_two_str(const string& s, const string& start_delim, const string& stop_delim);
+	string tournamentLog();
+	bool loadAnotherMap(string file);
+	void reset();
+	void playTournament();
 };
