@@ -133,6 +133,16 @@ void GameEngine::StartupPhase() {
     cout << "Welcome to Warzone" << endl << endl;
 
     Start();
+    string input = "";
+    std::cout << "Do you want to play tournament mode? Enter (y/n): ";
+    while (input != "y" || input != "n") {
+        std::cout << "Enter (y/n): ";
+        std::cin >> input;
+    }
+    if (input == "y") {
+        playTournament();
+        return;
+    }
     LoadMap();
     ValidateMap();
     AddPlayers();
@@ -630,12 +640,21 @@ void GameEngine::reset() {
 }
 
 void GameEngine::playTournament() {
+    std::cout << "Use \"tournament -M <listofmaps> -P <listofplayerstrategies> -G <numberofgames> -D <maxnumberofturns>\" to enter the parameters" << std::endl;
+    string input = "";
+    while (true) {
+        std::cin >> input;
+        processor->TournamentFunctionInput(input);
+        if (processor->TournamentValidation()) break;
+    } 
+    // input is valid, so set the parameters
+    initTournamentParams();
     state = State::tournamentStart;
     Notify(this);
     for (int i = 0; i < tournamentNumOfGames; ++i) {
         for (int j = 0; j < tournamentMaps.size(); ++i) {
             reset();
-            // initialize(); feature6 to add
+            // initTournament(); feature6 to add
             map->load("source_maps/" + tournamentMaps[i] + ".map");
             // play game
             // GameStart(); is this the correct function?
@@ -645,4 +664,18 @@ void GameEngine::playTournament() {
     }
     state = State::tournamentEnd;
     Notify(this);
+}
+
+void GameEngine::initTournamentParams() {
+    tournamentMaps = processor->allMaps;
+    tournamentPlayers = processor->allPlayerStrategies;
+    tournamentNumOfGames = processor->numberOfGames;
+    tournamentMaxturns = processor->maxNumberOfTurns;
+}
+
+void GameEngine::initTournament() {
+    // TODO: @Bero
+    // initialize players using tournamentPlayers (string of player strategies, wait for part 1 to complete this)
+    // initialize deck? (not sure how it works)
+    // anything else missing?
 }

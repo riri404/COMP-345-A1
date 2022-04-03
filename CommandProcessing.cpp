@@ -248,19 +248,19 @@ void CommandProcessor::TournamentFunctionInput(string input) {
 	vector<string> enteredTournamentString = split(input, " ");
 	int i = 1; // skip the first word "tournament"
 	while (i < enteredTournamentString.size()) {
-		if (enteredTournamentString[i] == "M") {
-			while (enteredTournamentString[++i] != "P") {
+		if (enteredTournamentString[i] == "-M") {
+			while (enteredTournamentString[++i] != "-P") {
 				allMaps.push_back(enteredTournamentString[i]);
 
 			}
 		}
-		else if (enteredTournamentString[i] == "P") {
-			while (enteredTournamentString[++i] != "G") {
+		else if (enteredTournamentString[i] == "-P") {
+			while (enteredTournamentString[++i] != "-G") {
 				allPlayerStrategies.push_back(enteredTournamentString[i]);
 			}
 
 		}
-		else if (enteredTournamentString[i] == "G") {
+		else if (enteredTournamentString[i] == "-G") {
 			i++;
 			string temp;
 			temp = enteredTournamentString[i++];
@@ -271,7 +271,7 @@ void CommandProcessor::TournamentFunctionInput(string input) {
 			numberOfGames = stoi(temp);
 
 		}
-		else if (enteredTournamentString[i] == "D") {
+		else if (enteredTournamentString[i] == "-D") {
 			i++;
 			string temp;
 			temp = enteredTournamentString[i++];
