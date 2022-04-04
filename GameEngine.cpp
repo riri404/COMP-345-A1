@@ -43,6 +43,7 @@ GameEngine::~GameEngine()
     map = NULL;
     delete this->deck;
     deck = NULL;
+    
 
     delete this->processor->gameEnginePtr;
     processor->gameEnginePtr = NULL;
@@ -133,13 +134,25 @@ void GameEngine::StartupPhase() {
     cout << "Welcome to Warzone" << endl << endl;
 
     Start();
+
+    //Q This sould be implemented throug a command 
+    // "During the start game state, a new tournament command can be entered by the user, 
+    // which triggers the Tournament Mode"
+
     string input = "";
     std::cout << "Do you want to play tournament mode? Enter (y/n): ";
-    while (input != "y" || input != "n") {
+
+  //  while (input != "y" || input != "n") { // does not work with strings
+    while (input.compare("y") != 0) {
         std::cout << "Enter (y/n): ";
         std::cin >> input;
+        if (input.compare("e") == 0) {
+            break;
+        }
     }
-    if (input == "y") {
+   // if (input == "y") {
+    if (input.compare("y") == 0) {
+     
         playTournament();
         return;
     }
@@ -295,6 +308,27 @@ void GameEngine::AddPlayer() {
     Notify(this);    
 }
 
+void GameEngine::AddStrategyPlayer(string strategyName, int playerID) {
+
+    string playerName = strategyName;
+
+  //  playerName = SelectName(commandEntered->GetCommandName());
+
+    Player* player = new Player();
+
+    player->setName(playerName);
+    player->setPlayerID(playerID);
+
+    players.push_back(player);
+    
+    cout << "Player " << playerID << ". " << playerName << " -> has been created. " << endl << endl;
+    state = State::playersadded;
+    cout << "GamePhase: players added" << endl << endl;
+    Notify(this);    
+}
+
+
+
 void GameEngine::DistributeTerritories() {
 
     mapTerritories = map->GetMapTerritories();
@@ -415,7 +449,7 @@ void GameEngine::ReinforcementPhase() {
     }
 
     cout << endl << "end of Reinforcement phase" << endl << endl;
-    // IssueOrdersPhase(); //why????????????????????????????
+    // IssueOrdersPhase(); //why????????????????????????????// this was from the first assignment, the logic changed sience
 }
 
 
@@ -627,6 +661,7 @@ bool GameEngine::loadAnotherMap(string file) {
 
 void GameEngine::reset() {
     // NOTE: All of these should be reloaded on each game in the tournament
+    //Q Should not we call the destructors?
     tournamentPlayersWon.clear();
     for (auto p : players) delete p;
     players.clear();
@@ -637,32 +672,47 @@ void GameEngine::reset() {
     deck = new Deck();
     NumberOfTerritories = 0;
     numberOfPlayers = 0;
+    // we should use delete to call the destructures 
 }
 
 void GameEngine::playTournament() {
-    std::cout << "Use \"tournament -M <listofmaps> -P <listofplayerstrategies> -G <numberofgames> -D <maxnumberofturns>\" to enter the parameters" << std::endl;
-    string input = "";
+    
     while (true) {
+        std::cout << "Use \"tournament -M <listofmaps> -P <listofplayerstrategies> -G <numberofgames> -D <maxnumberofturns>\" to enter the parameters" << std::endl;
+        string input = "";
         std::cin >> input;
         processor->TournamentFunctionInput(input);
         if (processor->TournamentValidation()) break;
     } 
+
+   // tournamentMaps = processor->allMaps;
+   // tournamentNumOfGames = processor->numberOfGames;
+   
     // input is valid, so set the parameters
     initTournamentParams();
     state = State::tournamentStart;
+    //Q why are we changing to tournamentStart state?
     Notify(this);
     for (int i = 0; i < tournamentNumOfGames; ++i) {
+      
+        //Q where are you initializing tournament maps?? found it in the initTournamentParams
         for (int j = 0; j < tournamentMaps.size(); ++i) {
             reset();
             // initTournament(); feature6 to add
             map->load("source_maps/" + tournamentMaps[i] + ".map");
             // play game
-            // GameStart(); is this the correct function?
-            Player* playerWon = new Player(); // get player who won
+            GameStart(); // is this the correct function? //Q yes
+
+            Player* playerWon = new Player(); // get player who won //Q is this a place holder?
             tournamentPlayersWon.push_back(playerWon);
         }
     }
+
+
+
+  
     state = State::tournamentEnd;
+    //Q should we sandwish the tournement with those states
     Notify(this);
 }
 
@@ -676,6 +726,15 @@ void GameEngine::initTournamentParams() {
 void GameEngine::initTournament() {
     // TODO: @Bero
     // initialize players using tournamentPlayers (string of player strategies, wait for part 1 to complete this)
+    //Q tournamentPlayers = processor->allPlayerStrategies; // initiated in initTournamentParams
+    int playerID = 1;
+    for (string& player : tournamentPlayers) // access by reference to avoid copying
+    {
+        AddStrategyPlayer(player, playerID);
+        playerID++;
+    }
     // initialize deck? (not sure how it works)
+    //Q Already initializing it and distrebuting two cards for each player in the gameStart() function
     // anything else missing?
+    //Q I am not sure but we need the game play part from assignment 2
 }
