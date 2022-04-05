@@ -142,17 +142,11 @@ void GameEngine::StartupPhase() {
     string input = "";
     std::cout << "Do you want to play tournament mode? Enter (y/n): ";
 
-  //  while (input != "y" || input != "n") { // does not work with strings
-    while (input.compare("y") != 0) {
+   while (input != "y" || input != "n") {
         std::cout << "Enter (y/n): ";
         std::cin >> input;
-        if (input.compare("e") == 0) {
-            break;
-        }
     }
-   // if (input == "y") {
-    if (input.compare("y") == 0) {
-     
+   if (input == "y") {
         playTournament();
         return;
     }
