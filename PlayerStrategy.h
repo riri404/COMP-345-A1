@@ -27,6 +27,7 @@ enum PlayerType
 class PlayerStrategy
 {
 public:
+	//PlayerStrategy(Player*, Player*, Deck*);
 	PlayerStrategy& operator = (const PlayerStrategy&); //added;
 	//create method that will change strategy in the isuueing orders phase
 	virtual int changeStrategy(string, int) = 0;
@@ -50,7 +51,7 @@ protected:
 //ConcreteStrategy classes
 class HumanPlayerStrategy : virtual public PlayerStrategy {
 public:
-	HumanPlayerStrategy(Player*);
+	HumanPlayerStrategy(Player*, Player*, Deck*);
 	~HumanPlayerStrategy();
 	HumanPlayerStrategy(const HumanPlayerStrategy& p); //Copy constructor
 	HumanPlayerStrategy& operator = (const HumanPlayerStrategy&); //added;
@@ -80,7 +81,7 @@ private:
 
 class AggressivePlayerStrategy : virtual public PlayerStrategy {
 public:
-	AggressivePlayerStrategy(Player* p);
+	AggressivePlayerStrategy(Player* p, Player* all, Deck* d);
 	~AggressivePlayerStrategy();
 	AggressivePlayerStrategy(const AggressivePlayerStrategy& p); //Copy constructor
 	AggressivePlayerStrategy& operator = (const AggressivePlayerStrategy&); //added;
@@ -98,7 +99,7 @@ private:
 
 class BenevolentPlayerStrategy : virtual public PlayerStrategy {
 public:
-	BenevolentPlayerStrategy(Player*);
+	BenevolentPlayerStrategy(Player*, Player*, Deck*);
 	~BenevolentPlayerStrategy();
 	BenevolentPlayerStrategy(const BenevolentPlayerStrategy& p); //Copy constructor
 	BenevolentPlayerStrategy& operator = (const BenevolentPlayerStrategy&); //added
@@ -115,7 +116,7 @@ private:
 
 class NeutralPlayerStrategy : public PlayerStrategy {
 public:
-	NeutralPlayerStrategy(Player* player);
+	NeutralPlayerStrategy(Player* player, Player* all, Deck* d);
 	//create method that will change strategy in the isuueing orders phase
 	virtual int changeStrategy(string, int);
 	//implement issueOrder(), toAttack(), toDefend() in different ConcreteStrategy 
@@ -132,7 +133,7 @@ private:
 
 class CheaterPlayerStrategy : public PlayerStrategy {
 public:
-	CheaterPlayerStrategy(Player* player);
+	CheaterPlayerStrategy(Player* player, Player* all, Deck* d);
 	//create method that will change strategy in the isuueing orders phase
 	virtual int changeStrategy(string, int);
 	//implement issueOrder(), toAttack(), toDefend() in different ConcreteStrategy 

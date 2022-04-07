@@ -12,11 +12,13 @@ class Territory;
 //--------------------------------------------------HUMAN PLAYER STRATEGY--------------------------------------------------
 #pragma region Human Player Strategy
 
-HumanPlayerStrategy::HumanPlayerStrategy(Player* p) {
+HumanPlayerStrategy::HumanPlayerStrategy(Player* p, Player* all, Deck* d) {
 	this->player = p;
-
+	this->allPlayers = all;
+	this->deck = d;
 }
 
+// Why did this method like this? Why an int? why not using string order?
 int HumanPlayerStrategy::changeStrategy(string order, int armies)
 {
 	cout << "HumanPlayerStrategy: Please choose a strategy from the following \n"
@@ -356,8 +358,10 @@ set<Player*> HumanPlayerStrategy::GetPlayers()
 
 #pragma region Aggressive Player Strategy
 
-AggressivePlayerStrategy::AggressivePlayerStrategy(Player* p) {
+AggressivePlayerStrategy::AggressivePlayerStrategy(Player* p, Player* all, Deck* d) {
 	this->player = p;
+	this->allPlayers = all;
+	this->deck = d;
 }
 
 int AggressivePlayerStrategy::changeStrategy(string order, int armies)
@@ -408,8 +412,10 @@ void AggressivePlayerStrategy::PrintStrategy()
 
 #pragma region Benevolent Player Strategy
 
-BenevolentPlayerStrategy::BenevolentPlayerStrategy(Player* p) {
+BenevolentPlayerStrategy::BenevolentPlayerStrategy(Player* p, Player* all, Deck* d) {
 	this->player = p;
+	this->allPlayers = all;
+	this->deck = d;
 }
 
 int BenevolentPlayerStrategy::changeStrategy(string order, int numArmy)
@@ -460,8 +466,10 @@ void BenevolentPlayerStrategy::PrintStrategy()
 #pragma region Neutral Player Strategy
 
 //sets player
-NeutralPlayerStrategy::NeutralPlayerStrategy(Player* player) {
-
+NeutralPlayerStrategy::NeutralPlayerStrategy(Player* player, Player* all, Deck* d) {
+	this->player = player;
+	this->allPlayers = all;
+	this->deck = d;
 }
 
 int NeutralPlayerStrategy::changeStrategy(string, int)
@@ -506,9 +514,11 @@ NeutralPlayerStrategy::~NeutralPlayerStrategy()
 
 #pragma region Cheater Player Strategy
 
-CheaterPlayerStrategy::CheaterPlayerStrategy(Player* player)
+CheaterPlayerStrategy::CheaterPlayerStrategy(Player* player, Player* all, Deck* d)
 {
 	this->player = player;
+	this->allPlayers = all;
+	this->deck = d;
 }
 
 int CheaterPlayerStrategy::changeStrategy(string, int)
