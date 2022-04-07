@@ -112,6 +112,21 @@ string const Deploy::getName() {
     return name;
 }
 
+void Deploy::setSelfPlayers(Player* p)
+{
+    this->player = p;
+}
+
+void Deploy::setTargetTerritory(Territory* t)
+{
+    this->target = t;
+}
+
+void Deploy::setNumArmy(int n)
+{
+    this->armies = n;
+}
+
 //If the target territory does not belong to the player that issued the order, the order is invalid.
 bool Deploy::validate() {
     bool isValid = false;
@@ -210,6 +225,26 @@ ostream& operator<<(ostream& outs, const Advance& advance) {
 
 string const Advance::getName() {
     return name;
+}
+
+void Advance::setSelfPlayers(Player* p)
+{
+    this->player = p;
+}
+
+void Advance::setSourceTerritory(Territory* s)
+{
+    this->source = s;
+}
+
+void Advance::setTargetTerritory(Territory* t)
+{
+    this->target = t;
+}
+
+void Advance::setArmyUnits(int n)
+{
+    this->armies = n;
 }
 
 //If the source territory does not belong to the player that issued the order, the order is invalid.
@@ -353,6 +388,16 @@ string const Bomb::getName() {
     return name;
 }
 
+void Bomb::setSelfPlayers(Player* p)
+{
+    this->player = p;
+}
+
+void Bomb::setTargetTerritory(Territory* t)
+{
+    this->target = t;
+}
+
 //If the target belongs to the player that issued the order, the order is invalid.
 //If the target territory is not adjacent to one of the territory owned by the player issuing the order, then the order is invalid.
 bool Bomb::validate() {
@@ -420,7 +465,7 @@ Blockade::~Blockade() {
     target = nullptr;
     delete neutralPlayer;
     neutralPlayer = nullptr;
-    allPlayers->getListOfPlayers().clear();
+    /*allPlayers->getListOfPlayers().clear();*/
 }
 
 //Copy constructor
@@ -454,6 +499,21 @@ ostream& operator<<(ostream& outs, const Blockade& blockade) {
 
 string const Blockade::getName() {
     return name;
+}
+
+void Blockade::setSelfPlayers(Player* p)
+{
+    this->player = p;
+}
+
+void Blockade::setNeutralPlayer(Player* n)
+{
+    this->neutralPlayer = n;
+}
+
+void Blockade::setTargetTerritory(Territory* t)
+{
+    this->target = t;
 }
 
 //If the target territory belongs to an enemy player, the order is declared invalid.
@@ -568,10 +628,10 @@ Airlift::Airlift(Player* currentPlayer, int armies, Territory* sourceTerritory, 
 
 //Destructor
 Airlift::~Airlift() {
-    delete source;
+    /*delete source;
     source = nullptr;
     delete target;
-    target = nullptr;
+    target = nullptr;*/
 }
 
 //Copy constructor
@@ -603,6 +663,26 @@ ostream& operator<<(ostream& outs, const Airlift& airlift) {
 
 string const Airlift::getName() {
     return name;
+}
+
+void Airlift::setSelfPlayers(Player* p)
+{
+    this->player = p;
+}
+
+void Airlift::setSourceTerritory(Territory* s)
+{
+    this->source = s;
+}
+
+void Airlift::setTargetTerritory(Territory* t)
+{
+    this->target = t;
+}
+
+void Airlift::setNumArmy(int n)
+{
+    this->armies = n;
 }
 
 //The target territory does not need to be adjacent to the source territory.
@@ -690,6 +770,16 @@ string const Negotiate::getName() {
     return name;
 }
 
+void Negotiate::setSelfPlayers(Player* p)
+{
+    this->player = p;
+}
+
+void Negotiate::setPeacePlayer(Player* n)
+{
+    this->enemyPlayer = n;
+}
+
 //If the target is the player issuing the order, then the order is invalid.
 bool Negotiate::validate() {
     bool isValid = false;
@@ -711,7 +801,7 @@ void Negotiate::execute() {
         cout << "Executing negotiate..." << endl;
         player->addNegociate(enemyPlayer);
         enemyPlayer->addNegociate(player);
-        //cout << "Players " << player->GetPlayerName() << " and " << enemyPlayer->GetPlayerName() << " are negociating. No attacks can be done. " << endl;
+        cout << "Players " << player->GetPlayerName() << " and " << enemyPlayer->GetPlayerName() << " are negociating. No attacks can be done. " << endl;
     }
     else {
         cout << "Cannot execute negotiate." << endl;
@@ -764,7 +854,7 @@ ostream& operator<<(ostream& outs, const OrdersList& anOrdersList) {
 void OrdersList::addToListOfOrders(Order* order) {
     listOfOrders.push_back(order);                //Push order at the end of the list
     cout << stringToLog() << endl;
-    
+
     notifyAddOrder(order);
     Notify(this);
 }

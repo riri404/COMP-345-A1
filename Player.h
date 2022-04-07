@@ -31,14 +31,13 @@ public:
 	friend ostream& operator <<(ostream& outs, const Player& p);
 
 	//methods
-	vector<Territory*> toAttack(vector<Territory*> attack); // method to attck; returns orders list
+	vector<Territory*> toAttack(); // method to attck; returns orders list
 	vector<Territory*> toDefend(); // method to defend; returns ordrs list
-	void issueOrder(vector<Territory*>);
+	void issueOrder(string order);
 	void setName(const string& name);
 	void setPlayerID(const int& playerID);
 	vector<Territory*> getTerritoryList();
-	vector<Territory*> getNeighbourTerritories();
-	bool playerContinentBouns(); 
+	bool playerContinentBouns();
 	//void setOrder(Orders*);
 	string GetPlayerName() const;
 	int GetPlayerID() const;

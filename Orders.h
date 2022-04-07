@@ -67,6 +67,11 @@ public:
     //Getters and setters
     string const getName() override;
 
+    // For Assignment 3
+    void setSelfPlayers(Player*);
+    void setTargetTerritory(Territory*);
+    void setNumArmy(int);
+
     //Member functions
     bool validate() override;
     void execute() override;
@@ -93,6 +98,12 @@ public:
 
     //Getters and setters
     string const getName() override;
+
+    // For Assignment 3
+    void setSelfPlayers(Player*);
+    void setSourceTerritory(Territory*);
+    void setTargetTerritory(Territory*);
+    void setArmyUnits(int);
 
     //Member functions
     bool validate() override;
@@ -124,6 +135,10 @@ public:
     //Getters and setters
     string const getName() override;
 
+    // For Assignment 3
+    void setSelfPlayers(Player*);
+    void setTargetTerritory(Territory*);
+
     //Member functions
     bool validate() override;
     void execute() override;
@@ -153,8 +168,13 @@ public:
     //Getters and setters
     string const getName() override;
 
+    // For Assignment 3
+    void setSelfPlayers(Player*);
+    void setNeutralPlayer(Player*);
+    void setTargetTerritory(Territory*);
+
     //Member functions
-    bool validate() override; 
+    bool validate() override;
     void execute() override;
 
     string stringToLog() override;
@@ -182,6 +202,12 @@ public:
 
     //Getters and setters
     string const getName() override;
+
+    // For Assignment 3
+    void setSelfPlayers(Player*);
+    void setSourceTerritory(Territory*);
+    void setTargetTerritory(Territory*);
+    void setNumArmy(int);
 
     //Member functions
     bool validate() override;
@@ -211,6 +237,10 @@ public:
 
     //Getters and setters
     string const getName() override;
+
+    // For Assignment 3
+    void setSelfPlayers(Player*);
+    void setPeacePlayer(Player*);
 
     //Member functions
     bool validate() override;
