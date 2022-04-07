@@ -62,6 +62,7 @@ public:
 	void SetNumberOfPlayers(int);
 
 	void AddPlayer();
+	void AddStrategyPlayer(string playerName, int playerID);
 	// void Init();
 	void Start();
 
