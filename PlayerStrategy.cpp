@@ -92,6 +92,12 @@ vector<Territory*> HumanPlayerStrategy::toAttack()
 {
 	cout << "HumanPlayerStrategy: toAttack() " << endl;
 	vector<Territory*> attackList;
+
+	// If territrory does not belong to player, then add it to attackList
+	for (int i = 0; allPlayers->getTerritoryList().size(); i++) {
+		if (allPlayers->getTerritoryList().at(i)->getPlayerOwner() != player)
+			attackList.push_back(allPlayers->getTerritoryList().at(i));
+	}
 	return attackList;
 }
 
@@ -245,9 +251,9 @@ void HumanPlayerStrategy::BlockadeOrder()
 	//// WHY? the neutral player is created when the order is executed
 	//blockadeOrders->setTargetTerritory(player->getTerritoryList().at(region));
 	// WHY not use constructor?
-	Blockade* blockadeOrders = new Blockade(player, allPlayers, player->getTerritoryList().at(region));
+	//Blockade* blockadeOrders = new Blockade(player, allPlayers, player->getTerritoryList().at(region));
 
-	player->setOrder(blockadeOrders);
+	//player->setOrder(blockadeOrders);
 }
 
 void HumanPlayerStrategy::NegotiateOrder()
@@ -374,14 +380,58 @@ int AggressivePlayerStrategy::changeStrategy(string order, int armies)
 //Then always advances to enemy territories until it cannot do so anymore). 
 void AggressivePlayerStrategy::issueOrder()
 {
+	Territory* source;
+	Territory* target;
 	//Deploys or advances armies on its strongest territories
 	//Find the strongest territory
-	//set strongest territory to index 0
 	//for all territories in its list of territories, if territory at i has more armies, then strongest territory = territory at i
 	//Create a Deploy or Advance (on its own territory) order, move all armies on the strongest country
+	if (player->getReinforcementPool() > 0)
+	{
+		// If player has reinforcement units, then deploy
+		target = player->getTerritoryList().at(0);
+		// Find territory with largest number of units
+		for (int i = 0; i < player->getTerritoryList().size(); i++) {
+			if (target->getArmies() < player->getTerritoryList().at(i)->getArmies()) {
+				target = player->getTerritoryList().at(i);
+			}
+		}
+		Deploy* deployOrder = new Deploy(player, player->getReinforcementPool(), target);
 
-	//Always advances to enemy territories until it cannot do so anymore
-	//Create Advance order on enemy territory
+		player->setOrder(deployOrder);
+	}
+	// Else, advance
+	else
+	{
+		//Always advances to enemy territories until it cannot do so anymore
+		//Create Advance order on enemy territory
+		source = player->getTerritoryList().at(0);
+		// While the player still has armie units, do advance
+		while (source->getArmies() > 0)
+		{
+			// Find territory with largest number of units; Going to be the source territory
+			for (int i = 0; i < player->getTerritoryList().size(); i++) {
+				if (source->getArmies() < player->getTerritoryList().at(i)->getArmies()) {
+					source = player->getTerritoryList().at(i);
+				}
+			}
+
+			target = allPlayers->getTerritoryList().at(0);
+			// Go through all the territories
+			for (int i = 0; allPlayers->getTerritoryList().size(); i++) {
+				// If territory does not belong to the player, then it belongs to an enemy player
+				if (allPlayers->getTerritoryList().at(i)->getPlayerOwner() != player) {
+					// If the enemie territory has lowest amount of armie units and is adjacent to the source territory, then it's going to be the target
+					if (target->getArmies() > allPlayers->getTerritoryList().at(i)->getArmies() && source->isAdjacentTo(allPlayers->getTerritoryList().at(i)->getId()))
+						target = allPlayers->getTerritoryList().at(i);
+				}
+			}
+
+			Advance* advanceOrder = new Advance(player, source->getArmies(), source, target, player->getPlayerHand(), deck);
+
+			player->setOrder(advanceOrder);
+		}
+	}
 
 	//cout << "\nAggressive player deployed/Advanced all its armies and reinforcements until it no longer can." << endl;
 }
