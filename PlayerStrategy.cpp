@@ -485,8 +485,44 @@ void BenevolentPlayerStrategy::issueOrder()
 	//set weakest territory to index 0
 	//for all territories in its list of territories, if territory at i has less armies, then weakest territory = territory at i
 	//Create a Deploy on the weakest country
+	Territory* source;
+	Territory* target;
+	if (player->getReinforcementPool() > 0)
+	{
+		// If player has reinforcement units, then deploy
+		source = player->getTerritoryList().at(0);
+		// Find territory with largest number of units
+		for (int i = 0; i < player->getTerritoryList().size(); i++) {
+			if (source->getArmies() > player->getTerritoryList().at(i)->getArmies()) {
+				source = player->getTerritoryList().at(i);
+			}
+		}
+		Deploy* deployOrder = new Deploy(player, player->getReinforcementPool(), source);
 
+		player->setOrder(deployOrder);
+	}
 	//Check adjacent countries that has less armies then the others and move armies to the weaker countries (Advance)
+	else
+	{
+		source = player->getTerritoryList().at(0);
+		while (source->getArmies() > 0)
+		{
+			// Find territory with largest number of units; Going to be the source territory
+			for (int i = 0; i < player->getTerritoryList().size(); i++) {
+				if (source->getArmies() < player->getTerritoryList().at(i)->getArmies()) {
+					source = player->getTerritoryList().at(i);
+				}
+			}
+
+			target = player->getTerritoryList().at(0);
+			for (int i = 0; i < player->getTerritoryList().size(); i++) {
+				if (source->isAdjacentTo(player->getTerritoryList().at(i)->getId()) && target->getArmies() > player->getTerritoryList().at(i)->getArmies()) {
+					target = player->getTerritoryList().at(i);
+				}
+			}
+			Advance* advanceOrder = new Advance(player, source->getArmies(), source, target, player->getPlayerHand(), deck);
+		}
+	}
 
 	//Cannot advance on enemy territories
 }
@@ -520,6 +556,7 @@ NeutralPlayerStrategy::NeutralPlayerStrategy(Player* player, Player* all, Deck* 
 	this->player = player;
 	this->allPlayers = all;
 	this->deck = d;
+
 }
 
 int NeutralPlayerStrategy::changeStrategy(string, int)
