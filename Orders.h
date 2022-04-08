@@ -47,6 +47,7 @@ public:
 protected:
     string name;
     Player* player;
+    Player* allPlayers;
     vector<Player*> listOfPlayers;
 };
 
@@ -182,7 +183,7 @@ private:
     Territory* target;
     Player* neutralPlayer;
     //vector<Player*> listOfPlayers;
-    Player* allPlayers;
+    //Player* allPlayers;
 };
 
 //An airlift order tells a certain number of armies taken from a source territory to be moved to a target

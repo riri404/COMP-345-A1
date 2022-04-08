@@ -270,14 +270,13 @@ void Player::addTerritory(Territory* newTerritory) {
 	territoryList.push_back(newTerritory);
 }
 
+// Changed by justine & jennifer, old version wasn't working, generated negative number
 void Player::addToReinforcePool(int armies) {
-	delete reinforcementPool;
-	reinforcementPool = new int(*reinforcementPool + armies);
+	*reinforcementPool = *reinforcementPool + armies;
 }
 
 void Player::removeFromReinforcePool(int armies) {
-	delete reinforcementPool;
-	reinforcementPool = new int(*reinforcementPool - armies);
+	*reinforcementPool = *reinforcementPool - armies;
 }
 
 void Player::AddCard(Cards* card) {
