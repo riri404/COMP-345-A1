@@ -128,7 +128,7 @@ public:
 private:
 	//Player* player;
 	int territoryCount;
-	int armyCount;
+	//int armyCount;
 };
 
 class CheaterPlayerStrategy : public PlayerStrategy {
