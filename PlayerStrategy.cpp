@@ -616,7 +616,20 @@ int CheaterPlayerStrategy::changeStrategy(string, int)
 //computer player that automatically conquers all territories that are adjacent to its own territories(only once per turn)
 void CheaterPlayerStrategy::issueOrder()
 {
+	Territory* source;
+	Territory* target;
 
+
+	for (int i = 0; i < player->getTerritoryList().size(); i++)
+	{
+		source = player->getTerritoryList().at(i);
+		for (int j = 0; j < allPlayers->getTerritoryList().size(); j++) {
+			target = allPlayers->getTerritoryList().at(i);
+			if (target->getPlayerOwner() != player && target->isAdjacentTo(source->getId())) {
+				target->setPlayerOwner(player);
+			}
+		}
+	}
 }
 
 vector<Territory*> CheaterPlayerStrategy::toAttack()
