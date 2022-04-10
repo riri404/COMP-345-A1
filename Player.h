@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <algorithm>
 using namespace std;
 
 class Order;
@@ -71,8 +72,17 @@ public:
 	void addTerritoryToDefend(Territory* t);
 	void addTerritoryToAttack(Territory* t);
 
+	void clearToDefend();
+	void clearToAttack();
+
 	void printToDefend();
 	void printToAttack();
+
+	bool sortAscendingOrder(Territory* t1, Territory* t2);
+	bool sortDescendingOrder(Territory* t1, Territory* t2);
+
+	void sortLeastToGreatestUnits();
+	void sortGreatestToLeastUnits();
 
 private:
 	//attributes/ variables

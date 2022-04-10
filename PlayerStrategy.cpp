@@ -196,6 +196,10 @@ vector<Territory*> HumanPlayerStrategy::toAttack()
 	cout << "HumanPlayerStrategy: toAttack() " << endl;
 	//vector<Territory*> attackList;
 
+	// If attack list is not empty, then empty it
+	if (!player->getListToAttack().empty())
+		player->clearToAttack();
+
 	string toAttack;
 	string input;
 
@@ -223,7 +227,6 @@ vector<Territory*> HumanPlayerStrategy::toAttack()
 				// If territory does not belong to the player, then it's a valid input.
 				if (player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() == toAttack && player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner() != player) {
 					cout << "Territory " << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() << " is being added to attackList." << endl;
-					/*attackList.push_back(player->getTerritoryList().at(i)->getAdjTerritories().at(j));*/
 					player->addTerritoryToAttack(player->getTerritoryList().at(i)->getAdjTerritories().at(j));
 					continue;
 				}
@@ -256,35 +259,26 @@ vector<Territory*> HumanPlayerStrategy::toDefend()
 {
 	cout << "HumanPlayerStrategy: toDefend() " << endl;
 
-	//vector<Territory*> defendList;
+	// Clear defend list if it's not empty
+	if (!player->getListToDefend().empty())
+		player->clearToDefend();
 
-	string toDefend;
+	int defend;
 	string input;
 
 	for (int i = 0; i < player->getTerritoryList().size(); i++) {
-		cout << "Territories to defend are: " << endl;
-		cout << "\t" << player->getTerritoryList().at(i)->getName() << " with armies: " << player->getTerritoryList().at(i)->getArmies() << endl;
+		cout << "Your territories are: " << endl;
+		cout << "\t" << i << ". " << player->getTerritoryList().at(i)->getName() << " with armies: " << player->getTerritoryList().at(i)->getArmies() << endl;
 	}
 
 	// Do while loop so the player can add the territories they wish to defend to the defendList
 	while (true)
 	{
 		cout << "Which territory do you wish to defend? (Enter territory name)" << endl;
-		cin >> toDefend;
+		cin >> defend;
 
-		for (int i = 0; i < player->getTerritoryList().size(); i++)
-		{
-			// If territory is in list of territories of player, then it's valid
-			if (player->getTerritoryList().at(i)->getName() == toDefend) {
-				cout << "Territory " << player->getTerritoryList().at(i)->getName() << " is being added to your defendList." << endl;
-				//defendList.push_back(player->getTerritoryList().at(i));
-				player->addTerritoryToDefend(player->getTerritoryList().at(i));
-				continue;
-			}
-			else {
-				cout << "Territory " << toDefend << " is not a valid input, please try again." << endl;
-			}
-		}
+		player->addTerritoryToDefend(player->getTerritoryList().at(defend));
+		player->printToDefend();
 
 		cout << "Do you wish to add another territory to your defendList? (yes or no)" << endl;
 		cin >> input;
@@ -533,15 +527,26 @@ void BenevolentPlayerStrategy::issueOrder()
 
 vector<Territory*> BenevolentPlayerStrategy::toAttack()
 {
-	vector<Territory*> AttackList;
-	return AttackList;
+	cout << "Player " << player->GetPlayerName() << " is a benevolent player and a benevolent player does not attack any territories." << endl;
+	return player->getListToAttack();
 }
 
 vector<Territory*> BenevolentPlayerStrategy::toDefend()
 {
-	vector<Territory*> defendList;
+	// Empty toDefend list
+	if (!player->getListToDefend().empty())
+		player->clearToDefend();
 
-	return defendList;
+	// Adding territory to defend by the least number of units
+	player->sortLeastToGreatestUnits();
+	for (int i = 0; i < player->getTerritoryList().size(); i++)
+	{
+		player->addTerritoryToDefend(player->getTerritoryList().at(i));
+	}
+
+	player->sortLeastToGreatestUnits();
+
+	return player->getListToDefend();
 }
 
 void BenevolentPlayerStrategy::PrintStrategy()
@@ -578,9 +583,9 @@ void NeutralPlayerStrategy::issueOrder()
 
 	//if army is attacked
 	if (territoryAmount < territoryCount || armyAmount < armyCount) {
-		
+
 		cout << "Neutral player is attacked, now it is aggressive" << endl;
-		
+
 		//change player strategy
 		//player->setPlayerStrategy(Aggressive); // have tocreate setPlayerStrategy
 		//player->issueOrder();

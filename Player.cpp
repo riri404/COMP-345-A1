@@ -360,6 +360,16 @@ void Player::addTerritoryToAttack(Territory* t)
 	attackTerritories.push_back(t);
 }
 
+void Player::clearToDefend()
+{
+	defendTerritories.clear();
+}
+
+void Player::clearToAttack()
+{
+	attackTerritories.clear();
+}
+
 void Player::printToDefend()
 {
 	cout << "Player " << GetPlayerName() << "'s list of territories to defend: " << endl;
@@ -388,4 +398,24 @@ void Player::printToAttack()
 	else {
 		cout << "Player " << GetPlayerName() << " has no territories to attack." << endl;
 	}
+}
+
+bool Player::sortAscendingOrder(Territory* t1, Territory* t2)
+{
+	return t1->getArmies() < t2->getArmies();
+}
+
+bool Player::sortDescendingOrder(Territory* t1, Territory* t2)
+{
+	return t1->getArmies() > t2->getArmies();
+}
+
+void Player::sortLeastToGreatestUnits()
+{
+	sort(defendTerritories.begin(), defendTerritories.end(), sortAscendingOrder);
+}
+
+void Player::sortGreatestToLeastUnits()
+{
+	sort(attackTerritories.begin(), attackTerritories.end(), sortDescendingOrder);
 }
