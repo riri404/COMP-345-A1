@@ -22,7 +22,8 @@ HumanPlayerStrategy::HumanPlayerStrategy(Player* p, Player* all, Deck* d) {
 int HumanPlayerStrategy::changeStrategy(string order, int armies)
 {
 	cout << "HumanPlayerStrategy: Please choose a strategy from the following \n"
-		"1 for issueOrder(), 2 for toAttack(), 3 for toDefend(). " << endl;			//Supposed to be strategies (Aggressive, Neutral...), not methods?
+		"1 for issueOrder(), 2 for toAttack(), 3 for toDefend(). " << endl;			//Supposed to be strategies (Aggressive, 
+	...), not methods?
 	int input;
 	cin >> input;
 	if (input == 1) {
@@ -657,13 +658,34 @@ int NeutralPlayerStrategy::changeStrategy(string, int)
 //computer player that never issues any order. If a Neutral player is attacked, it becomes an Aggressive player.
 void NeutralPlayerStrategy::issueOrder()
 {
-	//Cannot issue order
+	//Cannot issue order unless attcacked
+
+	int territoryAmount = 0;
+	int armyAmount = 0;
+
+	//if army is attacked
+	if (territoryAmount < territoryCount || armyAmount < armyCount) {
+		
+		cout << "Neutral player is attacked, now it is aggressive" << endl;
+		
+		//change player strategy
+		//player->setPlayerStrategy(Aggressive); // have tocreate setPlayerStrategy
+		//player->issueOrder();
+
+		//not sure if this is allowed, remove if necessary
+		this->~NeutralPlayerStrategy();
+	}
+	else {
+		territoryCount = territoryAmount;
+		armyCount = armyAmount;
+	}
 }
 
 //never needs to attack
 vector<Territory*> NeutralPlayerStrategy::toAttack()
 {
 	vector<Territory*> DefendList;
+	cout << "Neutral does not attack" << endl;
 	return DefendList;
 }
 
@@ -671,6 +693,7 @@ vector<Territory*> NeutralPlayerStrategy::toAttack()
 vector<Territory*> NeutralPlayerStrategy::toDefend()
 {
 	vector<Territory*> DefendList;
+	cout << "Neutral does not defend" << endl;
 	return DefendList;
 }
 
