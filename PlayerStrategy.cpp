@@ -42,79 +42,169 @@ int HumanPlayerStrategy::changeStrategy(string order, int armies)
 	}
 }
 
+// The player issues deploy orders on its own territories that are in the list returned by toDefend(). As long as the player has armies still to deploy (see startup phase and reinforcement phase), 
+// it will issue a deploy order and no other order. Once it has deployed all its available armies, it can proceed with other kinds of orders.
 void HumanPlayerStrategy::issueOrder()
 {
-	const int EXITNUMBER = 7;
-	int input = 0;
-
-	while (input != EXITNUMBER) {
-		cout << "Which order are you issuing?" << endl;
-		cout << "1. Deploy" << endl;
-		cout << "2. Advance" << endl;
-		cout << "3. Airlift" << endl;
-		cout << "4. Bomb" << endl;
-		cout << "5. Blockade" << endl;
-		cout << "6. Negotiate" << endl;
-		cout << EXITNUMBER << ". Exit" << endl;
-
-		//fix problem with orders
-		cin >> input;
-		switch (input) {
-		case (1):
-			DeployOrder();
-			break;
-		case (2):
-			AdvanceOrder();
-			break;
-		case (3):
-			AirliftOrder();
-			break;
-		case (4):
-			BombOrder();
-			break;
-		case (5):
-			BlockadeOrder();
-			break;
-		case (6):
-			NegotiateOrder();
-			break;
-		case (EXITNUMBER):
-			cout << "Exiting" << endl;
-			break;
-		default:
-			cout << "Please Enter a valid order number!" << endl;
-			break;
-		}
+	// If reinforcement pool > 0, then do deploy orders
+	if (player->getReinforcementPool() > 0)
+	{
+		cout << "Player " << player->GetPlayerName() << "'s reinforcement pool contains " << player->getReinforcementPool() << " armie units." << endl;
 	}
+	//const int EXITNUMBER = 7;
+	//int input = 0;
+
+	//while (input != EXITNUMBER) {
+	//	cout << "Which order are you issuing?" << endl;
+	//	cout << "1. Deploy" << endl;
+	//	cout << "2. Advance" << endl;
+	//	cout << "3. Airlift" << endl;
+	//	cout << "4. Bomb" << endl;
+	//	cout << "5. Blockade" << endl;
+	//	cout << "6. Negotiate" << endl;
+	//	cout << EXITNUMBER << ". Exit" << endl;
+
+	//	//fix problem with orders
+	//	cin >> input;
+	//	switch (input) {
+	//	case (1):
+	//		DeployOrder();
+	//		break;
+	//	case (2):
+	//		AdvanceOrder();
+	//		break;
+	//	case (3):
+	//		AirliftOrder();
+	//		break;
+	//	case (4):
+	//		BombOrder();
+	//		break;
+	//	case (5):
+	//		BlockadeOrder();
+	//		break;
+	//	case (6):
+	//		NegotiateOrder();
+	//		break;
+	//	case (EXITNUMBER):
+	//		cout << "Exiting" << endl;
+	//		break;
+	//	default:
+	//		cout << "Please Enter a valid order number!" << endl;
+	//		break;
+	//	}
+	//}
 }
 
+// From Assignment 2 (Orders Issuing phase): 
+// The player decides which neighboring territories are to be attacked in priority (as a list return by the toAttack() method), and which of their own territories are to be defended 
+// in priority (as a list returned by the toDefend() method).
 vector<Territory*> HumanPlayerStrategy::toAttack()
 {
 	cout << "HumanPlayerStrategy: toAttack() " << endl;
-	vector<Territory*> attackList;
+	//vector<Territory*> attackList;
 
-	// If territrory does not belong to player, then add it to attackList
-	for (int i = 0; allPlayers->getTerritoryList().size(); i++) {
-		if (allPlayers->getTerritoryList().at(i)->getPlayerOwner() != player)
-			attackList.push_back(allPlayers->getTerritoryList().at(i));
+	string toAttack;
+	string input;
+
+	for (int i = 0; i < player->getTerritoryList().size(); i++)
+	{
+		for (int j = 0; j > player->getTerritoryList().at(i)->getAdjTerritories().size(); j++) {
+			// Make sure territory does not belong to player
+			if (player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner() != player) {
+				cout << "Adjacent territories of territory " << player->getTerritoryList().at(i)->getName() << " are: " << endl;
+				cout << "\t" << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() << " belonging to player " << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner()->GetPlayerName()
+					<< " and has " << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getArmies() << " armie units." << endl;
+			}
+		}
 	}
-	return attackList;
+
+	/// Do while loop so the player can add the territories they wish to attack to the attackList
+	while (true)
+	{
+		cout << "Which territory do you wish to attack? (Enter territory name)" << endl;
+		cin >> toAttack;
+
+		for (int i = 0; i < player->getTerritoryList().size(); i++)
+		{
+			for (int j = 0; j > player->getTerritoryList().at(i)->getAdjTerritories().size(); j++) {
+				// If territory does not belong to the player, then it's a valid input.
+				if (player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() == toAttack && player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner() != player) {
+					cout << "Territory " << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() << " is being added to attackList." << endl;
+					/*attackList.push_back(player->getTerritoryList().at(i)->getAdjTerritories().at(j));*/
+					player->addTerritoryToAttack(player->getTerritoryList().at(i)->getAdjTerritories().at(j));
+					continue;
+				}
+				// If territory belongs to the player, it's not a valid input
+				else if (player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() == toAttack && player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner() == player) {
+					cout << "The territory " << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() << " belongs to you, you can't attack your own territory, please try again." << endl;
+					continue;
+				}
+			}
+		}
+
+		cout << "Do you wish to add another territory to your attackList? (yes or no)" << endl;
+		cin >> input;
+
+		if (input == "yes") {
+			continue;
+		}
+		else {
+			break;
+		}
+	}
+
+	return player->getListToAttack();
 }
 
+// From Assignment 2 (Orders Issuing phase): 
+// The player decides which neighboring territories are to be attacked in priority (as a list return by the toAttack() method), and which of their own territories are to be defended 
+// in priority (as a list returned by the toDefend() method).
 vector<Territory*> HumanPlayerStrategy::toDefend()
 {
 	cout << "HumanPlayerStrategy: toDefend() " << endl;
 
-	vector<Territory*> defendList;
+	//vector<Territory*> defendList;
 
-	/*for (auto element = player->getTerritoryList().begin(); element != player->getTerritoryList().end(); element++) {
-		defendList.push_back(*element);
-	}*/
-	for (int i = 0; player->getTerritoryList().size(); i++) {
-		defendList.push_back(player->getTerritoryList().at(i));
+	string toDefend;
+	string input;
+
+	for (int i = 0; i < player->getTerritoryList().size(); i++) {
+		cout << "Territories to defend are: " << endl;
+		cout << "\t" << player->getTerritoryList().at(i)->getName() << " with armies: " << player->getTerritoryList().at(i)->getArmies() << endl;
 	}
 
-	return defendList;
+	// Do while loop so the player can add the territories they wish to defend to the defendList
+	while (true)
+	{
+		cout << "Which territory do you wish to defend? (Enter territory name)" << endl;
+		cin >> toDefend;
+
+		for (int i = 0; i < player->getTerritoryList().size(); i++)
+		{
+			// If territory is in list of territories of player, then it's valid
+			if (player->getTerritoryList().at(i)->getName() == toDefend) {
+				cout << "Territory " << player->getTerritoryList().at(i)->getName() << " is being added to your defendList." << endl;
+				//defendList.push_back(player->getTerritoryList().at(i));
+				player->addTerritoryToDefend(player->getTerritoryList().at(i));
+				continue;
+			}
+			else {
+				cout << "Territory " << toDefend << " is not a valid input, please try again." << endl;
+			}
+		}
+
+		cout << "Do you wish to add another territory to your defendList? (yes or no)" << endl;
+		cin >> input;
+
+		if (input == "yes") {
+			continue;
+		}
+		else {
+			break;
+		}
+	}
+
+	return player->getListToDefend();
 }
 
 void HumanPlayerStrategy::PrintStrategy()

@@ -64,6 +64,15 @@ public:
 	void addPlayer(Player* p);
 	vector<Player*> getListOfPlayers();
 
+	vector<Territory*> getListToDefend();
+	vector<Territory*> getListToAttack();
+
+	void addTerritoryToDefend(Territory* t);
+	void addTerritoryToAttack(Territory* t);
+
+	void printToDefend();
+	void printToAttack();
+
 private:
 	//attributes/ variables
 	string* name;
@@ -80,4 +89,6 @@ private:
 	vector<Player*> playerNegociate;
 	Deck* deck;
 	string pName;
+	vector<Territory*> defendTerritories;
+	vector<Territory*> attackTerritories;
 };

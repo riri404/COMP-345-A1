@@ -333,3 +333,53 @@ vector<Player*> Player::getListOfPlayers()
 {
 	return players;
 }
+
+vector<Territory*> Player::getListToDefend()
+{
+	return defendTerritories;
+}
+
+vector<Territory*> Player::getListToAttack()
+{
+	return attackTerritories;
+}
+
+void Player::addTerritoryToDefend(Territory* t)
+{
+	defendTerritories.push_back(t);
+}
+
+void Player::addTerritoryToAttack(Territory* t)
+{
+	attackTerritories.push_back(t);
+}
+
+void Player::printToDefend()
+{
+	cout << "Player " << GetPlayerName() << "'s list of territories to defend: " << endl;
+	if (!defendTerritories.empty())
+	{
+		for (Territory* t : defendTerritories)
+		{
+			cout << "\t" << t->getName() << " with " << t->getArmies() << " armie units." << endl;
+		}
+	}
+	else {
+		cout << "Player " << GetPlayerName() << " has no territories to defend." << endl;
+	}
+}
+
+void Player::printToAttack()
+{
+	cout << "Player " << GetPlayerName() << "'s list of territories to attack: " << endl;
+	if (!attackTerritories.empty())
+	{
+		for (Territory* t : attackTerritories)
+		{
+			cout << "\t" << t->getName() << " belonging to player " << t->getPlayerOwner()->GetPlayerName() << " with " << t->getArmies() << " armie units. " << endl;
+		}
+	}
+	else {
+		cout << "Player " << GetPlayerName() << " has no territories to attack." << endl;
+	}
+}
