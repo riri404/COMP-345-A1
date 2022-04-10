@@ -261,6 +261,12 @@ Hand* Player::getPlayerHand() {
 	return handCards;
 }
 
+vector<Cards*> Player::GetHand()
+{
+	playerHand = handCards->getHand();
+	return playerHand;
+}
+
 int Player::GetPlayerID() const {
 	return *playerID;
 }
@@ -285,12 +291,6 @@ void Player::AddCard(Cards* card) {
 
 void Player::Attach(LogObserver* observer) {
 	orderList->Attach(observer);
-}
-
-vector<Territory*> Player::getTerritory()
-{
-	return territoryList;
-
 }
 
 // Added by justine & jennifer
@@ -365,9 +365,9 @@ void Player::printToDefend()
 	cout << "Player " << GetPlayerName() << "'s list of territories to defend: " << endl;
 	if (!defendTerritories.empty())
 	{
-		for (Territory* t : defendTerritories)
+		for (int i = 0; i < defendTerritories.size(); i++)
 		{
-			cout << "\t" << t->getName() << " with " << t->getArmies() << " armie units." << endl;
+			cout << "\t" << i << "." << defendTerritories.at(i)->getName() << " with " << defendTerritories.at(i)->getArmies() << " armie units." << endl;
 		}
 	}
 	else {
@@ -380,9 +380,9 @@ void Player::printToAttack()
 	cout << "Player " << GetPlayerName() << "'s list of territories to attack: " << endl;
 	if (!attackTerritories.empty())
 	{
-		for (Territory* t : attackTerritories)
+		for (int i = 0; i < attackTerritories.size(); i++)
 		{
-			cout << "\t" << t->getName() << " belonging to player " << t->getPlayerOwner()->GetPlayerName() << " with " << t->getArmies() << " armie units. " << endl;
+			cout << "\t" << i << "." << attackTerritories.at(i)->getName() << " belonging to player " << attackTerritories.at(i)->getPlayerOwner()->GetPlayerName() << " with " << attackTerritories.at(i)->getArmies() << " armie units. " << endl;
 		}
 	}
 	else {

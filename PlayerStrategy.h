@@ -8,6 +8,7 @@
 #include "Map.h"
 #include <set>
 using namespace std;
+//using namespace string;
 
 class Territory;
 class Player;
@@ -63,14 +64,7 @@ public:
 
 private:
 	void PrintStrategy();
-
 	// Changes done by Justine
-	void DeployOrder();		//Change name: Deploy()->DeployOrder()
-	void AdvanceOrder();	//Change name: Advance()->AdvanceOrder()
-	void AirliftOrder();	//Change name: Airlift()->AirliftOrder()
-	void BombOrder();		//Change name: Bomb()->BombOrder()
-	void BlockadeOrder();	//Change name: Blockade()->BlockadeOrder()
-	void NegotiateOrder();	//Change name: Negotiate()->NegotiateOrder()
 	int ChooseValidOption(int max);
 	int GetArmyNumber(int army); //getArmies() in class Territory
 	void ShowTerritory();
@@ -128,7 +122,7 @@ public:
 private:
 	//Player* player;
 	int territoryCount;
-	//int armyCount;
+	int armyCount;
 };
 
 class CheaterPlayerStrategy : public PlayerStrategy {

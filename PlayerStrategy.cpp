@@ -22,8 +22,7 @@ HumanPlayerStrategy::HumanPlayerStrategy(Player* p, Player* all, Deck* d) {
 int HumanPlayerStrategy::changeStrategy(string order, int armies)
 {
 	cout << "HumanPlayerStrategy: Please choose a strategy from the following \n"
-		"1 for issueOrder(), 2 for toAttack(), 3 for toDefend(). " << endl;			//Supposed to be strategies (Aggressive, 
-	...), not methods?
+		"1 for issueOrder(), 2 for toAttack(), 3 for toDefend(). " << endl;			//Supposed to be strategies (Aggressive, Neutral...), not methods?
 	int input;
 	cin >> input;
 	if (input == 1) {
@@ -47,53 +46,146 @@ int HumanPlayerStrategy::changeStrategy(string order, int armies)
 // it will issue a deploy order and no other order. Once it has deployed all its available armies, it can proceed with other kinds of orders.
 void HumanPlayerStrategy::issueOrder()
 {
+	int source;
+	int target;
+	int units;
+
+	int defend;
+	int attack;
+
+	string input;
 	// If reinforcement pool > 0, then do deploy orders
-	if (player->getReinforcementPool() > 0)
+	while (player->getReinforcementPool() > 0)
 	{
 		cout << "Player " << player->GetPlayerName() << "'s reinforcement pool contains " << player->getReinforcementPool() << " armie units." << endl;
+
+		player->printToDefend();
+
+		cout << "\nTo which territory would you want to issue a deploy order? (Enter the number of the territory in your defendList)" << endl;
+		cin >> target;
+
+		cout << "How many units would you like to deploy?" << endl;
+		cin >> units;
+
+		Deploy* deployOrder = new Deploy(player, units, player->getListToDefend().at(target));
+		player->setOrder(deployOrder);
 	}
-	//const int EXITNUMBER = 7;
-	//int input = 0;
 
-	//while (input != EXITNUMBER) {
-	//	cout << "Which order are you issuing?" << endl;
-	//	cout << "1. Deploy" << endl;
-	//	cout << "2. Advance" << endl;
-	//	cout << "3. Airlift" << endl;
-	//	cout << "4. Bomb" << endl;
-	//	cout << "5. Blockade" << endl;
-	//	cout << "6. Negotiate" << endl;
-	//	cout << EXITNUMBER << ". Exit" << endl;
+	cout << "Player " << player->GetPlayerName() << " has no more reinforcement units." << endl;
 
-	//	//fix problem with orders
-	//	cin >> input;
-	//	switch (input) {
-	//	case (1):
-	//		DeployOrder();
-	//		break;
-	//	case (2):
-	//		AdvanceOrder();
-	//		break;
-	//	case (3):
-	//		AirliftOrder();
-	//		break;
-	//	case (4):
-	//		BombOrder();
-	//		break;
-	//	case (5):
-	//		BlockadeOrder();
-	//		break;
-	//	case (6):
-	//		NegotiateOrder();
-	//		break;
-	//	case (EXITNUMBER):
-	//		cout << "Exiting" << endl;
-	//		break;
-	//	default:
-	//		cout << "Please Enter a valid order number!" << endl;
-	//		break;
-	//	}
-	//}
+	cout << "Your hand contains the following cards: " << endl;
+	player->getPlayerHand()->printHand();
+	cout << "Advance" << endl;
+	cout << "Exit" << endl;
+
+	cout << "Which order would you wish to issue?" << endl;
+	cin >> input;
+
+	// If the player issues an order card that is in its hand
+	if (input != "Advance") {
+		for (int i = 0; i < player->getPlayerHand()->getHand().size(); i++) {
+			if (*player->getPlayerHand()->getHand().at(i)->getCardType() == input) {
+				if (input == "Airlift") {
+					player->printToDefend();
+					cout << "\nFrom which territory do you wish to airlift?" << endl;
+					cin >> source;
+
+					cout << "\nTo which territory do you wish to airlift?" << endl;
+					cin >> target;
+
+					cout << "\nHow many army units do you wish to airlift? You have " << player->getListToDefend().at(source)->getArmies() << " armie units at source territory " << player->getListToDefend().at(source)->getName() << endl;
+					cin >> units;
+
+					Airlift* airliftOrder = new Airlift(player, units, player->getListToDefend().at(source), player->getListToDefend().at(target));
+					player->setOrder(airliftOrder);
+				}
+				else if (input == "Bomb") {
+					player->printToAttack();
+
+					cout << "\nWhich territory do you wish to bomb?" << endl;
+					cin >> target;
+
+					Bomb* bombOrder = new Bomb(player, player->getListToAttack().at(target));
+					player->setOrder(bombOrder);
+				}
+				else if (input == "Blockade") {
+					player->printToDefend();
+
+					cout << "\nFor which territory do you wish to do a blockade?" << endl;
+					cin >> target;
+
+					Blockade* blockadeOrder = new Blockade(player, allPlayers, player->getListToDefend().at(target));
+					player->setOrder(blockadeOrder);
+				}
+				else if (input == "Negotitate")
+				{
+					for (int i = 0; i < allPlayers->getListOfPlayers().size(); i++) {
+						if (allPlayers->getListOfPlayers().at(i) == player) {
+							cout << i << ". " << allPlayers->getListOfPlayers().at(i)->GetPlayerName() << " (You)" << endl;
+						}
+						else {
+							cout << i << ". " << allPlayers->getListOfPlayers().at(i)->GetPlayerName() << endl;
+						}
+					}
+					cout << "With which player do you wish to negociate?" << endl;
+					cin >> target;
+
+					Negotiate* negotitateOrder = new Negotiate(player, allPlayers->getListOfPlayers().at(target));
+					player->setOrder(negotitateOrder);
+				}
+			}
+		}
+	}
+	else if (input == "Advance") {
+		cout << "Do you wish to defend or attack? (write in lowercase defend or attack)" << endl;
+		cin >> input;
+
+		if (input == "defend")
+		{
+			player->printToDefend();
+
+			cout << "From which territory do you wish to send armie units?" << endl;
+			cin >> source;
+
+			cout << "Which territory do you wish to defend?" << endl;
+			cin >> target;
+
+			cout << "How many army units do you wish to send? You have " << player->getListToDefend().at(source)->getArmies() << " units at source territory " << player->getListToDefend().at(source)->getName() << endl;
+			cin >> units;
+
+			Advance* advanceOrder = new Advance(player, units, player->getListToDefend().at(source), player->getListToDefend().at(target), deck);
+
+			player->setOrder(advanceOrder);
+		}
+		else if (input == "attack")
+		{
+			cout << "Your territories are:" << endl;
+			for (int i = 0; player->getTerritoryList().size(); i++)
+			{
+				cout << i << ". " << player->getTerritoryList().at(i)->getName() << " with " << player->getTerritoryList().at(i)->getArmies() << endl;
+			}
+
+			cout << endl;
+			player->printToAttack();
+
+			cout << "From which territory do you wish to send armie units? (Please enter the number of a territory that belongs to you " << player->GetPlayerName() << ")" << endl;
+			cin >> source;
+
+			cout << "Which territory do you wish to attack from the attack list?" << endl;
+			cin >> target;
+
+			cout << "How many army units do you wish to send? You have " << player->getTerritoryList().at(source)->getArmies() << " units at source territory " << player->getTerritoryList().at(source)->getName() << endl;
+			cin >> units;
+
+			Advance* advanceOrder = new Advance(player, units, player->getTerritoryList().at(source), player->getListToAttack().at(target), deck);
+
+			player->setOrder(advanceOrder);
+		}
+	}
+	else if (input == "Exit")
+	{
+		cout << "Exiting" << endl;
+	}
 }
 
 // From Assignment 2 (Orders Issuing phase): 
@@ -215,162 +307,6 @@ void HumanPlayerStrategy::PrintStrategy()
 
 #pragma region Helper Functions
 
-void HumanPlayerStrategy::DeployOrder()
-{
-
-	//show necessary information
-	ShowTerritory();
-	cout << "Available Reinforcement: " << player->getReinforcementPool() << endl;
-
-	//get region and reinforcement
-	int region = ChooseValidOption(player->getTerritoryList().size());
-	int rein = GetArmyNumber(player->getReinforcementPool());
-	player->setReinforcementPool(player->getReinforcementPool() - rein);
-
-	//make order
-	//Deploy* deployOrder = new Deploy();
-	// WHY? Should be using constructor
-	Deploy* deployOrder = new Deploy(player, rein, player->getTerritoryList().at(region));
-	/*deployOrder->setSelfPlayers(player);
-	deployOrder->setTargetTerritory(player->getTerritoryList().at(region));
-	deployOrder->setNumArmy(rein);*/
-
-	player->setOrder(deployOrder);
-}
-
-void HumanPlayerStrategy::AdvanceOrder()
-{
-	//get source territory
-	ShowTerritory();
-	int source = ChooseValidOption(player->getTerritoryList().size());
-
-	//get target territory
-	cout << "These are the target Territories" << endl;
-	/*for (int i = 0; i < player->getTerritoryList().at(source)->edges.size(); i++)
-	{
-		cout << i << ". " << player->getTerritoryList().at(source)->edges.at(i)->getTname() << " (" << player->getTerritoryList().at(source)->edges.at(i)->getArmyAmount() << ")";
-		if (player->getTerritoryList().at(source)->edges.at(i)->getTerritoryOwner() != player)
-		{
-			cout << " (enemy)";
-		}
-		cout << endl;
-	}*/
-	// Changed by Justine & Jennifer, instead of using edges, used method getAdjTerritories() in Map to get the adjacent territories from the source
-	for (int i = 0; i < player->getTerritoryList().at(source)->getAdjTerritories().size(); i++)
-	{
-		cout << i << ". " << player->getTerritoryList().at(source)->getAdjTerritories().at(i)->getName() << " (" << player->getTerritoryList().at(source)->getAdjTerritories().at(i)->getArmies() << ")";
-		if (player->getTerritoryList().at(source)->getAdjTerritories().at(i)->getPlayerOwner() != player)
-		{
-			cout << " (enemy)";
-		}
-		cout << endl;
-	}
-	int target = ChooseValidOption(player->getTerritoryList().size());
-
-	//get army amount
-	cout << "Source armount is " << player->getTerritoryList().at(source)->getArmies() << endl;
-	int army = GetArmyNumber(player->getTerritoryList().at(source)->getArmies());
-
-	//make advance orders
-	/*Advance* advanceOrder = new Advance();
-	advanceOrder->setSelfPlayers(player);
-	advanceOrder->setSourceTerritory(player->getTerritoryList().at(source));
-	advanceOrder->setTargetTerritory(player->getTerritoryList().at(source)->edges.at(target));
-	advanceOrder->setArmyUnits(army);*/
-	// WHY? Should be using constructor
-	Advance* advanceOrder = new Advance(player, army, player->getTerritoryList().at(source), player->getTerritoryList().at(source)->getAdjTerritories().at(target), player->getPlayerHand(), deck);
-
-	player->setOrder(advanceOrder);
-}
-
-void HumanPlayerStrategy::AirliftOrder()
-{
-	ShowTerritory();
-
-	int source = ChooseValidOption(player->getTerritoryList().size());
-
-	cout << "Choose another region to Airlift towards" << endl;
-	int target = ChooseValidOption(player->getTerritoryList().size());
-
-	cout << "Choose army amount to source" << endl;
-	cout << "Available army: " << player->getTerritoryList().at(source)->getArmies() << endl;
-	int army = GetArmyNumber(player->getTerritoryList().at(source)->getArmies());
-
-	/*Airlift* airliftOrder = new Airlift();
-	airliftOrder->setSelfPlayers(player);
-	airliftOrder->setSourceTerritory(player->getTerritoryList().at(source));
-	airliftOrder->setTargetTerritory(player->getTerritoryList().at(target));
-	airliftOrder->setNumArmy(army);*/
-	// WHY? Should be using constructor
-	Airlift* airliftOrder = new Airlift(player, army, player->getTerritoryList().at(source), player->getTerritoryList().at(target));
-
-	player->setOrder(airliftOrder);
-}
-
-void HumanPlayerStrategy::BombOrder()
-{
-	//get enemy territory
-	vector<Territory*> enemyTerritory = GetEnemyTerritory();
-
-	//choose enemy territory
-	cout << "These are enemy Territory Territories" << endl;
-	for (int i = 0; i < enemyTerritory.size(); i++)
-	{
-		cout << i << ". " << enemyTerritory.at(i)->getName() << " (" << enemyTerritory.at(i)->getArmies() << ")";
-		cout << endl;
-	}
-	int territory = ChooseValidOption(enemyTerritory.size());
-
-	//make bomb orders
-	/*Bomb* bombOrders = new Bomb();
-	bombOrders->setSelfPlayers(player);
-	bombOrders->setTargetTerritory(enemyTerritory.at(territory));*/
-	// WHY? Should be using constructor
-	Bomb* bombOrders = new Bomb(player, enemyTerritory.at(territory), player->getTerritoryList());
-
-	player->setOrder(bombOrders);
-}
-
-void HumanPlayerStrategy::BlockadeOrder()
-{
-	ShowTerritory();
-	int region = ChooseValidOption(player->getTerritoryList().size());
-
-	//Blockade* blockadeOrders = new Blockade();
-	//blockadeOrders->setSelfPlayers(player);
-	////blockadeOrders->setNeutralPlayer(player->getNeutralPlayer()); 
-	//// WHY? the neutral player is created when the order is executed
-	//blockadeOrders->setTargetTerritory(player->getTerritoryList().at(region));
-	// WHY not use constructor?
-	//Blockade* blockadeOrders = new Blockade(player, allPlayers, player->getTerritoryList().at(region));
-
-	//player->setOrder(blockadeOrders);
-}
-
-void HumanPlayerStrategy::NegotiateOrder()
-{
-	set<Player*> playersTemp = GetPlayers();
-	vector<Player*> players = vector<Player*>(playersTemp.begin(), playersTemp.end());
-
-	cout << "These are the valid player options" << endl;
-	for (int i = 0; i < players.size(); i++)
-	{
-		next(players.begin(), i);
-		cout << i << ". " << players.at(i)->GetPlayerName() << endl;
-	}
-
-	int chosenPlayer = ChooseValidOption(players.size());
-
-	/*Negotiate* negotiateOrders = new Negotiate();
-	negotiateOrders->setSelfPlayers(player);
-	negotiateOrders->setPeacePlayer(players.at(chosenPlayer));*/
-	// WHY? Should be: 
-	Negotiate* negotiateOrders = new Negotiate(player, players.at(chosenPlayer));
-	// Reason: setPeacePlayer is technically the player chosen to negociate with, but should use constructor
-
-	player->setOrder(negotiateOrders);
-}
-
 int HumanPlayerStrategy::ChooseValidOption(int max)
 {
 	int region = -1;
@@ -408,11 +344,6 @@ vector<Territory*> HumanPlayerStrategy::GetEnemyTerritory()
 	vector<Territory*> nonPlayerTerritory;
 
 	// Modified by Jennifer, changed from for each(Territory* territory in player->getMap()) to this bc the other one gave errors
-	//for (Territory * territory : player->getMap()) {
-	//	if (territory->getPlayerOwner() != player) {
-	//		nonPlayerTerritory.push_back(territory);
-	//	}
-	//}
 	for (Territory* territory : allPlayers->getTerritoryList()) {
 		if (territory->getPlayerOwner() != player) {
 			nonPlayerTerritory.push_back(territory);
@@ -427,18 +358,6 @@ set<Player*> HumanPlayerStrategy::GetPlayers()
 	set<Player*> players;
 
 	// Changed by Jennifer
-	//for each (Territory * terr in player->getMap())
-	//{
-	//	if (terr->getTerritoryOwner() != player) {
-	//		players.insert(terr->getTerritoryOwner());
-	//	}
-	//}
-	/*for (Territory* terr : player->getMap())
-	{
-		if (terr->getPlayerOwner() != player) {
-			players.insert(terr->getPlayerOwner());
-		}
-	}*/
 	for (Player* p : allPlayers->getListOfPlayers()) {
 		if (p != player) {
 			players.insert(p);
@@ -477,7 +396,7 @@ void AggressivePlayerStrategy::issueOrder()
 	//Find the strongest territory
 	//for all territories in its list of territories, if territory at i has more armies, then strongest territory = territory at i
 	//Create a Deploy or Advance (on its own territory) order, move all armies on the strongest country
-	if (player->getReinforcementPool() > 0)
+	while (player->getReinforcementPool() > 0)
 	{
 		// If player has reinforcement units, then deploy
 		target = player->getTerritoryList().at(0);
@@ -492,36 +411,33 @@ void AggressivePlayerStrategy::issueOrder()
 		player->setOrder(deployOrder);
 	}
 	// Else, advance
-	else
+	//Always advances to enemy territories until it cannot do so anymore
+	//Create Advance order on enemy territory
+	source = player->getTerritoryList().at(0);
+	// While the player still has armie units, do advance
+	while (source->getArmies() > 0)
 	{
-		//Always advances to enemy territories until it cannot do so anymore
-		//Create Advance order on enemy territory
-		source = player->getTerritoryList().at(0);
-		// While the player still has armie units, do advance
-		while (source->getArmies() > 0)
-		{
-			// Find territory with largest number of units; Going to be the source territory
-			for (int i = 0; i < player->getTerritoryList().size(); i++) {
-				if (source->getArmies() < player->getTerritoryList().at(i)->getArmies()) {
-					source = player->getTerritoryList().at(i);
-				}
+		// Find territory with largest number of units; Going to be the source territory
+		for (int i = 0; i < player->getTerritoryList().size(); i++) {
+			if (source->getArmies() < player->getTerritoryList().at(i)->getArmies()) {
+				source = player->getTerritoryList().at(i);
 			}
-
-			target = allPlayers->getTerritoryList().at(0);
-			// Go through all the territories
-			for (int i = 0; allPlayers->getTerritoryList().size(); i++) {
-				// If territory does not belong to the player, then it belongs to an enemy player
-				if (allPlayers->getTerritoryList().at(i)->getPlayerOwner() != player) {
-					// If the enemie territory has lowest amount of armie units and is adjacent to the source territory, then it's going to be the target
-					if (target->getArmies() > allPlayers->getTerritoryList().at(i)->getArmies() && source->isAdjacentTo(allPlayers->getTerritoryList().at(i)->getId()))
-						target = allPlayers->getTerritoryList().at(i);
-				}
-			}
-
-			Advance* advanceOrder = new Advance(player, source->getArmies(), source, target, player->getPlayerHand(), deck);
-
-			player->setOrder(advanceOrder);
 		}
+
+		target = allPlayers->getTerritoryList().at(0);
+		// Go through all the territories
+		for (int i = 0; allPlayers->getTerritoryList().size(); i++) {
+			// If territory does not belong to the player, then it belongs to an enemy player
+			if (allPlayers->getTerritoryList().at(i)->getPlayerOwner() != player) {
+				// If the enemie territory has lowest amount of armie units and is adjacent to the source territory, then it's going to be the target
+				if (target->getArmies() > allPlayers->getTerritoryList().at(i)->getArmies() && source->isAdjacentTo(allPlayers->getTerritoryList().at(i)->getId()))
+					target = allPlayers->getTerritoryList().at(i);
+			}
+		}
+
+		Advance* advanceOrder = new Advance(player, source->getArmies(), source, target, deck);
+
+		player->setOrder(advanceOrder);
 	}
 
 	//cout << "\nAggressive player deployed/Advanced all its armies and reinforcements until it no longer can." << endl;
@@ -578,7 +494,7 @@ void BenevolentPlayerStrategy::issueOrder()
 	//Create a Deploy on the weakest country
 	Territory* source;
 	Territory* target;
-	if (player->getReinforcementPool() > 0)
+	while (player->getReinforcementPool() > 0)
 	{
 		// If player has reinforcement units, then deploy
 		source = player->getTerritoryList().at(0);
@@ -593,26 +509,23 @@ void BenevolentPlayerStrategy::issueOrder()
 		player->setOrder(deployOrder);
 	}
 	//Check adjacent countries that has less armies then the others and move armies to the weaker countries (Advance)
-	else
+	source = player->getTerritoryList().at(0);
+	while (source->getArmies() > 0)
 	{
-		source = player->getTerritoryList().at(0);
-		while (source->getArmies() > 0)
-		{
-			// Find territory with largest number of units; Going to be the source territory
-			for (int i = 0; i < player->getTerritoryList().size(); i++) {
-				if (source->getArmies() < player->getTerritoryList().at(i)->getArmies()) {
-					source = player->getTerritoryList().at(i);
-				}
+		// Find territory with largest number of units; Going to be the source territory
+		for (int i = 0; i < player->getTerritoryList().size(); i++) {
+			if (source->getArmies() < player->getTerritoryList().at(i)->getArmies()) {
+				source = player->getTerritoryList().at(i);
 			}
-
-			target = player->getTerritoryList().at(0);
-			for (int i = 0; i < player->getTerritoryList().size(); i++) {
-				if (source->isAdjacentTo(player->getTerritoryList().at(i)->getId()) && target->getArmies() > player->getTerritoryList().at(i)->getArmies()) {
-					target = player->getTerritoryList().at(i);
-				}
-			}
-			Advance* advanceOrder = new Advance(player, source->getArmies(), source, target, player->getPlayerHand(), deck);
 		}
+
+		target = player->getTerritoryList().at(0);
+		for (int i = 0; i < player->getTerritoryList().size(); i++) {
+			if (source->isAdjacentTo(player->getTerritoryList().at(i)->getId()) && target->getArmies() > player->getTerritoryList().at(i)->getArmies()) {
+				target = player->getTerritoryList().at(i);
+			}
+		}
+		Advance* advanceOrder = new Advance(player, source->getArmies(), source, target, deck);
 	}
 
 	//Cannot advance on enemy territories
@@ -732,7 +645,6 @@ void CheaterPlayerStrategy::issueOrder()
 	Territory* source;
 	Territory* target;
 
-
 	for (int i = 0; i < player->getTerritoryList().size(); i++)
 	{
 		source = player->getTerritoryList().at(i);
@@ -740,6 +652,7 @@ void CheaterPlayerStrategy::issueOrder()
 			target = allPlayers->getTerritoryList().at(i);
 			if (target->getPlayerOwner() != player && target->isAdjacentTo(source->getId())) {
 				target->setPlayerOwner(player);
+
 			}
 		}
 	}

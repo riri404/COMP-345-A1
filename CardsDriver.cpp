@@ -12,7 +12,7 @@ void CardsDriver()
 
 	cout << "Creating Deck..." << endl << endl;
 	deck->create_deck();
-	
+
 	string answer;
 	cout << "Do you wish to see the cards in the deck? (y/n)" << endl;
 	cin >> answer;
@@ -21,7 +21,7 @@ void CardsDriver()
 	{
 		deck->printDeck();
 	}
-	
+
 	cout << endl;
 	deck->printDeckSize();
 
@@ -49,12 +49,12 @@ void CardsDriver()
 	// Show play
 	cout << "Testing play. " << endl;
 	cout << "Lets play all your cards from your hand" << endl << endl;
-	
-	int handSize = hand->getHand()->size();
+
+	int handSize = hand->getHand().size();
 
 	for (int i = 0; i < handSize; i++)
 	{
-		hand->play(hand->getHand()->at(0), deck);
+		hand->play(hand->getHand().at(0), deck);
 	}
 
 	hand->printPlayCard();

@@ -89,7 +89,7 @@ class Advance : public Order {
 public:
     //Constructor and destructor
     Advance();
-    Advance(Player*, int, Territory*, Territory*, Hand*, Deck*);  //player, armies, source, target
+    Advance(Player*, int, Territory*, Territory*, Deck*);  //player, armies, source, target
     ~Advance();
 
     //Copy constructor, assignement and stream insertion operator
@@ -115,7 +115,7 @@ private:
     int armies;
     Territory* source;
     Territory* target;
-    Hand* playerHand;
+    //Hand* playerHand;
     Deck* deck;
 };
 
@@ -125,7 +125,7 @@ class Bomb : public Order {
 public:
     //Constructor and destructor
     Bomb();
-    Bomb(Player*, Territory*, vector<Territory*>);  //player, target, territoryList
+    Bomb(Player*, Territory*);  //player, target
     ~Bomb();
 
     //Copy constructor, assignement and stream insertion operator
@@ -148,7 +148,6 @@ public:
 
 private:
     Territory* target;
-    vector<Territory*> territoryList;
 };
 
 //A blockade order targets a territory that belongs to the player issuing the order. Its effect is to

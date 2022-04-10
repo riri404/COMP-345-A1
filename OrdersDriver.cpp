@@ -192,7 +192,7 @@ void OrdersDriver()
 									<< " units in " << allPlayers->getListOfPlayers().at(i)->getTerritoryList().at(j)->getName() << endl;
 								cin >> nbArmies;
 
-								advance = new Advance(p2, nbArmies, allPlayers->getListOfPlayers().at(i)->getTerritoryList().at(j), allPlayers->getListOfPlayers().at(k)->getTerritoryList().at(l), p2->getPlayerHand(), deck);
+								advance = new Advance(p2, nbArmies, allPlayers->getListOfPlayers().at(i)->getTerritoryList().at(j), allPlayers->getListOfPlayers().at(k)->getTerritoryList().at(l), deck);
 							}
 						}
 					}
@@ -221,7 +221,7 @@ void OrdersDriver()
 		for (int i = 0; i < allPlayers->getListOfPlayers().size(); i++) {
 			for (int j = 0; j < allPlayers->getListOfPlayers().at(i)->getTerritoryList().size(); j++) {
 				if (allPlayers->getListOfPlayers().at(i)->getTerritoryList().at(j)->getName() == targetTerritory) {
-					bomb = new Bomb(p1, allPlayers->getListOfPlayers().at(i)->getTerritoryList().at(j), p1->getTerritoryList());
+					bomb = new Bomb(p1, allPlayers->getListOfPlayers().at(i)->getTerritoryList().at(j));
 				}
 			}
 		}
@@ -344,7 +344,7 @@ void OrdersDriver()
 		for (int i = 0; i < allPlayers->getListOfPlayers().size(); i++) {
 			for (int j = 0; j < allPlayers->getListOfPlayers().at(i)->getTerritoryList().size(); j++) {
 				if (allPlayers->getListOfPlayers().at(i)->getTerritoryList().at(j)->getName() == targetTerritory) {
-					bomb = new Bomb(p1, allPlayers->getListOfPlayers().at(i)->getTerritoryList().at(j), allPlayers->getTerritoryList());
+					bomb = new Bomb(p1, allPlayers->getListOfPlayers().at(i)->getTerritoryList().at(j));
 				}
 			}
 		}

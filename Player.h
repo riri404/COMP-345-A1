@@ -49,13 +49,12 @@ public:
 	void AddCard(Cards*);
 	void Attach(LogObserver* observer);
 
-	vector<Territory*> getTerritory(); //added for neutral player
-
 
 	// Added & modified by Justine & Jennifer 
 	void setTerritory(Territory*);
 	void removeTerritory(int i);
 	Hand* getPlayerHand();
+	vector<Cards*> GetHand();
 
 	OrdersList* getOrdersList();
 	void setOrder(Order* order);
@@ -83,7 +82,6 @@ private:
 	vector<Territory*> territoryList;
 	OrdersList* orderList;
 	Hand* handCards;
-	PlayerStrategy* strategy;
 
 	vector<Player*> players;
 
@@ -94,4 +92,6 @@ private:
 	string pName;
 	vector<Territory*> defendTerritories;
 	vector<Territory*> attackTerritories;
+
+	vector<Cards*> playerHand;
 };

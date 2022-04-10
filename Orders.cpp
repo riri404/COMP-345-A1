@@ -172,13 +172,13 @@ Advance::Advance() {
 }
 
 // An advance order tells a certain number of army units to move from a source territory to a target adjacent territory.
-Advance::Advance(Player* currentPlayer, int numberOfArmies, Territory* sourceTerritory, Territory* targetTerritory, Hand* pHand, Deck* pDeck) {
+Advance::Advance(Player* currentPlayer, int numberOfArmies, Territory* sourceTerritory, Territory* targetTerritory, Deck* pDeck) {
 	this->name = "Advance";
 	this->player = currentPlayer;
 	this->armies = numberOfArmies;
 	this->source = sourceTerritory;
 	this->target = targetTerritory;
-	this->playerHand = pHand;
+	//this->playerHand = pHand;
 	this->deck = pDeck;
 }
 
@@ -197,7 +197,7 @@ Advance::Advance(Advance& anotherAdvance) : Order(anotherAdvance) {
 	this->armies = anotherAdvance.armies;
 	this->source = anotherAdvance.source;
 	this->target = anotherAdvance.target;
-	this->playerHand = anotherAdvance.playerHand;
+	//this->playerHand = anotherAdvance.playerHand;
 	this->deck = anotherAdvance.deck;
 }
 
@@ -209,7 +209,7 @@ Advance& Advance::operator=(const Advance& anAdvance) {
 	this->armies = anAdvance.armies;
 	this->source = anAdvance.source;
 	this->target = anAdvance.target;
-	this->playerHand = anAdvance.playerHand;
+	//this->playerHand = anAdvance.playerHand;
 	this->deck = anAdvance.deck;
 	return *this;
 }
@@ -342,20 +342,16 @@ Bomb::Bomb() {
 
 //A bomb order targets a territory owned by another player than the one issuing the order. Its result is
 //to remove half of the armies from this territory.The bomb order can only be created by playing the bomb card.
-Bomb::Bomb(Player* currentPlayer, Territory* targetTerritory, vector<Territory*> territoryList) {
+Bomb::Bomb(Player* currentPlayer, Territory* targetTerritory) {
 	this->name = "Bomb";
 	this->player = currentPlayer;
 	this->target = targetTerritory;
-	this->territoryList = territoryList;
 }
 
 //Destructor
 Bomb::~Bomb() {
 	delete target;
 	target = nullptr;
-	for (auto p : territoryList)
-		delete p;
-	territoryList.clear();
 }
 
 //Copy constructor
@@ -363,7 +359,6 @@ Bomb::Bomb(Bomb& anotherBomb) : Order(anotherBomb) {
 	this->name = anotherBomb.name;
 	this->player = anotherBomb.player;
 	this->target = anotherBomb.target;
-	this->territoryList = anotherBomb.territoryList;
 }
 
 //Assignment operator
@@ -372,7 +367,6 @@ Bomb& Bomb::operator=(const Bomb& aBomb) {
 	this->name = aBomb.name;
 	this->player = aBomb.player;
 	this->target = aBomb.target;
-	this->territoryList = aBomb.territoryList;
 	return *this;
 }
 
@@ -380,7 +374,6 @@ ostream& operator<<(ostream& outs, const Bomb& bomb) {
 	outs << "Order's name: " << bomb.name << endl;
 	outs << "Player: " << *(bomb.player) << endl;
 	outs << "Target territory: " << *(bomb.target) << endl;
-	//outs << "Territory list: " << bomb.territoryList << endl;
 	return outs;
 }
 
