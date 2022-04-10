@@ -287,6 +287,12 @@ void Player::Attach(LogObserver* observer) {
 	orderList->Attach(observer);
 }
 
+vector<Territory*> Player::getTerritory()
+{
+	return territoryList;
+
+}
+
 // Added by justine & jennifer
 void Player::setTerritory(Territory* newTerritory)
 {
