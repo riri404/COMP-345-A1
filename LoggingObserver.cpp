@@ -4,11 +4,11 @@
 #include <iostream>
 
 Observer::Observer() {
-    std::cout << "bla" << std::endl;
+  //  std::cout << "bla" << std::endl;
 };
 
 Observer::~Observer() {
-    std::cout << "bla" << std::endl;
+  //  std::cout << "bla" << std::endl;
 };
 
 Subject::Subject() {

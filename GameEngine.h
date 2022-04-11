@@ -67,7 +67,9 @@ public:
 	void Start();
 
 	void LoadMap();
+	void LoadMap(Command* commandEntered);
 	bool ValidateMap();
+	bool ValidateMapOld();
 	
 	void IssueOrdersPhase();
 	//void IssueOrdersPhase(Player* player);
@@ -102,6 +104,10 @@ public:
 	void AttachToOrdersList(LogObserver* observer);
 	void AttachToProcessor(LogObserver* observer);
 
+	
+
+
+
 private:
 	State state;
 	Map* map;
@@ -127,7 +133,10 @@ private:
 	string tournamentLog();
 	bool loadAnotherMap(string file);
 	void reset();
-	void playTournament();
+	
+	void playTournamentOld();
+	void PlayTournament(Command* command);
+
 	void initTournamentParams();
 	void initTournament(); // @Bero do this part
 };

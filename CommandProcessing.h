@@ -56,6 +56,8 @@ public:
 
 	void TournamentFunctionInput(string);
 	bool TournamentValidation();
+
+	string FileTournamentFunctionInput(string input);
 	//000000000000000000000000000000000000000000000000000000000
 	friend void CommandProcessorDriver();
 	GameEngine* gameEnginePtr;

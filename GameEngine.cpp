@@ -129,6 +129,7 @@ string GameEngine::SelectName(string command) {
     return name;
 }
 
+//=================== StartUp Phase===================
 
 void GameEngine::StartupPhase() {
     cout << "Welcome to Warzone" << endl << endl;
@@ -139,29 +140,88 @@ void GameEngine::StartupPhase() {
     // "During the start game state, a new tournament command can be entered by the user, 
     // which triggers the Tournament Mode"
 
-    string input = "";
-    std::cout << "Do you want to play tournament mode? Enter (y/n): ";
+   // string input = "";
+   // std::cout << "Do you want to play tournament mode? Enter (y/n): ";
+   //while (input != "y" || input != "n") {
+   //     std::cout << "Enter (y/n): ";
+   //     std::cin >> input;
+   // }
+   //if (input == "y") {
+   //     playTournament();
+   //     return;
+   // }
+  
+    TakeInput();
 
-   while (input != "y" || input != "n") {
-        std::cout << "Enter (y/n): ";
-        std::cin >> input;
-    }
-   if (input == "y") {
-        playTournament();
-        return;
-    }
-    LoadMap();
-    ValidateMap();
-    AddPlayers();
-    GameStart();
+   // LoadMap();
+   // ValidateMap();
+   // AddPlayers();
+   // GameStart();
 }
 
 void GameEngine::TakeInput() {
+    do {
+      
+        commandEntered = processor->getCommand();
+        
+        if (processor->validate(commandEntered)) {
+        
+            if (commandEntered->type == Command::CommandType::tournament) {
+                
+                // tournament -M <listofmaps> -P <listofplayerstrategies> -G <numberofgames> -D <maxnumberofturns>\" to enter the parameters
+                // tournament M map1 map2 map3 map4 map5 map6 P Aggressive sami wrong blabla the5th G 2 D 100
+        
+                PlayTournament(commandEntered);
+        
+            }
+            else if (commandEntered->type == Command::CommandType::loadmap) {
+        
+                LoadMap(commandEntered);
+        
+            }
 
+            else if (commandEntered->type == Command::CommandType::validatemap) {
+
+                ValidateMap();
+            }
+
+            else if (commandEntered->type == Command::CommandType::addplayer) {
+
+                if (numberOfPlayers < 6) {
+
+                    AddPlayer();
+
+                }
+
+                else {
+
+                    cout << endl << "-< Maximum number of players is 6 >- " << endl;
+
+                    cout << endl << "::Use the \"gamestart\" command to start the game play phase" << endl;
+                }
+               
+            }
+                   
+            else if (commandEntered->type == Command::CommandType::gamestart) {
+
+                if (numberOfPlayers > 1) {
+
+                    GameStart();
+
+                }
+
+                else {
+
+                    cout << endl << "::Use the \"addplayer <playername>\" command to enter players in the game (2-6 players)" << endl;
+
+                }
+                
+            }
+
+        }
+    } while (true);
 }
 
-
-//=================== StartUp Phase===================
 
 void GameEngine::Start() {
     state = State::start;   
@@ -179,6 +239,24 @@ void GameEngine::Start() {
               << endl; 
 }
 
+
+void GameEngine::LoadMap(Command* commandEntered) {
+
+    string mapName;
+    string fileName;
+
+        mapName = SelectName(commandEntered->GetCommandName());
+
+        fileName = "source_maps/" + mapName + ".map";
+
+        map = new Map(fileName);
+
+        if (map->isMapLoaded()) {
+            state = State::maploaded;
+            cout << endl << "GamePhase: map loaded" << endl << endl;
+            Notify(this);
+        }
+}
 
 void GameEngine::LoadMap() {
  
@@ -207,9 +285,8 @@ void GameEngine::LoadMap() {
     } while (map == nullptr || !map->isMapLoaded());
 }
 
+bool GameEngine::ValidateMapOld() {
 
-bool GameEngine::ValidateMap() {
-    
     bool validMap = false;
 
     do {
@@ -237,6 +314,74 @@ bool GameEngine::ValidateMap() {
     } while (!validMap);
     return false;
 }
+
+
+void GameEngine::PlayTournament(Command* command) {
+    
+    cout << *command;
+ 
+  //  std::cout << "Use \"tournament -M <listofmaps> -P <listofplayerstrategies> -G <numberofgames> -D <maxnumberofturns>\" to enter the parameters" << std::endl;
+
+    string commandText = command->getCommandText();
+
+    processor->TournamentFunctionInput(commandText);
+    if (processor->TournamentValidation())
+    {
+     // input is valid, so set the parameters
+    initTournamentParams();
+    state = State::tournamentStart;
+    //Q why are we changing to tournamentStart state?
+    Notify(this);
+    for (int i = 0; i < tournamentNumOfGames; ++i) {
+
+        //Q where are you initializing tournament maps?? found it in the initTournamentParams
+        for (int j = 0; j < tournamentMaps.size(); ++i) {
+            reset();
+            // initTournament(); feature6 to add
+            map->load("source_maps/" + tournamentMaps[i] + ".map");
+            // play game
+            GameStart(); // is this the correct function? //Q yes
+
+            Player* playerWon = new Player(); // get player who won //Q is this a place holder?
+            tournamentPlayersWon.push_back(playerWon);
+        }
+    }
+
+
+
+    state = State::tournamentEnd;
+    //Q should we sandwish the tournement with those states
+    Notify(this);
+
+    }
+
+    else
+    {
+        cout << endl << "Tournament validation failed";
+    }
+}
+
+
+bool GameEngine::ValidateMap() {
+    
+    bool validMap = false;
+
+    validMap = map->validate();
+
+    if (!validMap)
+    {
+        cout << "Not a valid map, please try again\n" << endl << endl;
+        return false;
+    }
+    else
+    {
+        state = State::mapvalidated;
+        cout << "GamePhase: map validated" << endl << endl;
+        Notify(this);
+        return true;
+    }        
+}
+
 
 void GameEngine::AddPlayers() {
 
@@ -322,7 +467,6 @@ void GameEngine::AddStrategyPlayer(string strategyName, int playerID) {
 }
 
 
-
 void GameEngine::DistributeTerritories() {
 
     mapTerritories = map->GetMapTerritories();
@@ -376,9 +520,6 @@ void GameEngine::GameStart() {
         player->addToReinforcePool(50);
     }
 
-  
-    // cout << endl << "Map info ->" << endl << endl <<*map;
-
     cout << endl << "Players of this game ->" << endl;
 
     for (auto player : players)
@@ -387,20 +528,52 @@ void GameEngine::GameStart() {
         cout << endl << *player << endl;
     }
 
+   // GameEngine::MainGameLoop(); // Here we start the main game loop
 
- /*   for (Player* player : players) {
+    // For debugging:
+    
+    // cout << endl << "Map info ->" << endl << endl <<*map;
 
+    /*  for (Player* player : players) {
         cout << endl <<"Territories owned by " << player->GetPlayerName() << " -> " << endl << endl;
         for (Territory* territory : player->getTerritoryList()) {
           cout << *territory;
-        }
-        
+        } 
     }*/
 }
 
+// ==============================Play Phase===================================
+void GameEngine::MainGameLoop() {
+
+    cout << "Starting Main Game Loop..." << endl;
+
+    while (true) {
+        ReinforcementPhase();
+        IssueOrdersPhase();
+        ExecuteOrdersPhase();
+        // Eliminate players who don't have any more territories.
+        for (int i = players.size() - 1; i >= 0; i--) {
+            if (false/* player has no more territories */) {
+                cout << "A player has been eliminated." << endl;
+
+                players.erase(players.begin() + i);
+            }
+        }
+        // If a player controls all territories, they win the game.
+        if (players.size() < 2) {
+            cout << "There's only one player left." << endl;
+
+
+            if (false /*players.at(0)->player controls all territories*/) {
+                cout << "Exiting Main Game Loop." << endl;
+
+                return;
+            }
+        }
+    }
+}
 
 // Adds troops to a player's reinforcement pool at the start of the turn.
-
 void GameEngine::ReinforcementPhase() {
     state = State::reinforcementPhase;
     Notify(this);
@@ -447,9 +620,7 @@ void GameEngine::ReinforcementPhase() {
 }
 
 
-
 // Calls IssueOrder until all players have commited that they are done issuing orders.
-
 void GameEngine::IssueOrdersPhase() {
     state = State::issueOrderPhase;
     Notify(this);
@@ -470,7 +641,6 @@ void GameEngine::IssueOrdersPhase() {
 
 
 // Calls ExecuteOrder() until all players have no more orders in their orders list.
-
 void GameEngine::ExecuteOrdersPhase() {
     state = State::executeOrderPhase;
     Notify(this);
@@ -513,6 +683,7 @@ void GameEngine::ExecuteOrdersPhase() {
     cout << "end of execute orders phase" << endl;
 }
 
+
 void GameEngine::ExecuteOrders() {
 
 
@@ -542,36 +713,6 @@ void GameEngine::PlayerDrawCard(Player* player) {
 }
 
 
-// ==============================Play Phase===================================
-void GameEngine::MainGameLoop() {
-
-    cout << "Starting Main Game Loop..." << endl;
-
-    while (true) {
-        ReinforcementPhase();
-        IssueOrdersPhase();
-        ExecuteOrdersPhase();
-        // Eliminate players who don't have any more territories.
-        for (int i = players.size() - 1; i >= 0; i--) {
-            if (false/* player has no more territories */) {
-                cout << "A player has been eliminated." << endl;
-
-                players.erase(players.begin() + i);
-            }
-        }
-        // If a player controls all territories, they win the game.
-        if (players.size() < 2) {
-            cout << "There's only one player left." << endl;
-
-
-            if (false /*players.at(0)->player controls all territories*/) {
-                cout << "Exiting Main Game Loop." << endl;
-
-                return;
-            }
-        }
-    }
-}
 
 std::string GameEngine::stringToLog() {
     std::string log = "";
@@ -667,9 +808,10 @@ void GameEngine::reset() {
     NumberOfTerritories = 0;
     numberOfPlayers = 0;
     // we should use delete to call the destructures 
+    // would not calling delete gameEngine take care of some of the cleaning .. check ~GameEngine
 }
 
-void GameEngine::playTournament() {
+void GameEngine::playTournamentOld() {
     
     while (true) {
         std::cout << "Use \"tournament -M <listofmaps> -P <listofplayerstrategies> -G <numberofgames> -D <maxnumberofturns>\" to enter the parameters" << std::endl;
@@ -679,9 +821,6 @@ void GameEngine::playTournament() {
         if (processor->TournamentValidation()) break;
     } 
 
-   // tournamentMaps = processor->allMaps;
-   // tournamentNumOfGames = processor->numberOfGames;
-   
     // input is valid, so set the parameters
     initTournamentParams();
     state = State::tournamentStart;
@@ -689,15 +828,28 @@ void GameEngine::playTournament() {
     Notify(this);
     for (int i = 0; i < tournamentNumOfGames; ++i) {
       
-        //Q where are you initializing tournament maps?? found it in the initTournamentParams
         for (int j = 0; j < tournamentMaps.size(); ++i) {
             reset();
-            // initTournament(); feature6 to add
+           
+            // initTournament(); feature6 to add 
+
+            int playerID = 1;
+            for (string& player : tournamentPlayers) // access by reference to avoid copying
+            {
+                AddStrategyPlayer(player, playerID);
+                playerID++;
+            }
+
             map->load("source_maps/" + tournamentMaps[i] + ".map");
+           
             // play game
             GameStart(); // is this the correct function? //Q yes
 
+
             Player* playerWon = new Player(); // get player who won //Q is this a place holder?
+
+           // playerWon = MainGameLoop().winner; // something like this
+
             tournamentPlayersWon.push_back(playerWon);
         }
     }
@@ -721,12 +873,7 @@ void GameEngine::initTournament() {
     // TODO: @Bero
     // initialize players using tournamentPlayers (string of player strategies, wait for part 1 to complete this)
     //Q tournamentPlayers = processor->allPlayerStrategies; // initiated in initTournamentParams
-    int playerID = 1;
-    for (string& player : tournamentPlayers) // access by reference to avoid copying
-    {
-        AddStrategyPlayer(player, playerID);
-        playerID++;
-    }
+  
     // initialize deck? (not sure how it works)
     //Q Already initializing it and distrebuting two cards for each player in the gameStart() function
     // anything else missing?

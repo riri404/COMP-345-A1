@@ -1,15 +1,3 @@
 State: Starting game
-Command: loadmap bigeurope
-Effect: maploaded
-Phase: Map loaded
-Command: validatemap
-Effect: mapvalidated
-Phase: Map validated
-Command: addplayer jake
-Effect: playersadded
-Phase: Players added
-Command: addplayer lol
-Effect: playersadded
-Phase: Players added
-Command: gamestart
-Effect: assignreinforcement
+Command: tournament M bigeurope map2 map3 map4 map5 map6 P Aggressive sami wrong blabla the5th G 2 D 100
+Effect: Tournament Mode activated.
