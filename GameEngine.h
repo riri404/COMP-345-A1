@@ -74,7 +74,7 @@ public:
 	void IssueOrdersPhase();
 	//void IssueOrdersPhase(Player* player);
 
-	void MainGameLoop();
+	Player* MainGameLoop();
 	void StartupPhase();
 	void ReinforcementPhase();
 

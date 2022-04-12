@@ -543,7 +543,7 @@ void GameEngine::GameStart() {
 }
 
 // ==============================Play Phase===================================
-void GameEngine::MainGameLoop() {
+Player* GameEngine::MainGameLoop() {
 
     cout << "Starting Main Game Loop..." << endl;
 
@@ -560,15 +560,11 @@ void GameEngine::MainGameLoop() {
             }
         }
         // If a player controls all territories, they win the game.
-        if (players.size() < 2) {
+        if (players.size() == 1) {
             cout << "There's only one player left." << endl;
+            return players[0];
 
-
-            if (false /*players.at(0)->player controls all territories*/) {
-                cout << "Exiting Main Game Loop." << endl;
-
-                return;
-            }
+        
         }
     }
 }
@@ -848,7 +844,7 @@ void GameEngine::playTournamentOld() {
 
             Player* playerWon = new Player(); // get player who won //Q is this a place holder?
 
-           // playerWon = MainGameLoop().winner; // something like this
+            playerWon = MainGameLoop(); // something like this
 
             tournamentPlayersWon.push_back(playerWon);
         }
