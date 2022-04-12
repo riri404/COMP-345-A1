@@ -439,17 +439,38 @@ void AggressivePlayerStrategy::issueOrder()
 
 vector<Territory*> AggressivePlayerStrategy::toAttack()
 {
-	vector<Territory*> attackList;
+	// Empty toDefend list
+	if (!player->getListToAttack().empty())
+		player->clearToAttack();
 
-	return attackList;
+	// Adding territory to defend by the least number of units
+	for (int i = 0; i < player->getTerritoryList().size(); i++) {
+		for (int j = 0; j < player->getTerritoryList().at(i)->getAdjTerritories().size(); j++) {
+			if (player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner() != player) {
+				player->addTerritoryToAttack(player->getTerritoryList().at(i)->getAdjTerritories().at(j));
+			}
+		}
+	}
+
+	return player->getListToAttack();
 }
 
 vector<Territory*> AggressivePlayerStrategy::toDefend()
 {
-	vector<Territory*> DefendList;
-	return DefendList;
-	//cout << "AggressivePlayerStrategy: toDefend() " << endl;
-	//cout << "Aggressive Player can not defend!" << endl;
+	// Empty toDefend list
+	if (!player->getListToDefend().empty())
+		player->clearToDefend();
+
+	// Adding territory to defend by the least number of units
+	player->sortLeastToGreatestUnits();
+	for (int i = 0; i < player->getTerritoryList().size(); i++)
+	{
+		player->addTerritoryToDefend(player->getTerritoryList().at(i));
+	}
+
+	player->printToDefend();
+
+	return player->getListToDefend();
 }
 
 void AggressivePlayerStrategy::PrintStrategy()
@@ -544,7 +565,7 @@ vector<Territory*> BenevolentPlayerStrategy::toDefend()
 		player->addTerritoryToDefend(player->getTerritoryList().at(i));
 	}
 
-	player->sortLeastToGreatestUnits();
+	player->printToDefend();
 
 	return player->getListToDefend();
 }
@@ -650,14 +671,17 @@ void CheaterPlayerStrategy::issueOrder()
 	Territory* source;
 	Territory* target;
 
+	// Go through list of cheater player territories
 	for (int i = 0; i < player->getTerritoryList().size(); i++)
 	{
 		source = player->getTerritoryList().at(i);
-		for (int j = 0; j < allPlayers->getTerritoryList().size(); j++) {
-			target = allPlayers->getTerritoryList().at(i);
-			if (target->getPlayerOwner() != player && target->isAdjacentTo(source->getId())) {
-				target->setPlayerOwner(player);
 
+		// Conquer all adjacent territories that are not his
+		for (int j = 0; j < source->getAdjTerritories().size(); j++) {
+			target = source->getAdjTerritories().at(i);
+
+			if (target->getPlayerOwner() != player) {
+				target->setPlayerOwner(player);
 			}
 		}
 	}
