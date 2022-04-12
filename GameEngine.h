@@ -67,12 +67,14 @@ public:
 	void Start();
 
 	void LoadMap();
+	void LoadMap(Command* commandEntered);
 	bool ValidateMap();
+	bool ValidateMapOld();
 	
 	void IssueOrdersPhase();
 	//void IssueOrdersPhase(Player* player);
 
-	void MainGameLoop();
+	Player* MainGameLoop();
 	void StartupPhase();
 	void ReinforcementPhase();
 
@@ -102,7 +104,13 @@ public:
 	void AttachToOrdersList(LogObserver* observer);
 	void AttachToProcessor(LogObserver* observer);
 
+	
+
+
+
 private:
+
+	bool tournamentMode = false;
 	State state;
 	Map* map;
 	MapLoader* mapLoader; //for reinforcement phase
@@ -127,7 +135,10 @@ private:
 	string tournamentLog();
 	bool loadAnotherMap(string file);
 	void reset();
-	void playTournament();
+	
+	void playTournamentOld();
+	void PlayTournament(Command* command);
+
 	void initTournamentParams();
 	void initTournament(); // @Bero do this part
 };
