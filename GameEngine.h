@@ -109,6 +109,8 @@ public:
 
 
 private:
+
+	bool tournamentMode = false;
 	State state;
 	Map* map;
 	MapLoader* mapLoader; //for reinforcement phase

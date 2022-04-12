@@ -171,6 +171,7 @@ void GameEngine::TakeInput() {
                 // tournament -M <listofmaps> -P <listofplayerstrategies> -G <numberofgames> -D <maxnumberofturns>\" to enter the parameters
                 // tournament M map1 map2 map3 map4 map5 map6 P Aggressive sami wrong blabla the5th G 2 D 100
         
+                tournamentMode = true;
                 PlayTournament(commandEntered);
         
             }
@@ -219,7 +220,7 @@ void GameEngine::TakeInput() {
             }
 
         }
-    } while (true);
+    } while ((state != State::tournamentEnd && tournamentEnd) || (state != State::win && !tournamentMode) );
 }
 
 
@@ -562,6 +563,8 @@ Player* GameEngine::MainGameLoop() {
         // If a player controls all territories, they win the game.
         if (players.size() == 1) {
             cout << "There's only one player left." << endl;
+            state = State::win;
+            Notify(this);
             return players[0];
 
         
