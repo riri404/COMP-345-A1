@@ -39,11 +39,15 @@ public:
     virtual bool validate() = 0; //pure virtual
     virtual void execute() = 0; //pure virtual
 
-    // Not working
-    void addPlayer(Player* p);
+    // Not using these
+    void addPlayer(Player*);
     vector<Player*> getListOfPlayers();
 
+    // Following update method is to update the list of players. Make sure to use it after execute an order
+    virtual vector<Player*> updateListOfPlayers() = 0;
+
     string stringToLog() override;
+
 protected:
     string name;
     Player* player;
@@ -72,6 +76,7 @@ public:
     void setSelfPlayers(Player*);
     void setTargetTerritory(Territory*);
     void setNumArmy(int);
+    vector<Player*> updateListOfPlayers();
 
     //Member functions
     bool validate() override;
@@ -105,6 +110,7 @@ public:
     void setSourceTerritory(Territory*);
     void setTargetTerritory(Territory*);
     void setArmyUnits(int);
+    vector<Player*> updateListOfPlayers();
 
     //Member functions
     bool validate() override;
@@ -139,6 +145,7 @@ public:
     // For Assignment 3
     void setSelfPlayers(Player*);
     void setTargetTerritory(Territory*);
+    vector<Player*> updateListOfPlayers();
 
     //Member functions
     bool validate() override;
@@ -157,7 +164,7 @@ class Blockade : public Order {
 public:
     //Constructor and destructor
     Blockade();
-    Blockade(Player*, vector<Player*>, Territory*, Deck*);  //player, list of players, target
+    Blockade(Player*, vector<Player*>, Territory*);  //player, target
     ~Blockade();
 
     //Copy constructor, assignement and stream insertion operator
@@ -172,6 +179,7 @@ public:
     void setSelfPlayers(Player*);
     void setNeutralPlayer(Player*);
     void setTargetTerritory(Territory*);
+    vector<Player*> updateListOfPlayers();
 
     //Member functions
     bool validate() override;
@@ -181,7 +189,6 @@ public:
 private:
     Territory* target;
     Player* neutralPlayer;
-    Deck* deck;
     //vector<Player*> listOfPlayers;
     //Player* allPlayers;
 };
@@ -209,6 +216,7 @@ public:
     void setSourceTerritory(Territory*);
     void setTargetTerritory(Territory*);
     void setNumArmy(int);
+    vector<Player*> updateListOfPlayers();
 
     //Member functions
     bool validate() override;
@@ -242,6 +250,7 @@ public:
     // For Assignment 3
     void setSelfPlayers(Player*);
     void setPeacePlayer(Player*);
+    vector<Player*> updateListOfPlayers();
 
     //Member functions
     bool validate() override;

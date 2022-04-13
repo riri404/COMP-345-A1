@@ -35,6 +35,8 @@ Player::Player(int* playerID, int* reinforcementPool, string* name, vector<Terri
 	this->territoryList = territoryList;
 	this->handCards = cards;
 	this->orderList = orderlist;
+	// Unsure if use following 2 or not
+	//this->players = all; 
 	//this->deck = d;
 	if (strategy == "Human") {
 		ps = new HumanPlayerStrategy(this, all, d);
@@ -46,7 +48,7 @@ Player::Player(int* playerID, int* reinforcementPool, string* name, vector<Terri
 		ps = new BenevolentPlayerStrategy(this, all, d);
 	}
 	if (strategy == "Neutral") {
-		ps = new NeutralPlayerStrategy(this, all, d);
+		//ps = new NeutralPlayerStrategy(this, all, d);
 	}
 	if (strategy == "Cheater") {
 		ps = new CheaterPlayerStrategy(this, all, d);
@@ -373,7 +375,7 @@ vector<Player*> Player::getListOfPlayers()
 
 void Player::updateAllPlayers(vector<Player*> all)
 {
-	ps->updateAllPlayers(all);
+	//ps->updateAllPlayers(all);
 }
 
 vector<Territory*> Player::getListToDefend()

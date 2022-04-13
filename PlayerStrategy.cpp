@@ -1,457 +1,744 @@
-#include "Player.h"
+#include "PlayerStrategy.h"
+#include "Orders.h"
 #include "Map.h"
-#include "Cards.h"
-#include <vector>
-#include <iostream>
-#include <string>
+#include "Player.h"
+#include <vector>;
+#include <set>;
 using namespace std;
+class Orders;
+class Player;
+class Territory;
 
-Player::Player()
-{
-	name = new string("");
-	reinforcementPool = new int(0);
-	playerID = new int(-1);
-	territoryList = *(new vector<Territory*>);
-	handCards = new Hand();
-	// list = (*new vector<Order>);
-	orderList = new OrdersList();
+//--------------------------------------------------HUMAN PLAYER STRATEGY--------------------------------------------------
+#pragma region Human Player Strategy
+
+HumanPlayerStrategy::HumanPlayerStrategy(Player* p, vector<Player*> all, Deck* d) {
+	this->player = p;
+	this->allPlayers = all;
+	this->deck = d;
 }
 
-Player::Player(int* playerID, int* reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist)
+// Why did this method like this? Why an int? why not using string order?
+// NOT GOING TO USE THIS, WILL DO IT IN DRIVER (EASIER)
+int HumanPlayerStrategy::changeStrategy(string order, int armies)
 {
-	this->playerID = playerID;
-	this->reinforcementPool = reinforcementPool;
-	this->name = name;
-	this->territoryList = territoryList;
-	this->handCards = cards;
-	this->orderList = orderlist;
-}
-
-Player::Player(int* playerID, int* reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist, string strategy, vector<Player*> all, Deck* d)
-{
-	this->playerID = playerID;
-	this->reinforcementPool = reinforcementPool;
-	this->name = name;
-	this->territoryList = territoryList;
-	this->handCards = cards;
-	this->orderList = orderlist;
-	//this->deck = d;
-	if (strategy == "Human") {
-		ps = new HumanPlayerStrategy(this, all, d);
+	cout << "HumanPlayerStrategy: Please choose a strategy from the following \n"
+		"1 for issueOrder(), 2 for toAttack(), 3 for toDefend(). " << endl;			//Supposed to be strategies (Aggressive, Neutral...), not methods?
+	int input;
+	cin >> input;
+	if (input == 1) {
+		issueOrder();
+		return armies - 1;
 	}
-	if (strategy == "Aggressive") {
-		ps = new AggressivePlayerStrategy(this, all, d);
+	else if (input == 2) {
+		toAttack();
+		return armies - 2;
 	}
-	if (strategy == "Benevolent") {
-		ps = new BenevolentPlayerStrategy(this, all, d);
-	}
-	if (strategy == "Neutral") {
-		ps = new NeutralPlayerStrategy(this, all, d);
-	}
-	if (strategy == "Cheater") {
-		ps = new CheaterPlayerStrategy(this, all, d);
-	}
-}
-
-Player::Player(const Player& p)
-{
-	this->playerID = p.playerID;
-	this->reinforcementPool = p.reinforcementPool;
-	this->name = p.name;
-	this->territoryList = p.territoryList;
-	this->handCards = p.handCards;
-	this->orderList = p.orderList;
-}
-
-Player::~Player()
-{
-	delete playerID;
-	playerID = nullptr;
-	delete name;
-	name = nullptr;
-	delete handCards;
-	handCards = nullptr;
-	delete reinforcementPool;
-	reinforcementPool = nullptr;
-	delete orderList;
-	orderList = nullptr;
-	for (auto p : territoryList)
-	{
-		delete p;
-	}
-	territoryList.clear();
-
-	// Added by Justine & Jennifer
-	/*for (auto l : list) {
-		delete l;
-	}
-	list.clear();*/
-
-	/*for (auto n : playerNegociate) {
-		delete n;
-	}
-	playerNegociate.clear();*/
-
-	/*delete deck;
-	deck = nullptr;*/
-
-	/*for (auto lp : listOfPlayers) {
-		delete lp;
-	}
-	listOfPlayers.clear();*/
-}
-
-Player& Player::operator=(const Player& p)
-{
-	this->playerID = p.playerID;
-	this->name = p.name;
-	this->reinforcementPool = p.reinforcementPool;
-	this->territoryList = p.territoryList;
-	this->handCards = p.handCards;
-	this->orderList = p.orderList;
-	return *this;
-}
-
-/*std:: istream& operator>>(std::istream& ins, Player& p1)
-{
-	ins >> p1.name;
-	ins >> p1.cards;
-	ins >> p1.territoryList;
-	ins >> p1.orderList;
-	return ins;
-}*/
-
-std::ostream& operator<<(std::ostream& outs, const Player& p1)
-{
-	outs << "Player ID: " << *(p1.playerID) << endl;
-	outs << "Player's name: " << *(p1.name) << endl;
-	//outs << "Player's cards: " << p1.handCards << endl;
-	outs << "Player's cards: ";
-	p1.handCards->printHand();
-	outs << "Player's reinforcement pool" << *(p1.reinforcementPool) << endl;;
-	//outs << (p1.territoryList);
-	//outs << p1.orderList;
-
-	return outs;
-}
-
-vector<Territory*> Player::toAttack()
-{
-	vector<Territory*> territoriesToAttack;
-	if (territoriesToAttack != territoryList) {
-		for (auto it = territoriesToAttack.begin(); it != territoriesToAttack.end(); ++it) {
-			territoriesToAttack.push_back(*it);
-			std::cout << *it << std::endl;
-		}
-	}
-
-	return territoriesToAttack;
-}
-
-vector<Territory*> Player::toDefend()
-{
-
-	vector<Territory*> territoriesToDefend = territoryList;
-
-	for (auto defend = territoriesToDefend.begin(); defend != territoriesToDefend.end(); ++defend) {
-		// territoriesToDefend.push_back(*defend);
-		std::cout << *defend << std::endl;
-	}
-	return territoriesToDefend;
-}
-
-void Player::issueOrder(string order)
-{
-	if (order == "Deploy") {
-		Deploy* deploy = new Deploy();
-		orderList->addToListOfOrders(deploy);
-	}
-	else if (order == "Advance") {
-		Advance* advance = new Advance();
-		orderList->addToListOfOrders(advance);
-	}
-	else if (order == "Bomb") {
-		Bomb* bomb = new Bomb();
-		orderList->addToListOfOrders(bomb);
-	}
-	else if (order == "Blockade") {
-		Blockade* block = new Blockade();
-		orderList->addToListOfOrders(block);
-	}
-	else if (order == "Airlift") {
-		Airlift* air = new Airlift();
-		orderList->addToListOfOrders(air);
-	}
-	else if (order == "Negotiate") {
-		Negotiate* negotiate = new Negotiate();
-		orderList->addToListOfOrders(negotiate);
+	else if (input == 3) {
+		toDefend();
+		return armies;
 	}
 	else {
-		cout << "Error! Please enter one of the following orders: 1. Deploy, 2. Advance, 3. Bomb, 4. Blockade, 5 Airlift, 6. Negotiate." << endl;
+		cout << "Please input an correct integer from 1 to 3...\n" << endl;
 	}
 }
 
-void Player::issueOrder(PlayerStrategy* ps)
+// The player issues deploy orders on its own territories that are in the list returned by toDefend(). As long as the player has armies still to deploy (see startup phase and reinforcement phase), 
+// it will issue a deploy order and no other order. Once it has deployed all its available armies, it can proceed with other kinds of orders.
+void HumanPlayerStrategy::issueOrder()
 {
-	ps->issueOrder();
-}
+	int source;
+	int target;
+	int units;
 
-// to calculate continent bonus for reinforcement phase
-bool Player::playerContinentBouns()
-{
-	string a = "NA";
-	string b = "AS";
-	string c = "SA";
-	string d = "AU";
-	string e = "EU";
-	string f = "AF";
-	int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0;
-	for (int i = 0; i < territoryList.size(); i++)
+	int defend;
+	int attack;
+
+	string input;
+	// If reinforcement pool > 0, then do deploy orders
+	while (player->getReinforcementPool() > 0)
 	{
-		if ((*territoryList[i]).getContinent().compare(a))
+		cout << "Player " << player->GetPlayerName() << "'s reinforcement pool contains " << player->getReinforcementPool() << " armie units." << endl;
+
+		player->printToDefend();
+
+		cout << "\nTo which territory would you want to issue a deploy order? (Enter the number of the territory in your defendList)" << endl;
+		cin >> target;
+
+		cout << "How many units would you like to deploy?" << endl;
+		cin >> units;
+
+		Deploy* deployOrder = new Deploy(player, units, player->getListToDefend().at(target));
+		player->setOrder(deployOrder);
+	}
+
+	cout << "Player " << player->GetPlayerName() << " has no more reinforcement units." << endl;
+
+	cout << "Your hand contains the following cards: " << endl;
+	player->getPlayerHand()->printHand();
+	cout << "Advance" << endl;
+	cout << "Exit" << endl;
+
+	cout << "Which order would you wish to issue?" << endl;
+	cin >> input;
+
+	// If the player issues an order card that is in its hand
+	if (input != "Advance") {
+		for (int i = 0; i < player->getPlayerHand()->getHand().size(); i++) {
+			if (*player->getPlayerHand()->getHand().at(i)->getCardType() == input) {
+				if (input == "Airlift") {
+					player->printToDefend();
+					cout << "\nFrom which territory do you wish to airlift?" << endl;
+					cin >> source;
+
+					cout << "\nTo which territory do you wish to airlift?" << endl;
+					cin >> target;
+
+					cout << "\nHow many army units do you wish to airlift? You have " << player->getListToDefend().at(source)->getArmies() << " armie units at source territory " << player->getListToDefend().at(source)->getName() << endl;
+					cin >> units;
+
+					Airlift* airliftOrder = new Airlift(player, units, player->getListToDefend().at(source), player->getListToDefend().at(target));
+					player->setOrder(airliftOrder);
+				}
+				else if (input == "Bomb") {
+					player->printToAttack();
+
+					cout << "\nWhich territory do you wish to bomb?" << endl;
+					cin >> target;
+
+					Bomb* bombOrder = new Bomb(player, player->getListToAttack().at(target));
+					player->setOrder(bombOrder);
+				}
+				else if (input == "Blockade") {
+					player->printToDefend();
+
+					cout << "\nFor which territory do you wish to do a blockade?" << endl;
+					cin >> target;
+
+					Blockade* blockadeOrder = new Blockade(player, allPlayers, player->getListToDefend().at(target));
+					player->setOrder(blockadeOrder);
+				}
+				else if (input == "Negotitate")
+				{
+					for (int i = 0; i < allPlayers.size(); i++) {
+						if (allPlayers.at(i) == player) {
+							cout << i << ". " << allPlayers.at(i)->GetPlayerName() << " (You)" << endl;
+						}
+						else {
+							cout << i << ". " << allPlayers.at(i)->GetPlayerName() << endl;
+						}
+					}
+					cout << "With which player do you wish to negociate?" << endl;
+					cin >> target;
+
+					Negotiate* negotitateOrder = new Negotiate(player, allPlayers.at(target));
+					player->setOrder(negotitateOrder);
+				}
+			}
+		}
+	}
+	else if (input == "Advance") {
+		cout << "Do you wish to defend or attack? (write in lowercase defend or attack)" << endl;
+		cin >> input;
+
+		bool isValid = false;
+
+		if (input == "defend")
 		{
-			c1++;
+			player->printToDefend();
+
+			// Make sure that player selects 2 territories that are adjacent
+			while (isValid) {
+				cout << "From which territory do you wish to send armie units?" << endl;
+				cin >> source;
+
+				cout << "Which territory do you wish to defend?" << endl;
+				cin >> target;
+
+				cout << "How many army units do you wish to send? You have " << player->getListToDefend().at(source)->getArmies() << " units at source territory " << player->getListToDefend().at(source)->getName() << endl;
+				cin >> units;
+
+				if (player->getListToDefend().at(source)->isAdjacentTo(player->getListToDefend().at(target)->getId()) == true) {
+					Advance* advanceOrder = new Advance(player, units, player->getListToDefend().at(source), player->getListToDefend().at(target), deck);
+
+					player->setOrder(advanceOrder);
+				}
+				else {
+					cout << "The territories " << player->getListToDefend().at(source)->getName() << " and " << player->getListToDefend().at(target)->getName() << " are not adjacent territories. Please select adjacent territories." << endl;
+				}
+			}
 		}
-		if ((*territoryList[i]).getContinent().compare(b))
+		else if (input == "attack")
 		{
-			c2++;
+			// Make sure that player selects 2 territories that are adjacent
+			while (isValid) {
+				cout << "Your territories are:" << endl;
+				for (int i = 0; player->getTerritoryList().size(); i++)
+				{
+					cout << i << ". " << player->getTerritoryList().at(i)->getName() << " with " << player->getTerritoryList().at(i)->getArmies() << endl;
+				}
+
+				cout << endl;
+				player->printToAttack();
+
+				cout << "From which territory do you wish to send armie units? (Please enter the number of a territory that belongs to you " << player->GetPlayerName() << ")" << endl;
+				cin >> source;
+
+				cout << "Which territory do you wish to attack from the attack list? (Please enter the number of the territory)" << endl;
+				cin >> target;
+
+				cout << "How many army units do you wish to send? You have " << player->getTerritoryList().at(source)->getArmies() << " units at source territory " << player->getTerritoryList().at(source)->getName() << endl;
+				cin >> units;
+
+				// Make sure that the target is adjacent to source territory
+				if (player->getTerritoryList().at(source)->isAdjacentTo(player->getListToAttack().at(target)->getId()) == true) {
+					Advance* advanceOrder = new Advance(player, units, player->getTerritoryList().at(source), player->getListToAttack().at(target), deck);
+
+					player->setOrder(advanceOrder);
+					isValid = true;
+				}
+				else {
+					cout << "The territories " << player->getTerritoryList().at(source)->getName() << " and " << player->getListToAttack().at(target)->getName() << " are not adjacent territories. Please select adjacent territories." << endl;
+					isValid = false;
+				}
+			}
 		}
-		if ((*territoryList[i]).getContinent().compare(c))
+	}
+	else if (input == "Exit")
+	{
+		cout << "Exiting" << endl;
+	}
+}
+
+// From Assignment 2 (Orders Issuing phase): 
+// The player decides which neighboring territories are to be attacked in priority (as a list return by the toAttack() method), and which of their own territories are to be defended 
+// in priority (as a list returned by the toDefend() method).
+vector<Territory*> HumanPlayerStrategy::toAttack()
+{
+	cout << "HumanPlayerStrategy: toAttack() " << endl;
+	//vector<Territory*> attackList;
+
+	// If attack list is not empty, then empty it
+	if (!player->getListToAttack().empty())
+		player->clearToAttack();
+
+	string toAttack;
+	string input;
+
+	for (int i = 0; i < player->getTerritoryList().size(); i++)
+	{
+		for (int j = 0; j > player->getTerritoryList().at(i)->getAdjTerritories().size(); j++) {
+			// Make sure territory does not belong to player
+			if (player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner() != player) {
+				cout << "Adjacent territories of territory " << player->getTerritoryList().at(i)->getName() << " are: " << endl;
+				cout << "\t" << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() << " belonging to player " << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner()->GetPlayerName()
+					<< " and has " << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getArmies() << " armie units." << endl;
+			}
+		}
+	}
+
+	/// Do while loop so the player can add the territories they wish to attack to the attackList
+	while (true)
+	{
+		cout << "Which territory do you wish to attack? (Enter territory name)" << endl;
+		cin >> toAttack;
+
+		for (int i = 0; i < player->getTerritoryList().size(); i++)
 		{
-			c3++;
+			for (int j = 0; j > player->getTerritoryList().at(i)->getAdjTerritories().size(); j++) {
+				// If territory does not belong to the player, then it's a valid input.
+				if (player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() == toAttack && player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner() != player) {
+					cout << "Territory " << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() << " is being added to attackList." << endl;
+					player->addTerritoryToAttack(player->getTerritoryList().at(i)->getAdjTerritories().at(j));
+					continue;
+				}
+				// If territory belongs to the player, it's not a valid input
+				else if (player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() == toAttack && player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner() == player) {
+					cout << "The territory " << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() << " belongs to you, you can't attack your own territory, please try again." << endl;
+					continue;
+				}
+			}
 		}
-		if ((*territoryList[i]).getContinent().compare(d))
-		{
-			c4++;
+
+		cout << "Do you wish to add another territory to your attackList? (yes or no)" << endl;
+		cin >> input;
+
+		if (input == "yes") {
+			continue;
 		}
-		if ((*territoryList[i]).getContinent().compare(e))
-		{
-			c5++;
-		}
-		if ((*territoryList[i]).getContinent().compare(f))
-		{
-			c6++;
-		}
-
-
-	}
-	if (c1 == 3) {
-		return true;
-	}
-
-	if (c2 == 3) {
-		return true;
-	}
-
-	if (c3 == 1) {
-		return true;
-	}
-	if (c4 == 1) {
-		return true;
-	}
-	if (c5 == 1) {
-		return true;
-	}
-	if (c6 == 1) {
-		return true;
-	}
-
-	return false;
-}
-
-int Player::getReinforcementPool() {
-	return *(this->reinforcementPool);
-}
-
-void Player::setReinforcementPool(int r)
-{
-	//return int; // There is an error here
-	*this->reinforcementPool = r;
-}
-
-
-
-void Player::setName(const string& n) {
-	*name = n;
-}
-
-void Player::setPlayerID(const int& ID) {
-	*playerID = ID;
-}
-
-vector<Territory*> Player::getTerritoryList() {
-	return territoryList;
-}
-
-
-string Player::GetPlayerName() const {
-	return *name;
-}
-
-Hand* Player::getPlayerHand() {
-	return handCards;
-}
-
-vector<Cards*> Player::GetHand()
-{
-	playerHand = handCards->getHand();
-	return playerHand;
-}
-
-int Player::GetPlayerID() const {
-	return *playerID;
-}
-
-void Player::addTerritory(Territory* newTerritory) {
-
-	territoryList.push_back(newTerritory);
-}
-
-// Changed by justine & jennifer, old version wasn't working, generated negative number
-void Player::addToReinforcePool(int armies) {
-	*reinforcementPool = *reinforcementPool + armies;
-}
-
-void Player::removeFromReinforcePool(int armies) {
-	*reinforcementPool = *reinforcementPool - armies;
-}
-
-void Player::AddCard(Cards* card) {
-	handCards->setHand(card);
-}
-
-void Player::Attach(LogObserver* observer) {
-	orderList->Attach(observer);
-}
-
-// Added by justine & jennifer
-void Player::setTerritory(Territory* newTerritory)
-{
-	territoryList.push_back(newTerritory);
-}
-
-void Player::removeTerritory(int i)
-{
-	this->territoryList.erase(this->territoryList.begin() + i);
-}
-
-OrdersList* Player::getOrdersList() {
-	return orderList;
-}
-
-void Player::setOrder(Order* order) {
-	orderList->addToListOfOrders(order);
-}
-
-void Player::addNegociate(Player* p) {
-	playerNegociate.push_back(p);
-}
-
-bool Player::isNegociating(Player* p) {
-	for (int i = 0; i < playerNegociate.size(); i++) {
-		if (playerNegociate.at(i) == p) {
-			return true;
+		else {
+			break;
 		}
 	}
-	return false;
+
+	return player->getListToAttack();
 }
 
-void Player::addPlayer(Player* p)
+// From Assignment 2 (Orders Issuing phase): 
+// The player decides which neighboring territories are to be attacked in priority (as a list return by the toAttack() method), and which of their own territories are to be defended 
+// in priority (as a list returned by the toDefend() method).
+vector<Territory*> HumanPlayerStrategy::toDefend()
 {
-	players.push_back(p);
+	cout << "HumanPlayerStrategy: toDefend() " << endl;
 
-	// When add a player to the list that contains all the players, then we also add the territories that have been assigned to the player.
-	for (int i = 0; i < p->getTerritoryList().size(); i++) {
-		addTerritory(p->getTerritoryList().at(i));
+	// Clear defend list if it's not empty
+	if (!player->getListToDefend().empty())
+		player->clearToDefend();
+
+	int defend;
+	string input;
+
+	for (int i = 0; i < player->getTerritoryList().size(); i++) {
+		cout << "Your territories are: " << endl;
+		cout << "\t" << i << ". " << player->getTerritoryList().at(i)->getName() << " with armies: " << player->getTerritoryList().at(i)->getArmies() << endl;
+	}
+
+	// Do while loop so the player can add the territories they wish to defend to the defendList
+	while (true)
+	{
+		cout << "Which territory do you wish to defend? (Enter territory name)" << endl;
+		cin >> defend;
+
+		player->addTerritoryToDefend(player->getTerritoryList().at(defend));
+		player->printToDefend();
+
+		cout << "Do you wish to add another territory to your defendList? (yes or no)" << endl;
+		cin >> input;
+
+		if (input == "yes") {
+			continue;
+		}
+		else {
+			break;
+		}
+	}
+
+	return player->getListToDefend();
+}
+
+void HumanPlayerStrategy::PrintStrategy()
+{
+	std::cout << "Human Player Strategy\n";
+}
+
+#pragma region Helper Functions
+
+int HumanPlayerStrategy::ChooseValidOption(int max)
+{
+	int region = -1;
+	while (region >= max || region < 0) {
+		cout << "choose a valid option: ";
+		cin >> region;
+	}
+
+	return region;
+}
+
+int HumanPlayerStrategy::GetArmyNumber(int army)
+{
+	int rein = -1;
+	while (rein > army || rein < 0) {
+		cout << "choose a valid amount: ";
+		cin >> rein;
+		cout << endl;
+	}
+
+	return rein;
+}
+
+void HumanPlayerStrategy::ShowTerritory()
+{
+	cout << "These are the available to Choose from" << endl;
+	for (int i = 0; i < player->getTerritoryList().size(); i++)
+	{
+		cout << i << ". " << player->getTerritoryList().at(i)->getName() << " (" << player->getTerritoryList().at(i)->getArmies() << ")" << endl;
 	}
 }
 
-vector<Player*> Player::getListOfPlayers()
+vector<Territory*> HumanPlayerStrategy::GetEnemyTerritory()
 {
+	vector<Territory*> nonPlayerTerritory;
+
+	// Modified by Jennifer, changed from for each(Territory* territory in player->getMap()) to this bc the other one gave errors
+	for (int i = 0; i < allPlayers.size(); i++) {
+		for (int j = 0; j < allPlayers.at(i)->getTerritoryList().size(); j++) {
+			if (allPlayers.at(i)->getTerritoryList().at(j)->getPlayerOwner() != player) {
+				nonPlayerTerritory.push_back(allPlayers.at(i)->getTerritoryList().at(j));
+			}
+		}
+	}
+
+	return nonPlayerTerritory;
+}
+
+set<Player*> HumanPlayerStrategy::GetPlayers()
+{
+	set<Player*> players;
+
+	// Changed by Jennifer
+	for (Player* p : allPlayers) {
+		if (p != player) {
+			players.insert(p);
+		}
+	}
 	return players;
 }
 
-void Player::updateAllPlayers(vector<Player*> all)
-{
-	ps->updateAllPlayers(all);
+#pragma endregion
+
+#pragma endregion
+
+//--------------------------------------------------AGGRESSIVE PLAYER STRATEGY--------------------------------------------------
+
+#pragma region Aggressive Player Strategy
+
+AggressivePlayerStrategy::AggressivePlayerStrategy(Player* p, vector<Player*> all, Deck* d) {
+	this->player = p;
+	this->allPlayers = all;
+	this->deck = d;
 }
 
-vector<Territory*> Player::getListToDefend()
+int AggressivePlayerStrategy::changeStrategy(string order, int armies)
 {
-	return defendTerritories;
+	cout << "AggressivePlayerStrategy: changeStrategy() " << endl;
+	return 0;
 }
 
-vector<Territory*> Player::getListToAttack()
+//computer player that focuses on attack (deploys or advances armies on its strongest country)
+//Then always advances to enemy territories until it cannot do so anymore). 
+void AggressivePlayerStrategy::issueOrder()
 {
-	return attackTerritories;
-}
-
-void Player::addTerritoryToDefend(Territory* t)
-{
-	defendTerritories.push_back(t);
-}
-
-void Player::addTerritoryToAttack(Territory* t)
-{
-	attackTerritories.push_back(t);
-}
-
-void Player::clearToDefend()
-{
-	defendTerritories.clear();
-}
-
-void Player::clearToAttack()
-{
-	attackTerritories.clear();
-}
-
-void Player::printToDefend()
-{
-	cout << "Player " << GetPlayerName() << "'s list of territories to defend: " << endl;
-	if (!defendTerritories.empty())
+	Territory* source;
+	Territory* target;
+	//Deploys or advances armies on its strongest territories
+	//Find the strongest territory
+	//for all territories in its list of territories, if territory at i has more armies, then strongest territory = territory at i
+	//Create a Deploy or Advance (on its own territory) order, move all armies on the strongest country
+	while (player->getReinforcementPool() > 0)
 	{
-		for (int i = 0; i < defendTerritories.size(); i++)
-		{
-			cout << "\t" << i << "." << defendTerritories.at(i)->getName() << " with " << defendTerritories.at(i)->getArmies() << " armie units." << endl;
+		// If player has reinforcement units, then deploy
+		target = player->getTerritoryList().at(0);
+		// Find territory with largest number of units
+		for (int i = 0; i < player->getTerritoryList().size(); i++) {
+			if (target->getArmies() < player->getTerritoryList().at(i)->getArmies()) {
+				target = player->getTerritoryList().at(i);
+			}
+		}
+		Deploy* deployOrder = new Deploy(player, player->getReinforcementPool(), target);
+
+		player->setOrder(deployOrder);
+	}
+	// Else, advance
+	//Always advances to enemy territories until it cannot do so anymore
+	//Create Advance order on enemy territory
+	source = player->getTerritoryList().at(0);
+	// While the player still has armie units, do advance
+	while (source->getArmies() > 0)
+	{
+		// Find territory with largest number of units; Going to be the source territory
+		for (int i = 0; i < player->getTerritoryList().size(); i++) {
+			if (source->getArmies() < player->getTerritoryList().at(i)->getArmies()) {
+				source = player->getTerritoryList().at(i);
+			}
+		}
+
+		// Go through all the territories
+		for (int i = 0; i < allPlayers.size(); i++) {
+			target = allPlayers.at(i)->getTerritoryList().at(0);
+			for (int j = 0; j < allPlayers.at(i)->getTerritoryList().size(); j++) {
+				if (allPlayers.at(i)->getTerritoryList().at(j)->getPlayerOwner() != player) {
+					// If the enemie territory has lowest amount of armie units and is adjacent to the source territory, then it's going to be the target
+					if (target->getArmies() > allPlayers.at(i)->getTerritoryList().at(j)->getArmies() && source->isAdjacentTo(allPlayers.at(i)->getTerritoryList().at(j)->getId()))
+						target = allPlayers.at(i)->getTerritoryList().at(j);
+				}
+			}
+		}
+		Advance* advanceOrder = new Advance(player, source->getArmies(), source, target, deck);
+
+		player->setOrder(advanceOrder);
+	}
+
+	//cout << "\nAggressive player deployed/Advanced all its armies and reinforcements until it no longer can." << endl;
+}
+
+vector<Territory*> AggressivePlayerStrategy::toAttack()
+{
+	// Empty toDefend list
+	if (!player->getListToAttack().empty())
+		player->clearToAttack();
+
+	// Adding territory to defend by the least number of units
+	for (int i = 0; i < player->getTerritoryList().size(); i++) {
+		for (int j = 0; j < player->getTerritoryList().at(i)->getAdjTerritories().size(); j++) {
+			if (player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner() != player) {
+				player->addTerritoryToAttack(player->getTerritoryList().at(i)->getAdjTerritories().at(j));
+			}
 		}
 	}
+
+	return player->getListToAttack();
+}
+
+vector<Territory*> AggressivePlayerStrategy::toDefend()
+{
+	// Empty toDefend list
+	if (!player->getListToDefend().empty())
+		player->clearToDefend();
+
+	// Adding territory to defend by the least number of units
+	//player->sortLeastToGreatestUnits();
+	for (int i = 0; i < player->getTerritoryList().size(); i++)
+	{
+		player->addTerritoryToDefend(player->getTerritoryList().at(i));
+	}
+
+	player->printToDefend();
+
+	return player->getListToDefend();
+}
+
+void AggressivePlayerStrategy::PrintStrategy()
+{
+	std::cout << "Aggressive Player Strategy\n";
+}
+
+#pragma endregion
+
+//--------------------------------------------------BEENEVOLENT PLAYER STRATEGY--------------------------------------------------
+
+#pragma region Benevolent Player Strategy
+
+BenevolentPlayerStrategy::BenevolentPlayerStrategy(Player* p, vector<Player*> all, Deck* d) {
+	this->player = p;
+	this->allPlayers = all;
+	this->deck = d;
+}
+
+int BenevolentPlayerStrategy::changeStrategy(string order, int numArmy)
+{
+	cout << "BenevolentPlayerStrategy: changeStrategy() " << endl;
+
+	return 0;
+
+}
+
+//computer player that focuses on protecting its weak countries (deploys or advances armies on its weakest countries, 
+//never advances to enemy territories).
+void BenevolentPlayerStrategy::issueOrder()
+{
+	//Deploys its weakest territories
+	//Find the weakest territory
+	//set weakest territory to index 0
+	//for all territories in its list of territories, if territory at i has less armies, then weakest territory = territory at i
+	//Create a Deploy on the weakest country
+	Territory* source;
+	Territory* target;
+	while (player->getReinforcementPool() > 0)
+	{
+		// If player has reinforcement units, then deploy
+		source = player->getTerritoryList().at(0);
+		// Find territory with largest number of units
+		for (int i = 0; i < player->getTerritoryList().size(); i++) {
+			if (source->getArmies() > player->getTerritoryList().at(i)->getArmies()) {
+				source = player->getTerritoryList().at(i);
+			}
+		}
+		Deploy* deployOrder = new Deploy(player, player->getReinforcementPool(), source);
+
+		player->setOrder(deployOrder);
+	}
+	//Check adjacent countries that has less armies then the others and move armies to the weaker countries (Advance)
+	source = player->getTerritoryList().at(0);
+	while (source->getArmies() > 0)
+	{
+		// Find territory with largest number of units; Going to be the source territory
+		for (int i = 0; i < player->getTerritoryList().size(); i++) {
+			if (source->getArmies() < player->getTerritoryList().at(i)->getArmies()) {
+				source = player->getTerritoryList().at(i);
+			}
+		}
+
+		// Get target territory which is adjacent to the source
+		target = player->getTerritoryList().at(0);
+		for (int i = 0; i < player->getTerritoryList().size(); i++) {
+			if (source->isAdjacentTo(player->getTerritoryList().at(i)->getId()) && target->getArmies() > player->getTerritoryList().at(i)->getArmies()) {
+				target = player->getTerritoryList().at(i);
+			}
+		}
+		Advance* advanceOrder = new Advance(player, source->getArmies(), source, target, deck);
+	}
+
+	//Cannot advance on enemy territories
+}
+
+vector<Territory*> BenevolentPlayerStrategy::toAttack()
+{
+	cout << "Player " << player->GetPlayerName() << " is a benevolent player and a benevolent player does not attack any territories." << endl;
+	return player->getListToAttack();
+}
+
+vector<Territory*> BenevolentPlayerStrategy::toDefend()
+{
+	// Empty toDefend list
+	if (!player->getListToDefend().empty())
+		player->clearToDefend();
+
+	// Adding territory to defend by the least number of units
+	//player->sortLeastToGreatestUnits();
+	for (int i = 0; i < player->getTerritoryList().size(); i++)
+	{
+		player->addTerritoryToDefend(player->getTerritoryList().at(i));
+	}
+
+	player->printToDefend();
+
+	return player->getListToDefend();
+}
+
+void BenevolentPlayerStrategy::PrintStrategy()
+{
+	std::cout << "Benevolent Player Strategy\n";
+}
+
+#pragma endregion
+
+//--------------------------------------------------NEUTRAL PLAYER STRATEGY--------------------------------------------------
+
+#pragma region Neutral Player Strategy
+
+//sets player
+NeutralPlayerStrategy::NeutralPlayerStrategy(Player* player, vector<Player*> all, Deck* d) {
+	this->player = player;
+	this->allPlayers = all;
+	this->deck = d;
+
+}
+
+int NeutralPlayerStrategy::changeStrategy(string, int)
+{
+	return 0;
+}
+
+//computer player that never issues any order. If a Neutral player is attacked, it becomes an Aggressive player.
+void NeutralPlayerStrategy::issueOrder()
+{
+	//Cannot issue order unless attcacked
+
+	int territoryAmount = 0;
+	int armyAmount = 0;
+
+	//if army is attacked
+	if (territoryAmount < territoryCount || armyAmount < armyCount) {
+
+		cout << "Neutral player is attacked, now it is aggressive" << endl;
+
+		//change player strategy
+		//player->setPlayerStrategy(Aggressive); // have tocreate setPlayerStrategy
+		//player->issueOrder();
+
+		//not sure if this is allowed, remove if necessary
+		this->~NeutralPlayerStrategy();
+	}
 	else {
-		cout << "Player " << GetPlayerName() << " has no territories to defend." << endl;
+		territoryCount = territoryAmount;
+		armyCount = armyAmount;
 	}
 }
 
-void Player::printToAttack()
+//never needs to attack
+vector<Territory*> NeutralPlayerStrategy::toAttack()
 {
-	cout << "Player " << GetPlayerName() << "'s list of territories to attack: " << endl;
-	if (!attackTerritories.empty())
+	vector<Territory*> DefendList;
+	cout << "Neutral does not attack" << endl;
+	return DefendList;
+}
+
+//never needs to defend
+vector<Territory*> NeutralPlayerStrategy::toDefend()
+{
+	vector<Territory*> DefendList;
+	cout << "Neutral does not defend" << endl;
+	return DefendList;
+}
+
+void NeutralPlayerStrategy::PrintStrategy()
+{
+	std::cout << "Neutral Player Strategy\n";
+}
+
+NeutralPlayerStrategy::~NeutralPlayerStrategy()
+{
+
+}
+
+#pragma endregion
+
+
+//--------------------------------------------------CHEATER PLAYER STRATEGY--------------------------------------------------
+
+#pragma region Cheater Player Strategy
+
+CheaterPlayerStrategy::CheaterPlayerStrategy(Player* player, vector<Player*> all, Deck* d)
+{
+	this->player = player;
+	this->allPlayers = all;
+	this->deck = d;
+}
+
+int CheaterPlayerStrategy::changeStrategy(string, int)
+{
+	return 0;
+}
+
+//computer player that automatically conquers all territories that are adjacent to its own territories(only once per turn)
+void CheaterPlayerStrategy::issueOrder()
+{
+	Territory* source;
+	Territory* target;
+
+	// Go through list of cheater player territories
+	for (int i = 0; i < player->getTerritoryList().size(); i++)
 	{
-		for (int i = 0; i < attackTerritories.size(); i++)
-		{
-			cout << "\t" << i << "." << attackTerritories.at(i)->getName() << " belonging to player " << attackTerritories.at(i)->getPlayerOwner()->GetPlayerName() << " with " << attackTerritories.at(i)->getArmies() << " armie units. " << endl;
+		source = player->getTerritoryList().at(i);
+
+		// Conquer all adjacent territories that are not his
+		for (int j = 0; j < source->getAdjTerritories().size(); j++) {
+			target = source->getAdjTerritories().at(i);
+
+			if (target->getPlayerOwner() != player) {
+				target->setPlayerOwner(player);
+			}
 		}
 	}
-	else {
-		cout << "Player " << GetPlayerName() << " has no territories to attack." << endl;
-	}
 }
 
-bool Player::sortAscendingOrder(Territory* t1, Territory* t2)
+vector<Territory*> CheaterPlayerStrategy::toAttack()
 {
-	return t1->getArmies() < t2->getArmies();
+	vector<Territory*> AttackList;
+
+	return AttackList;
 }
 
-bool Player::sortDescendingOrder(Territory* t1, Territory* t2)
+//cheater never needs to defend
+vector<Territory*> CheaterPlayerStrategy::toDefend()
 {
-	return t1->getArmies() > t2->getArmies();
+	vector<Territory*> DefendList;
+	return DefendList;
 }
 
-void Player::sortLeastToGreatestUnits()
+void CheaterPlayerStrategy::PrintStrategy()
 {
-	sort(defendTerritories.begin(), defendTerritories.end(), sortAscendingOrder);
+	std::cout << "Cheater Player Strategy\n";
 }
 
-void Player::sortGreatestToLeastUnits()
+#pragma endregion
+
+void PlayerStrategy::setDeck(Deck* d)
 {
-	sort(attackTerritories.begin(), attackTerritories.end(), sortDescendingOrder);
+	this->deck = d;
+}
+
+void PlayerStrategy::updateAllPlayers(vector<Player*> all)
+{
+	allPlayers = all;
 }

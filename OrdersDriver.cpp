@@ -92,6 +92,7 @@ void OrdersDriver()
 
 	Player* p1 = new Player(id1, reinforcement1, name1, list1, hand1, ordersList1);
 	Player* p2 = new Player(id2, reinforcement2, name2, list2, hand2, ordersList2);
+
 	cout << "Players created." << endl << endl;
 
 	cout << "Setting territory owners." << endl;
@@ -104,10 +105,13 @@ void OrdersDriver()
 	cout << "Finished assigning territory owners." << endl << endl;
 
 	cout << "Creating list of all players" << endl;
-
 	vector<Player*> allPlayers;
 	allPlayers.push_back(p1);
 	allPlayers.push_back(p2);
+
+	/*Player* allPlayers = new Player();
+	allPlayers->addPlayer(p1);
+	allPlayers->addPlayer(p2);*/
 
 	cout << "Players are: " << endl;
 	for (int i = 0; i < allPlayers.size(); i++) {
@@ -148,7 +152,6 @@ void OrdersDriver()
 			{
 				if (allPlayers.at(i)->getTerritoryList().at(j)->getName() == targetTerritory) {
 					deploy = new Deploy(p1, nbArmies, allPlayers.at(i)->getTerritoryList().at(j));
-					//deploy->execute();
 				}
 			}
 		}
@@ -202,7 +205,7 @@ void OrdersDriver()
 	} while (advance->validate() == false);
 	advance->execute();
 
-	cout << "\n--------------Bomb Execution with Player 1 ---------------" << endl;
+	/*cout << "\n--------------Bomb Execution with Player 1 ---------------" << endl;
 
 	cout << "Your enemy territories are " << endl;
 	for (int i = 0; i < allPlayers.size(); i++) {
@@ -226,7 +229,7 @@ void OrdersDriver()
 			}
 		}
 	} while (bomb->validate() == false);
-	bomb->execute();
+	bomb->execute();*/
 
 
 	cout << "\n--------------blockade execution with player 2 ---------------" << endl;
@@ -243,13 +246,13 @@ void OrdersDriver()
 		for (int i = 0; i < allPlayers.size(); i++) {
 			for (int j = 0; j < allPlayers.at(i)->getTerritoryList().size(); j++) {
 				if (allPlayers.at(i)->getTerritoryList().at(j)->getName() == targetTerritory) {
-					blockade = new Blockade(p2, allPlayers, allPlayers.at(i)->getTerritoryList().at(j), deck);
+					blockade = new Blockade(p2, allPlayers, allPlayers.at(i)->getTerritoryList().at(j));
 				}
 			}
 		}
 	} while (blockade->validate() == false);
 	blockade->execute();
-
+	allPlayers = blockade->updateListOfPlayers();
 
 	//cout << "\n--------------blockade execution with player 2 ---------------" << endl;
 
@@ -309,10 +312,12 @@ void OrdersDriver()
 	cout << "\n--------------Negociate Execution with Player 2 ---------------" << endl;
 	cout << "List of players:" << endl;
 	for (int i = 0; i < allPlayers.size(); i++) {
-		cout << "\t" << allPlayers.at(i)->GetPlayerName() << endl;
-		for (int j = 0; j < allPlayers.at(i)->getTerritoryList().size(); j++) {
-			cout << "\t\t" << allPlayers.at(i)->getTerritoryList().at(j)->getName() << endl;
+		if (allPlayers.at(i) != p2) {
+			cout << "\t" << allPlayers.at(i)->GetPlayerName() << endl;
 		}
+		/*for (int j = 0; j < allPlayers.at(i)->getTerritoryList().size(); j++) {
+			cout << "\t\t" << allPlayers.at(i)->getTerritoryList().at(j)->getName() << endl;
+		}*/
 	}
 
 	do {

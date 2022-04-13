@@ -15,6 +15,7 @@ class OrdersList;
 class Cards;
 class Hand;
 class Deck; // Added by Justine & Jennifer
+class PlayerStrategy;
 
 void PlayerDriver();
 

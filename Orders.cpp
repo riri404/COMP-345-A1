@@ -87,7 +87,7 @@ Deploy::Deploy(Deploy& anotherDeploy) : Order(anotherDeploy) {
 	this->name = anotherDeploy.name;
 	this->player = anotherDeploy.player;
 	this->armies = anotherDeploy.armies;
-	this->target = new Territory(*(anotherDeploy.target));
+	this->target = anotherDeploy.target;
 }
 
 //Assignment operator
@@ -96,7 +96,7 @@ Deploy& Deploy::operator=(const Deploy& aDeploy) {
 	this->name = aDeploy.name;
 	this->player = aDeploy.player;
 	this->armies = aDeploy.armies;
-	this->target = new Territory(*(aDeploy.target));
+	this->target = aDeploy.target;
 	return *this;
 }
 
@@ -125,6 +125,11 @@ void Deploy::setTargetTerritory(Territory* t)
 void Deploy::setNumArmy(int n)
 {
 	this->armies = n;
+}
+
+vector<Player*> Deploy::updateListOfPlayers()
+{
+	return listOfPlayers;
 }
 
 //If the target territory does not belong to the player that issued the order, the order is invalid.
@@ -247,6 +252,11 @@ void Advance::setArmyUnits(int n)
 	this->armies = n;
 }
 
+vector<Player*> Advance::updateListOfPlayers()
+{
+	return listOfPlayers;
+}
+
 //If the source territory does not belong to the player that issued the order, the order is invalid.
 //If the target territory is not adjacent to the source territory, the order is invalid.
 bool Advance::validate() {
@@ -282,7 +292,7 @@ void Advance::execute() {
 		else if (target->getPlayerOwner() != player) {
 
 			bool noMoreArmies = false;
-			cout << "source armies " << source->getArmies() << endl;
+			cout << "source armies " << armies << endl;
 			cout << "Target armies " << target->getArmies() << endl;
 			// Each attacking army unit involved has 60 % chances of killing one defending army.
 			while (!noMoreArmies) {
@@ -299,7 +309,7 @@ void Advance::execute() {
 					source->removeArmies(1);
 					cout << "Player " << target->getPlayerOwner()->GetPlayerName() << " has eliminated 1 unit of player " << player->GetPlayerName() << endl;
 				}
-				if (source->getArmies() == 0 || target->getArmies() == 0) {
+				if (armies == 0 || target->getArmies() == 0) {
 					noMoreArmies = true;
 				}
 
@@ -317,7 +327,7 @@ void Advance::execute() {
 				player->getPlayerHand()->setHand(drawnCard); // Player receives card if they succesfully conquered at least one territory during their turn
 				cout << "Since player " << target->getPlayerOwner()->GetPlayerName() << " has successfully captured the territory, they have received the card " << *drawnCard->getCardType() << endl;
 			}
-			else if (source->getArmies() == 0) {
+			else if (armies == 0) {
 				cout << "Player " << player->GetPlayerName() << " has not been able to capture territory " << target->getName() << " and there remains " << target->getArmies() << " unit at that territory." << endl;
 			}
 		}
@@ -391,6 +401,11 @@ void Bomb::setTargetTerritory(Territory* t)
 	this->target = t;
 }
 
+vector<Player*> Bomb::updateListOfPlayers()
+{
+	return listOfPlayers;
+}
+
 //If the target belongs to the player that issued the order, the order is invalid.
 //If the target territory is not adjacent to one of the territory owned by the player issuing the order, then the order is invalid.
 bool Bomb::validate() {
@@ -448,12 +463,11 @@ Blockade::Blockade() {
 //A blockade order targets a territory that belongs to the player issuing the order. Its effect is to
 //double the number of armies on the territory and to transfer the ownership of the territory to the Neutral player.
 //The blockade order can only be created by playing the blockade card.
-Blockade::Blockade(Player* currentPlayer, vector<Player*> all, Territory* targetTerritory, Deck* d) {
+Blockade::Blockade(Player* currentPlayer, vector<Player*> all, Territory* targetTerritory) {
 	this->name = "Blockade";
 	this->player = currentPlayer;
 	this->listOfPlayers = all;
 	this->target = targetTerritory;
-	this->deck = d;
 	/*this->listOfPlayers = list;*/
 	//this->engine = e;
 }
@@ -471,9 +485,9 @@ Blockade::~Blockade() {
 Blockade::Blockade(Blockade& anotherBlockade) : Order(anotherBlockade) {
 	this->name = anotherBlockade.name;
 	this->player = anotherBlockade.player;
-	this->listOfPlayers = anotherBlockade.listOfPlayers;
+	//this->allPlayers = anotherBlockade.allPlayers;
 	this->target = anotherBlockade.target;
-	//this->listOfPlayers = anotherBlockade.listOfPlayers;
+	this->listOfPlayers = anotherBlockade.listOfPlayers;
 	//this->engine = anotherBlockade.engine;
 }
 
@@ -482,9 +496,9 @@ Blockade& Blockade::operator=(const Blockade& aBlockade) {
 	Order::operator= (aBlockade);
 	this->name = aBlockade.name;
 	this->player = aBlockade.player;
-	this->listOfPlayers = aBlockade.listOfPlayers;
+	//this->allPlayers = aBlockade.allPlayers;
 	this->target = aBlockade.target;
-	//this->listOfPlayers = aBlockade.listOfPlayers;
+	this->listOfPlayers = aBlockade.listOfPlayers;
 	//this->engine = aBlockade.engine;
 	return *this;
 }
@@ -515,6 +529,11 @@ void Blockade::setTargetTerritory(Territory* t)
 	this->target = t;
 }
 
+vector<Player*> Blockade::updateListOfPlayers()
+{
+	return listOfPlayers;
+}
+
 //If the target territory belongs to an enemy player, the order is declared invalid.
 bool Blockade::validate() {
 	bool isValid = false;
@@ -543,7 +562,7 @@ void Blockade::execute() {
 			if (listOfPlayers.at(i)->GetPlayerName() == "Neutral Player") { // Verify if player in game engine list of players has a neutral player
 				neutralPlayer = listOfPlayers.at(i);
 				neutralPlayer->addTerritory(target);
-				//listOfPlayers.at(i)->getTerritoryList().push_back(target); // Transfer target ownership
+				listOfPlayers.at(i)->getTerritoryList().push_back(target); // Transfer target ownership
 
 				cout << "The target territory " << target->getName() << "'s ownership has been transfered to " << listOfPlayers.at(i)->GetPlayerName() << endl;
 
@@ -569,7 +588,7 @@ void Blockade::execute() {
 
 				neutralTerritoryList.push_back(target);
 				// Create neutral player
-				neutralPlayer = new Player(neutralID, neutralReinforcement, neutralName, neutralTerritoryList, neutralHand, neutralOrdersList, "Neutral", listOfPlayers, deck);
+				neutralPlayer = new Player(neutralID, neutralReinforcement, neutralName, neutralTerritoryList, neutralHand, neutralOrdersList);
 				listOfPlayers.push_back(neutralPlayer); // Add neutral player to list of players in game engine
 				target->setPlayerOwner(neutralPlayer);
 				cout << "A neutral player has been created." << endl;
@@ -696,6 +715,11 @@ void Airlift::setNumArmy(int n)
 	this->armies = n;
 }
 
+vector<Player*> Airlift::updateListOfPlayers()
+{
+	return listOfPlayers;
+}
+
 //The target territory does not need to be adjacent to the source territory.
 //If the source or target does not belong to the player that issued the order, the order is invalid.
 bool Airlift::validate() {
@@ -789,6 +813,11 @@ void Negotiate::setSelfPlayers(Player* p)
 void Negotiate::setPeacePlayer(Player* n)
 {
 	this->enemyPlayer = n;
+}
+
+vector<Player*> Negotiate::updateListOfPlayers()
+{
+	return listOfPlayers;
 }
 
 //If the target is the player issuing the order, then the order is invalid.
