@@ -27,6 +27,32 @@ Player::Player(int* playerID, int* reinforcementPool, string* name, vector<Terri
 	this->orderList = orderlist;
 }
 
+Player::Player(int* playerID, int* reinforcementPool, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist, string strategy, vector<Player*> all, Deck* d)
+{
+	this->playerID = playerID;
+	this->reinforcementPool = reinforcementPool;
+	this->name = name;
+	this->territoryList = territoryList;
+	this->handCards = cards;
+	this->orderList = orderlist;
+	//this->deck = d;
+	if (strategy == "Human") {
+		ps = new HumanPlayerStrategy(this, all, d);
+	}
+	if (strategy == "Aggressive") {
+		ps = new AggressivePlayerStrategy(this, all, d);
+	}
+	if (strategy == "Benevolent") {
+		ps = new BenevolentPlayerStrategy(this, all, d);
+	}
+	if (strategy == "Neutral") {
+		ps = new NeutralPlayerStrategy(this, all, d);
+	}
+	if (strategy == "Cheater") {
+		ps = new CheaterPlayerStrategy(this, all, d);
+	}
+}
+
 Player::Player(const Player& p)
 {
 	this->playerID = p.playerID;
@@ -163,6 +189,11 @@ void Player::issueOrder(string order)
 	else {
 		cout << "Error! Please enter one of the following orders: 1. Deploy, 2. Advance, 3. Bomb, 4. Blockade, 5 Airlift, 6. Negotiate." << endl;
 	}
+}
+
+void Player::issueOrder(PlayerStrategy* ps)
+{
+	ps->issueOrder();
 }
 
 // to calculate continent bonus for reinforcement phase
@@ -338,6 +369,11 @@ void Player::addPlayer(Player* p)
 vector<Player*> Player::getListOfPlayers()
 {
 	return players;
+}
+
+void Player::updateAllPlayers(vector<Player*> all)
+{
+	ps->updateAllPlayers(all);
 }
 
 vector<Territory*> Player::getListToDefend()

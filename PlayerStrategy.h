@@ -4,16 +4,15 @@
 #include <string>
 #include "Cards.h" // Need for Deck
 #include "Player.h"
-//#include "Player.h"
 #include "Map.h"
 #include <set>
 using namespace std;
-//using namespace string;
 
 class Territory;
 class Player;
 class Deck;
 
+void PlayerStrategyDriver();
 
 enum PlayerType
 {
@@ -42,9 +41,11 @@ public:
 
 	void setDeck(Deck*);
 
+	void updateAllPlayers(vector<Player*>);
+
 protected:
-	Player* player;	//Put in PlayerStrategy instead of in each subclass
-	Player* allPlayers; // Added by Justine & jennifer, need it to keep track of all the players in
+	Player* player;		//Put in PlayerStrategy instead of in each subclass
+	vector<Player*> allPlayers; // Added by Justine & jennifer, need it to keep track of all the players in
 						// the game & use it in Blockade
 	Deck* deck;
 };
@@ -52,7 +53,7 @@ protected:
 //ConcreteStrategy classes
 class HumanPlayerStrategy : virtual public PlayerStrategy {
 public:
-	HumanPlayerStrategy(Player*, Player*, Deck*);
+	HumanPlayerStrategy(Player*, vector<Player*>, Deck*);
 	~HumanPlayerStrategy();
 	HumanPlayerStrategy(const HumanPlayerStrategy& p); //Copy constructor
 	HumanPlayerStrategy& operator = (const HumanPlayerStrategy&); //added;
@@ -75,7 +76,7 @@ private:
 
 class AggressivePlayerStrategy : virtual public PlayerStrategy {
 public:
-	AggressivePlayerStrategy(Player* p, Player* all, Deck* d);
+	AggressivePlayerStrategy(Player* p, vector<Player*> all, Deck* d);
 	~AggressivePlayerStrategy();
 	AggressivePlayerStrategy(const AggressivePlayerStrategy& p); //Copy constructor
 	AggressivePlayerStrategy& operator = (const AggressivePlayerStrategy&); //added;
@@ -93,7 +94,7 @@ private:
 
 class BenevolentPlayerStrategy : virtual public PlayerStrategy {
 public:
-	BenevolentPlayerStrategy(Player*, Player*, Deck*);
+	BenevolentPlayerStrategy(Player*, vector<Player*>, Deck*);
 	~BenevolentPlayerStrategy();
 	BenevolentPlayerStrategy(const BenevolentPlayerStrategy& p); //Copy constructor
 	BenevolentPlayerStrategy& operator = (const BenevolentPlayerStrategy&); //added
@@ -110,7 +111,7 @@ private:
 
 class NeutralPlayerStrategy : public PlayerStrategy {
 public:
-	NeutralPlayerStrategy(Player* player, Player* all, Deck* d);
+	NeutralPlayerStrategy(Player* player, vector<Player*> all, Deck* d);
 	//create method that will change strategy in the isuueing orders phase
 	virtual int changeStrategy(string, int);
 	//implement issueOrder(), toAttack(), toDefend() in different ConcreteStrategy 
@@ -127,7 +128,7 @@ private:
 
 class CheaterPlayerStrategy : public PlayerStrategy {
 public:
-	CheaterPlayerStrategy(Player* player, Player* all, Deck* d);
+	CheaterPlayerStrategy(Player* player, vector<Player*> all, Deck* d);
 	//create method that will change strategy in the isuueing orders phase
 	virtual int changeStrategy(string, int);
 	//implement issueOrder(), toAttack(), toDefend() in different ConcreteStrategy 
