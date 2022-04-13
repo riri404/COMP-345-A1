@@ -47,7 +47,7 @@ public:
 protected:
     string name;
     Player* player;
-    Player* allPlayers;
+    //Player* allPlayers;
     vector<Player*> listOfPlayers;
 };
 
@@ -157,7 +157,7 @@ class Blockade : public Order {
 public:
     //Constructor and destructor
     Blockade();
-    Blockade(Player*, Player*, Territory*);  //player, target
+    Blockade(Player*, vector<Player*>, Territory*, Deck*);  //player, list of players, target
     ~Blockade();
 
     //Copy constructor, assignement and stream insertion operator
@@ -181,6 +181,7 @@ public:
 private:
     Territory* target;
     Player* neutralPlayer;
+    Deck* deck;
     //vector<Player*> listOfPlayers;
     //Player* allPlayers;
 };
