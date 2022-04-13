@@ -448,12 +448,11 @@ Blockade::Blockade() {
 //A blockade order targets a territory that belongs to the player issuing the order. Its effect is to
 //double the number of armies on the territory and to transfer the ownership of the territory to the Neutral player.
 //The blockade order can only be created by playing the blockade card.
-Blockade::Blockade(Player* currentPlayer, vector<Player*> all, Territory* targetTerritory, Deck* d) {
+Blockade::Blockade(Player* currentPlayer, Player* all, Territory* targetTerritory) {
 	this->name = "Blockade";
 	this->player = currentPlayer;
-	this->listOfPlayers = all;
+	this->allPlayers = all;
 	this->target = targetTerritory;
-	this->deck = d;
 	/*this->listOfPlayers = list;*/
 	//this->engine = e;
 }
@@ -471,7 +470,7 @@ Blockade::~Blockade() {
 Blockade::Blockade(Blockade& anotherBlockade) : Order(anotherBlockade) {
 	this->name = anotherBlockade.name;
 	this->player = anotherBlockade.player;
-	this->listOfPlayers = anotherBlockade.listOfPlayers;
+	this->allPlayers = anotherBlockade.allPlayers;
 	this->target = anotherBlockade.target;
 	//this->listOfPlayers = anotherBlockade.listOfPlayers;
 	//this->engine = anotherBlockade.engine;
@@ -482,7 +481,7 @@ Blockade& Blockade::operator=(const Blockade& aBlockade) {
 	Order::operator= (aBlockade);
 	this->name = aBlockade.name;
 	this->player = aBlockade.player;
-	this->listOfPlayers = aBlockade.listOfPlayers;
+	this->allPlayers = aBlockade.allPlayers;
 	this->target = aBlockade.target;
 	//this->listOfPlayers = aBlockade.listOfPlayers;
 	//this->engine = aBlockade.engine;
@@ -539,13 +538,13 @@ void Blockade::execute() {
 		target->addArmies(target->getArmies());
 		cout << "Number of armies added to target: " << target->getArmies() << endl;
 
-		for (int i = 0; i < listOfPlayers.size(); i++) {
-			if (listOfPlayers.at(i)->GetPlayerName() == "Neutral Player") { // Verify if player in game engine list of players has a neutral player
-				neutralPlayer = listOfPlayers.at(i);
+		for (int i = 0; i < allPlayers->getListOfPlayers().size(); i++) {
+			if (allPlayers->getListOfPlayers().at(i)->GetPlayerName() == "Neutral Player") { // Verify if player in game engine list of players has a neutral player
+				neutralPlayer = allPlayers->getListOfPlayers().at(i);
 				neutralPlayer->addTerritory(target);
-				//listOfPlayers.at(i)->getTerritoryList().push_back(target); // Transfer target ownership
+				allPlayers->getListOfPlayers().at(i)->getTerritoryList().push_back(target); // Transfer target ownership
 
-				cout << "The target territory " << target->getName() << "'s ownership has been transfered to " << listOfPlayers.at(i)->GetPlayerName() << endl;
+				cout << "The target territory " << target->getName() << "'s ownership has been transfered to " << allPlayers->getListOfPlayers().at(i)->GetPlayerName() << endl;
 
 				cout << "Neutral Player's territories are: " << endl;
 				for (int j = 0; j < neutralPlayer->getTerritoryList().size(); j++) {
@@ -557,7 +556,7 @@ void Blockade::execute() {
 				break;
 			}
 			// if reach end of for loop and have not found a neutral player, then create a neutral player
-			else if (listOfPlayers.at(listOfPlayers.size() - 1)->GetPlayerName() != "Neutral Player") {
+			else if (allPlayers->getListOfPlayers().at(allPlayers->getListOfPlayers().size() - 1)->GetPlayerName() != "Neutral Player") {
 
 				// Create variables for neutral player
 				int* neutralID = new int(0);
@@ -569,8 +568,8 @@ void Blockade::execute() {
 
 				neutralTerritoryList.push_back(target);
 				// Create neutral player
-				neutralPlayer = new Player(neutralID, neutralReinforcement, neutralName, neutralTerritoryList, neutralHand, neutralOrdersList, "Neutral", listOfPlayers, deck);
-				listOfPlayers.push_back(neutralPlayer); // Add neutral player to list of players in game engine
+				neutralPlayer = new Player(neutralID, neutralReinforcement, neutralName, neutralTerritoryList, neutralHand, neutralOrdersList);
+				allPlayers->addPlayer(neutralPlayer); // Add neutral player to list of players in game engine
 				target->setPlayerOwner(neutralPlayer);
 				cout << "A neutral player has been created." << endl;
 				cout << "The target territory " << target->getName() << "'s ownership has been transferred to " << neutralPlayer->GetPlayerName() << endl;

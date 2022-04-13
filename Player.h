@@ -3,7 +3,6 @@
 #include "Map.h"
 #include "Cards.h"
 #include "LoggingObserver.h"
-#include "PlayerStrategy.h"
 #include <vector>
 #include <iostream>
 #include <string>
@@ -23,8 +22,7 @@ class Player
 public:
 	// contructors
 	Player(); // default constructor
-	Player(int* id, int*, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); // Used in ordersDriver
-	Player(int* id, int*, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist, string strategy, vector<Player*> all, Deck* d); //Constructor
+	Player(int* id, int*, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
 	Player(const Player& p); //copy constructor
 	~Player(); //destructor
 
@@ -37,7 +35,6 @@ public:
 	vector<Territory*> toAttack(); // method to attck; returns orders list
 	vector<Territory*> toDefend(); // method to defend; returns ordrs list
 	void issueOrder(string order);
-	void issueOrder(PlayerStrategy* ps);
 	void setName(const string& name);
 	void setPlayerID(const int& playerID);
 	vector<Territory*> getTerritoryList();
@@ -68,8 +65,6 @@ public:
 
 	void addPlayer(Player* p);
 	vector<Player*> getListOfPlayers();
-
-	void updateAllPlayers(vector<Player*>);
 
 	vector<Territory*> getListToDefend();
 	vector<Territory*> getListToAttack();
@@ -109,6 +104,4 @@ private:
 	vector<Territory*> attackTerritories;
 
 	vector<Cards*> playerHand;
-	PlayerStrategy* ps;
-	string strategy;
 };
