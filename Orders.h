@@ -76,7 +76,7 @@ public:
     void setSelfPlayers(Player*);
     void setTargetTerritory(Territory*);
     void setNumArmy(int);
-    vector<Player*> updateListOfPlayers();
+    vector<Player*> updateListOfPlayers() override;
 
     //Member functions
     bool validate() override;
@@ -110,7 +110,7 @@ public:
     void setSourceTerritory(Territory*);
     void setTargetTerritory(Territory*);
     void setArmyUnits(int);
-    vector<Player*> updateListOfPlayers();
+    vector<Player*> updateListOfPlayers() override;
 
     //Member functions
     bool validate() override;
@@ -145,7 +145,7 @@ public:
     // For Assignment 3
     void setSelfPlayers(Player*);
     void setTargetTerritory(Territory*);
-    vector<Player*> updateListOfPlayers();
+    vector<Player*> updateListOfPlayers() override;
 
     //Member functions
     bool validate() override;
@@ -179,7 +179,7 @@ public:
     void setSelfPlayers(Player*);
     void setNeutralPlayer(Player*);
     void setTargetTerritory(Territory*);
-    vector<Player*> updateListOfPlayers();
+    vector<Player*> updateListOfPlayers() override;
 
     //Member functions
     bool validate() override;
@@ -216,7 +216,7 @@ public:
     void setSourceTerritory(Territory*);
     void setTargetTerritory(Territory*);
     void setNumArmy(int);
-    vector<Player*> updateListOfPlayers();
+    vector<Player*> updateListOfPlayers() override;
 
     //Member functions
     bool validate() override;
@@ -250,7 +250,7 @@ public:
     // For Assignment 3
     void setSelfPlayers(Player*);
     void setPeacePlayer(Player*);
-    vector<Player*> updateListOfPlayers();
+    vector<Player*> updateListOfPlayers() override;
 
     //Member functions
     bool validate() override;

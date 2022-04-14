@@ -893,8 +893,6 @@ ostream& operator<<(ostream& outs, const OrdersList& anOrdersList) {
 
 void OrdersList::addToListOfOrders(Order* order) {
 	listOfOrders.push_back(order);                //Push order at the end of the list
-	cout << stringToLog() << endl;
-
 	notifyAddOrder(order);
 	Notify(this);
 }

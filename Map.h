@@ -97,6 +97,7 @@ class Map {
 public:
 	~Map();                      // Destructor
 	Map(const string&);
+	Map();
 	Map(const Map&);             // Copy Constructor 
 	Map& operator=(const Map&);  // Assignment operator Overloading
 	friend ostream& operator<<(ostream&, const Map&);

@@ -7,6 +7,7 @@
 #include <string>
 #include <fstream>
 #include <regex>
+#include <stdlib.h>
 #include <utility>
 using namespace std;
 // This free function split a string to several components according to the delimiter
@@ -246,9 +247,10 @@ bool CommandProcessor::validate(Command* command) {
 		return false;
 	}
 	else if (command->type == Command::CommandType::quit) {
-		if (gameEnginePtr->GetState() == win) {
+		if (true) {
 			command->saveEffect("exit program");
 			cout << endl << command->CommandEffect;
+			exit(1);
 			return true;
 		}
 		else
@@ -338,16 +340,16 @@ bool CommandProcessor::TournamentValidation() {
 		allGood = false;
 	}
 	// validate strategy
-	string strategies[4] = { "Aggressive" , "Benevolent" , "Neutral", "Cheater" };
+	string strategies[5] = { "Aggressive" , "Benevolent" , "Neutral", "Cheater", "Human" };
 	int invalidStrategyCounter = 0;
 	//bool isStrategyValid = false;
 	for (int i = 0; i < allPlayerStrategies.size(); i++) {
-		for (int j = 0; j < 4; j++) {
+		for (int j = 0; j < 5; j++) {
 			if (allPlayerStrategies[i] == strategies[j]) {
 				break;
 			//isStrategyValid = true;
-		}
-			else if (allPlayerStrategies[i] != strategies[j]&& j==3) {
+			}
+			else if (allPlayerStrategies[i] != strategies[j]&& j==4) {
 				cout << allPlayerStrategies[i] +" X NOT VALID" << endl;
 				invalidStrategyCounter++;
 			}

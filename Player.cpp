@@ -193,7 +193,7 @@ void Player::issueOrder(string order)
 	}
 }
 
-void Player::issueOrder(PlayerStrategy* ps)
+void Player::issueOrder()
 {
 	ps->issueOrder();
 }
@@ -438,12 +438,12 @@ void Player::printToAttack()
 	}
 }
 
-bool Player::sortAscendingOrder(Territory* t1, Territory* t2)
+bool sortAscendingOrder(Territory* t1, Territory* t2)
 {
 	return t1->getArmies() < t2->getArmies();
 }
 
-bool Player::sortDescendingOrder(Territory* t1, Territory* t2)
+bool sortDescendingOrder(Territory* t1, Territory* t2)
 {
 	return t1->getArmies() > t2->getArmies();
 }
@@ -456,4 +456,22 @@ void Player::sortLeastToGreatestUnits()
 void Player::sortGreatestToLeastUnits()
 {
 	sort(attackTerritories.begin(), attackTerritories.end(), sortDescendingOrder);
+}
+
+void Player::setStrategy(const string& strategy, Deck* d, vector<Player*> all) {
+	if (strategy == "Human") {
+		ps = new HumanPlayerStrategy(this, all, d);
+	}
+	if (strategy == "Aggressive") {
+		ps = new AggressivePlayerStrategy(this, all, d);
+	}
+	if (strategy == "Benevolent") {
+		ps = new BenevolentPlayerStrategy(this, all, d);
+	}
+	if (strategy == "Neutral") {
+		ps = new NeutralPlayerStrategy(this, all, d);
+	}
+	if (strategy == "Cheater") {
+		ps = new CheaterPlayerStrategy(this, all, d);
+	}
 }

@@ -38,9 +38,10 @@ public:
 	vector<Territory*> toAttack(); // method to attck; returns orders list
 	vector<Territory*> toDefend(); // method to defend; returns ordrs list
 	void issueOrder(string order);
-	void issueOrder(PlayerStrategy* ps);
+	void issueOrder();
 	void setName(const string& name);
 	void setPlayerID(const int& playerID);
+	void setStrategy(const string& strat, Deck* deck, vector<Player*>);
 	vector<Territory*> getTerritoryList();
 	bool playerContinentBouns();
 	//void setOrder(Orders*);
@@ -83,9 +84,6 @@ public:
 
 	void printToDefend();
 	void printToAttack();
-
-	bool sortAscendingOrder(Territory* t1, Territory* t2);
-	bool sortDescendingOrder(Territory* t1, Territory* t2);
 
 	void sortLeastToGreatestUnits();
 	void sortGreatestToLeastUnits();

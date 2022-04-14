@@ -2,8 +2,8 @@
 #include "Orders.h"
 #include "Map.h"
 #include "Player.h"
-#include <vector>;
-#include <set>;
+#include <vector>
+#include <set>
 using namespace std;
 class Orders;
 class Player;
@@ -40,6 +40,7 @@ int HumanPlayerStrategy::changeStrategy(string order, int armies)
 	}
 	else {
 		cout << "Please input an correct integer from 1 to 3...\n" << endl;
+		return 0;
 	}
 }
 
@@ -416,6 +417,7 @@ void AggressivePlayerStrategy::issueOrder()
 	//Create a Deploy or Advance (on its own territory) order, move all armies on the strongest country
 	while (player->getReinforcementPool() > 0)
 	{
+		cout << "loop?" << endl;
 		// If player has reinforcement units, then deploy
 		target = player->getTerritoryList().at(0);
 		// Find territory with largest number of units
@@ -427,7 +429,7 @@ void AggressivePlayerStrategy::issueOrder()
 		Deploy* deployOrder = new Deploy(player, player->getReinforcementPool(), target);
 
 		player->setOrder(deployOrder);
-	}
+	} 
 	// Else, advance
 	//Always advances to enemy territories until it cannot do so anymore
 	//Create Advance order on enemy territory

@@ -199,6 +199,10 @@ Map::Map(const string& fileName) {
     load(fileName);
 }
 
+Map::Map() {
+    mapLoader = new MapLoader();
+}
+
 Map::Map(const Map& other) {
     if (!other.isLoaded) {
         numTerritories = 0;

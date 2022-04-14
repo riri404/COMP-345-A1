@@ -6,7 +6,7 @@ using namespace std;
 GameEngine::GameEngine()
 {
     state = State::null;
-    this->map = nullptr;
+    this->map = new Map();
     vector<Player*> players;
     this->deck = new Deck();
     this->numberOfPlayers = 0;
@@ -326,8 +326,7 @@ void GameEngine::PlayTournament(Command* command) {
     string commandText = command->getCommandText();
 
     processor->TournamentFunctionInput(commandText);
-    if (processor->TournamentValidation())
-    {
+    if (processor->TournamentValidation()) {
      // input is valid, so set the parameters
     initTournamentParams();
     state = State::tournamentStart;
@@ -336,15 +335,16 @@ void GameEngine::PlayTournament(Command* command) {
     for (int i = 0; i < tournamentNumOfGames; ++i) {
 
         //Q where are you initializing tournament maps?? found it in the initTournamentParams
-        for (int j = 0; j < tournamentMaps.size(); ++i) {
-            reset();
-            // initTournament(); feature6 to add
-            map->load("source_maps/" + tournamentMaps[i] + ".map");
+        for (int j = 0; j < tournamentMaps.size(); ++j) {
+            initTournament();
+            map->load("source_maps/" + tournamentMaps[j] + ".map");
             // play game
             GameStart(); // is this the correct function? //Q yes
 
             Player* playerWon = new Player(); // get player who won //Q is this a place holder?
             tournamentPlayersWon.push_back(playerWon);
+
+            reset();
         }
     }
 
@@ -477,14 +477,14 @@ void GameEngine::DistributeTerritories() {
 
     for (int i = 0; i < NumberOfTerritories; i++) {
 
-        Player* tempPlayer = players.at(playerIndex);
+        // Player* tempPlayer = players.at(playerIndex);
 
-        mapTerritories[i]->setOwnerId(tempPlayer->GetPlayerID());
+        mapTerritories[i]->setOwnerId(players[playerIndex]->GetPlayerID());
 
         // Territory* tempTerritory = new Territory(*mapTerritories[i]);
         // just add the territory no need to copy
 
-        tempPlayer->addTerritory(mapTerritories[i]);
+        players[playerIndex]->addTerritory(mapTerritories[i]);
 
         playerIndex++;
 
@@ -528,8 +528,7 @@ void GameEngine::GameStart() {
         
         cout << endl << *player << endl;
     }
-
-   // GameEngine::MainGameLoop(); // Here we start the main game loop
+   GameEngine::MainGameLoop(); // Here we start the main game loop
 
     // For debugging:
     
@@ -547,28 +546,24 @@ void GameEngine::GameStart() {
 Player* GameEngine::MainGameLoop() {
 
     cout << "Starting Main Game Loop..." << endl;
-
     while (true) {
         ReinforcementPhase();
         IssueOrdersPhase();
         ExecuteOrdersPhase();
         // Eliminate players who don't have any more territories.
         for (int i = players.size() - 1; i >= 0; i--) {
-            if (false/* player has no more territories */) {
+            if (true/* player has no more territories */) {
                 cout << "A player has been eliminated." << endl;
-
                 players.erase(players.begin() + i);
+                if (players.size() == 1) {
+                    cout << "There's only one player left." << endl;
+                    state = State::win;
+                    Notify(this);
+                    return players[0];
+                }
             }
         }
         // If a player controls all territories, they win the game.
-        if (players.size() == 1) {
-            cout << "There's only one player left." << endl;
-            state = State::win;
-            Notify(this);
-            return players[0];
-
-        
-        }
     }
 }
 
@@ -586,15 +581,13 @@ void GameEngine::ReinforcementPhase() {
     {   //check if the player's terriotries
         temp = players[i]->getReinforcementPool();
 
-        for (int j = 0; j < players[i]->getTerritoryList().size(); i++)
+        for (int j = 0; j < players[i]->getTerritoryList().size(); j++)
         {
-            cout << "inside nested loop..." << endl;
             //count the terriorties number
             count++;
         }
         //calcuate the contient bouns
         check = (*players[i]).playerContinentBouns();
-
 
         if (check == true)
         {
@@ -631,7 +624,8 @@ void GameEngine::IssueOrdersPhase() {
     
     for (auto player : players)
     {
-        player->issueOrder(m);
+        if (tournamentMode) player->issueOrder();
+        else player->issueOrder("Deploy"); // what should be order?
     }
     cout << "end of issue orders phase" << endl << endl;
 
@@ -649,17 +643,17 @@ void GameEngine::ExecuteOrdersPhase() {
 
     for (Player* player : players)
     {
-        auto orderList = player->getOrdersList()->listOfOrders;
+        vector<Order*>& orderList = player->getOrdersList()->listOfOrders;
         for (int i = 0; i < orderList.size(); i++)
         {
             //execute and remove if its a deploy order
-            if (orderList.at(i)->getName() == "Deploy Orders")
+            if (orderList.at(i)->getName() == "Deploy")
             {
                 //validate, excute and delete order
-                orderList.at(i)->validate();
-                orderList.at(i)->execute();
-                orderList.erase(orderList.begin() + i);
-                i--;
+                // orderList.at(i)->validate();
+                // orderList.at(i)->execute();
+                // orderList.erase(orderList.begin() + i);
+                // TODO: fix, this part does not work because in validate, target is null and causes segfault
             }
         }
     }
@@ -668,13 +662,14 @@ void GameEngine::ExecuteOrdersPhase() {
 
     for (Player* player : players)
     {
-        auto orderList = player->getOrdersList()->listOfOrders;
+        vector<Order*>& orderList = player->getOrdersList()->listOfOrders;
         while (!orderList.empty())
         {
             //validate, excute and delete order
-            orderList.at(0)->validate();
-            orderList.at(0)->execute();
+            // orderList.at(0)->validate();
+            // orderList.at(0)->execute();
             orderList.erase(orderList.begin());
+            // TODO: fix, this part does not work because in validate, target is null and causes segfault
         }
     } //order list should be empty
 
@@ -739,8 +734,10 @@ std::string GameEngine::stringToLog() {
             break;
         case State::tournamentStart:
             log = "Phase: Starting tournament";
+            break;
         case State::tournamentEnd:
             log = tournamentLog();
+            break;
         default:
             log = "Unknown phase";
             break;
@@ -780,12 +777,13 @@ string GameEngine::tournamentLog() {
     oss << "Results: " << endl;
     for (int i = 0; i < tournamentNumOfGames; ++i) {
         oss << "Game " << i + 1 << endl;
-        for (int j = 0; j < tournamentMaps.size(); ++ j) {
+        for (int j = 0; j < tournamentMaps.size(); ++j) {
             auto player = tournamentPlayersWon.at(i * tournamentMaps.size() + j);
             oss << "\t" << "Map: " << tournamentMaps.at(j) << ", Won by " << player->GetPlayerName() << endl;
         }
     }
     return oss.str();
+
 }
 // returns true if the load was successfull, otherwise false
 bool GameEngine::loadAnotherMap(string file) {
@@ -796,7 +794,6 @@ bool GameEngine::loadAnotherMap(string file) {
 void GameEngine::reset() {
     // NOTE: All of these should be reloaded on each game in the tournament
     //Q Should not we call the destructors?
-    tournamentPlayersWon.clear();
     for (auto p : players) delete p;
     players.clear();
     map->clear();
@@ -830,13 +827,17 @@ void GameEngine::playTournamentOld() {
         for (int j = 0; j < tournamentMaps.size(); ++i) {
             reset();
            
-            // initTournament(); feature6 to add 
+            // initTournament();
 
             int playerID = 1;
             for (string& player : tournamentPlayers) // access by reference to avoid copying
             {
                 AddStrategyPlayer(player, playerID);
                 playerID++;
+            }
+            for (int i = 0; i < players.size(); ++i)
+            {
+                players[i]->setStrategy(tournamentPlayers[i], deck, players);
             }
 
             map->load("source_maps/" + tournamentMaps[i] + ".map");
@@ -845,9 +846,7 @@ void GameEngine::playTournamentOld() {
             GameStart(); // is this the correct function? //Q yes
 
 
-            Player* playerWon = new Player(); // get player who won //Q is this a place holder?
-
-            playerWon = MainGameLoop(); // something like this
+            Player* playerWon = MainGameLoop(); // get player who won //Q is this a place holder?
 
             tournamentPlayersWon.push_back(playerWon);
         }
@@ -869,12 +868,13 @@ void GameEngine::initTournamentParams() {
 }
 
 void GameEngine::initTournament() {
-    // TODO: @Bero
-    // initialize players using tournamentPlayers (string of player strategies, wait for part 1 to complete this)
-    //Q tournamentPlayers = processor->allPlayerStrategies; // initiated in initTournamentParams
-  
-    // initialize deck? (not sure how it works)
-    //Q Already initializing it and distrebuting two cards for each player in the gameStart() function
-    // anything else missing?
-    //Q I am not sure but we need the game play part from assignment 2
+    int playerID = 1;
+    for (string& player : tournamentPlayers) // access by reference to avoid copying
+    {
+        AddStrategyPlayer(player, playerID);
+        playerID++;
+    }
+    for (int i = 0; i < players.size(); ++i) {
+        players[i]->setStrategy(tournamentPlayers[i], deck, players);
+    }
 }
