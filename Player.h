@@ -3,9 +3,11 @@
 #include "Map.h"
 #include "Cards.h"
 #include "LoggingObserver.h"
+#include "PlayerStrategy.h"
 #include <vector>
 #include <iostream>
 #include <string>
+#include <algorithm>
 using namespace std;
 
 class Order;
@@ -13,6 +15,7 @@ class OrdersList;
 class Cards;
 class Hand;
 class Deck; // Added by Justine & Jennifer
+class PlayerStrategy;
 
 void PlayerDriver();
 
@@ -21,7 +24,8 @@ class Player
 public:
 	// contructors
 	Player(); // default constructor
-	Player(int* id, int*, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); //Constructor
+	Player(int* id, int*, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist); // Used in ordersDriver
+	Player(int* id, int*, string* name, vector<Territory*> territoryList, Hand* cards, OrdersList* orderlist, string strategy, vector<Player*> all, Deck* d); //Constructor
 	Player(const Player& p); //copy constructor
 	~Player(); //destructor
 
@@ -31,14 +35,14 @@ public:
 	friend ostream& operator <<(ostream& outs, const Player& p);
 
 	//methods
-	vector<Territory*> toAttack(vector<Territory*> attack); // method to attck; returns orders list
+	vector<Territory*> toAttack(); // method to attck; returns orders list
 	vector<Territory*> toDefend(); // method to defend; returns ordrs list
-	void issueOrder(vector<Territory*>);
+	void issueOrder(string order);
+	void issueOrder(PlayerStrategy* ps);
 	void setName(const string& name);
 	void setPlayerID(const int& playerID);
 	vector<Territory*> getTerritoryList();
-	vector<Territory*> getNeighbourTerritories();
-	bool playerContinentBouns(); 
+	bool playerContinentBouns();
 	//void setOrder(Orders*);
 	string GetPlayerName() const;
 	int GetPlayerID() const;
@@ -55,6 +59,7 @@ public:
 	void setTerritory(Territory*);
 	void removeTerritory(int i);
 	Hand* getPlayerHand();
+	vector<Cards*> GetHand();
 
 	OrdersList* getOrdersList();
 	void setOrder(Order* order);
@@ -64,6 +69,26 @@ public:
 
 	void addPlayer(Player* p);
 	vector<Player*> getListOfPlayers();
+
+	void updateAllPlayers(vector<Player*>);
+
+	vector<Territory*> getListToDefend();
+	vector<Territory*> getListToAttack();
+
+	void addTerritoryToDefend(Territory* t);
+	void addTerritoryToAttack(Territory* t);
+
+	void clearToDefend();
+	void clearToAttack();
+
+	void printToDefend();
+	void printToAttack();
+
+	bool sortAscendingOrder(Territory* t1, Territory* t2);
+	bool sortDescendingOrder(Territory* t1, Territory* t2);
+
+	void sortLeastToGreatestUnits();
+	void sortGreatestToLeastUnits();
 
 private:
 	//attributes/ variables
@@ -81,4 +106,10 @@ private:
 	vector<Player*> playerNegociate;
 	Deck* deck;
 	string pName;
+	vector<Territory*> defendTerritories;
+	vector<Territory*> attackTerritories;
+
+	vector<Cards*> playerHand;
+	PlayerStrategy* ps;
+	string strategy;
 };

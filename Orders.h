@@ -39,14 +39,19 @@ public:
     virtual bool validate() = 0; //pure virtual
     virtual void execute() = 0; //pure virtual
 
-    // Not working
-    void addPlayer(Player* p);
+    // Not using these
+    void addPlayer(Player*);
     vector<Player*> getListOfPlayers();
 
+    // Following update method is to update the list of players. Make sure to use it after execute an order
+    virtual vector<Player*> updateListOfPlayers() = 0;
+
     string stringToLog() override;
+
 protected:
     string name;
     Player* player;
+    //Player* allPlayers;
     vector<Player*> listOfPlayers;
 };
 
@@ -67,6 +72,12 @@ public:
     //Getters and setters
     string const getName() override;
 
+    // For Assignment 3
+    void setSelfPlayers(Player*);
+    void setTargetTerritory(Territory*);
+    void setNumArmy(int);
+    vector<Player*> updateListOfPlayers();
+
     //Member functions
     bool validate() override;
     void execute() override;
@@ -83,7 +94,7 @@ class Advance : public Order {
 public:
     //Constructor and destructor
     Advance();
-    Advance(Player*, int, Territory*, Territory*, Hand*, Deck*);  //player, armies, source, target
+    Advance(Player*, int, Territory*, Territory*, Deck*);  //player, armies, source, target
     ~Advance();
 
     //Copy constructor, assignement and stream insertion operator
@@ -94,6 +105,13 @@ public:
     //Getters and setters
     string const getName() override;
 
+    // For Assignment 3
+    void setSelfPlayers(Player*);
+    void setSourceTerritory(Territory*);
+    void setTargetTerritory(Territory*);
+    void setArmyUnits(int);
+    vector<Player*> updateListOfPlayers();
+
     //Member functions
     bool validate() override;
     void execute() override;
@@ -103,7 +121,7 @@ private:
     int armies;
     Territory* source;
     Territory* target;
-    Hand* playerHand;
+    //Hand* playerHand;
     Deck* deck;
 };
 
@@ -113,7 +131,7 @@ class Bomb : public Order {
 public:
     //Constructor and destructor
     Bomb();
-    Bomb(Player*, Territory*, vector<Territory*>);  //player, target, territoryList
+    Bomb(Player*, Territory*);  //player, target
     ~Bomb();
 
     //Copy constructor, assignement and stream insertion operator
@@ -124,6 +142,11 @@ public:
     //Getters and setters
     string const getName() override;
 
+    // For Assignment 3
+    void setSelfPlayers(Player*);
+    void setTargetTerritory(Territory*);
+    vector<Player*> updateListOfPlayers();
+
     //Member functions
     bool validate() override;
     void execute() override;
@@ -132,7 +155,6 @@ public:
 
 private:
     Territory* target;
-    vector<Territory*> territoryList;
 };
 
 //A blockade order targets a territory that belongs to the player issuing the order. Its effect is to
@@ -142,7 +164,7 @@ class Blockade : public Order {
 public:
     //Constructor and destructor
     Blockade();
-    Blockade(Player*, Player*, Territory*);  //player, target
+    Blockade(Player*, vector<Player*>, Territory*);  //player, target
     ~Blockade();
 
     //Copy constructor, assignement and stream insertion operator
@@ -153,8 +175,14 @@ public:
     //Getters and setters
     string const getName() override;
 
+    // For Assignment 3
+    void setSelfPlayers(Player*);
+    void setNeutralPlayer(Player*);
+    void setTargetTerritory(Territory*);
+    vector<Player*> updateListOfPlayers();
+
     //Member functions
-    bool validate() override; 
+    bool validate() override;
     void execute() override;
 
     string stringToLog() override;
@@ -162,7 +190,7 @@ private:
     Territory* target;
     Player* neutralPlayer;
     //vector<Player*> listOfPlayers;
-    Player* allPlayers;
+    //Player* allPlayers;
 };
 
 //An airlift order tells a certain number of armies taken from a source territory to be moved to a target
@@ -182,6 +210,13 @@ public:
 
     //Getters and setters
     string const getName() override;
+
+    // For Assignment 3
+    void setSelfPlayers(Player*);
+    void setSourceTerritory(Territory*);
+    void setTargetTerritory(Territory*);
+    void setNumArmy(int);
+    vector<Player*> updateListOfPlayers();
 
     //Member functions
     bool validate() override;
@@ -211,6 +246,11 @@ public:
 
     //Getters and setters
     string const getName() override;
+
+    // For Assignment 3
+    void setSelfPlayers(Player*);
+    void setPeacePlayer(Player*);
+    vector<Player*> updateListOfPlayers();
 
     //Member functions
     bool validate() override;
