@@ -415,7 +415,7 @@ void AggressivePlayerStrategy::issueOrder()
 	//Find the strongest territory
 	//for all territories in its list of territories, if territory at i has more armies, then strongest territory = territory at i
 	//Create a Deploy or Advance (on its own territory) order, move all armies on the strongest country
-	while (player->getReinforcementPool() > 0)
+	if (player->getReinforcementPool() > 0)
 	{
 		cout << "loop?" << endl;
 		// If player has reinforcement units, then deploy
@@ -435,7 +435,7 @@ void AggressivePlayerStrategy::issueOrder()
 	//Create Advance order on enemy territory
 	source = player->getTerritoryList().at(0);
 	// While the player still has armie units, do advance
-	while (source->getArmies() > 0)
+	if (source->getArmies() > 0)
 	{
 		// Find territory with largest number of units; Going to be the source territory
 		for (int i = 0; i < player->getTerritoryList().size(); i++) {
@@ -535,7 +535,7 @@ void BenevolentPlayerStrategy::issueOrder()
 	//Create a Deploy on the weakest country
 	Territory* source;
 	Territory* target;
-	while (player->getReinforcementPool() > 0)
+	if (player->getReinforcementPool() > 0)
 	{
 		// If player has reinforcement units, then deploy
 		source = player->getTerritoryList().at(0);
@@ -551,7 +551,7 @@ void BenevolentPlayerStrategy::issueOrder()
 	}
 	//Check adjacent countries that has less armies then the others and move armies to the weaker countries (Advance)
 	source = player->getTerritoryList().at(0);
-	while (source->getArmies() > 0)
+	if (source->getArmies() > 0)
 	{
 		// Find territory with largest number of units; Going to be the source territory
 		for (int i = 0; i < player->getTerritoryList().size(); i++) {
@@ -568,6 +568,7 @@ void BenevolentPlayerStrategy::issueOrder()
 			}
 		}
 		Advance* advanceOrder = new Advance(player, source->getArmies(), source, target, deck);
+		player->setOrder(advanceOrder);
 	}
 
 	//Cannot advance on enemy territories
