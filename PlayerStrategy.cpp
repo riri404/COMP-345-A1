@@ -439,6 +439,7 @@ void AggressivePlayerStrategy::issueOrder()
 	// While the player still has armie units, do advance
 	if (source->getArmies() > 0)
 	{
+		Territory* target;
 		// Find territory with largest number of units; Going to be the source territory
 		for (int i = 0; i < player->getTerritoryList().size(); i++) {
 			if (source->getArmies() < player->getTerritoryList().at(i)->getArmies()) {
@@ -457,7 +458,7 @@ void AggressivePlayerStrategy::issueOrder()
 				}
 			}
 		}
-		Advance* advanceOrder = new Advance(player, source->getArmies(), source, target, deck);
+		Advance* advanceOrder = new Advance(player, source->getArmies(), source, target, deck); 
 
 		player->setOrder(advanceOrder);
 	}
@@ -637,10 +638,10 @@ void NeutralPlayerStrategy::issueOrder()
 	//if army is attacked
 	if (territoryAmount < territoryCount || armyAmount < armyCount) {
 
-		cout << "Neutral player is attacked, now it is aggressive" << endl;
+		cout << "Neutral player is attacked, now Player is aggressive" << endl;
 
 		//change player strategy
-		//player->setPlayerStrategy(Aggressive); // have tocreate setPlayerStrategy
+		//player->setPlayerStrategy(Aggressive); // created setPlayerStrategy
 		//player->issueOrder();
 
 		//not sure if this is allowed, remove if necessary

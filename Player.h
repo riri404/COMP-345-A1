@@ -17,7 +17,11 @@ class Hand;
 class Deck; // Added by Justine & Jennifer
 class PlayerStrategy;
 
-void PlayerDriver();
+
+
+//void PlayerDriver();
+
+//enum PlayerType;
 
 class Player
 {
@@ -89,6 +93,8 @@ public:
 
 	void sortLeastToGreatestUnits();
 	void sortGreatestToLeastUnits();
+
+	//void setPlayerStrategy(PlayerType type); // added for driver
 
 private:
 	//attributes/ variables

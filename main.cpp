@@ -2,6 +2,7 @@
 #include "Map.h"
 #include "Orders.h"
 #include "Player.h"
+#include "PlayerStrategy.h"
 #include "GameEngine.h"
 #include "LoggingObserver.h"
 #include "CommandProcessing.h"
@@ -20,9 +21,11 @@ int main() {
   // PlayerDriver();
   // std::cout << "-------------ORDERS DRIVER-------------" << std::endl;
   // OrdersDriver();
+   std::cout << "-------------ORDERS DRIVER-------------" << std::endl;
+  StrategiesDriver();
 
   // std::cout << "-------------ENGINE DRIVER-------------" << std::endl;
   
-  EngineDriver();
+  //EngineDriver();
   return 0;
 }

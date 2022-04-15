@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Map.h"
 #include "Cards.h"
+#include "PlayerStrategy.h"
 #include <vector>
 #include <iostream>
 #include <string>
@@ -457,3 +458,27 @@ void Player::sortGreatestToLeastUnits()
 {
 	sort(attackTerritories.begin(), attackTerritories.end(), sortDescendingOrder);
 }
+
+//void Player::setPlayerStrategy(PlayerType type)
+//{
+	//switch (type)
+	//{
+	//case Human:
+	//	strategy = new HumanPlayerStrategy();
+	//	break;
+	//case Aggressive:
+	//	strategy = new AggressivePlayerStrategy(this);
+	//	break;
+	//case Benevolent:
+	//	strategy = new BenevolentPlayerStrategy(this);
+	//	break;
+	//case Neutral:
+	//	strategy = new NeutralPlayerStrategy(this);
+	//	break;
+	//case Cheater:
+	//	strategy = new CheaterPlayerStrategy(this);
+	//	break;
+	//default:
+	//	break;
+	//}
+//}
