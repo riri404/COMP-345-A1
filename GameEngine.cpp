@@ -433,7 +433,7 @@ void GameEngine::IssueOrdersPhase() {
     
     for (auto player : players)
     {
-        player->issueOrder(m);
+       // player->issueOrder(m);
     }
     cout << "end of issue orders phase" << endl << endl;
 

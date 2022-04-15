@@ -2,8 +2,9 @@
 #include "Orders.h"
 #include "Map.h"
 #include "Player.h"
-#include <vector>;
-#include <set>;
+#include <vector>
+#include <set>
+
 using namespace std;
 class Orders;
 class Player;
@@ -41,7 +42,10 @@ int HumanPlayerStrategy::changeStrategy(string order, int armies)
 	else {
 		cout << "Please input an correct integer from 1 to 3...\n" << endl;
 	}
+
+	return 0;
 }
+
 
 // The player issues deploy orders on its own territories that are in the list returned by toDefend(). As long as the player has armies still to deploy (see startup phase and reinforcement phase), 
 // it will issue a deploy order and no other order. Once it has deployed all its available armies, it can proceed with other kinds of orders.
@@ -645,6 +649,7 @@ void NeutralPlayerStrategy::issueOrder()
 	else {
 		territoryCount = territoryAmount;
 		armyCount = armyAmount;
+		cout << "Neutral player does nothing" << endl;
 	}
 }
 

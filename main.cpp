@@ -13,7 +13,7 @@
 int main() {
    
   // std::cout << "-------------MAP DRIVER-------------" << std::endl;
-  MapDriver();
+  //MapDriver();
   // std::cout << "-------------CARDS DRIVER-------------" << std::endl;
   // CardsDriver();
   // std::cout << "-------------PLAYER DRIVER-------------" << std::endl;
@@ -23,6 +23,6 @@ int main() {
 
   // std::cout << "-------------ENGINE DRIVER-------------" << std::endl;
   
-  // EngineDriver();
+  EngineDriver();
   return 0;
 }
