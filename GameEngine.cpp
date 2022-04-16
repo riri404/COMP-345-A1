@@ -1,6 +1,7 @@
 #include "GameEngine.h"
 #include <sstream>
 
+
 using namespace std;
 
 GameEngine::GameEngine()
@@ -206,10 +207,15 @@ void GameEngine::TakeInput() {
                    
             else if (commandEntered->type == Command::CommandType::gamestart) {
 
+                for (auto player : players) {
+                     player->setStrategy("Human", deck, players);
+                }
+
                 if (numberOfPlayers > 1) {
 
                     GameStart();
-
+                    Player* winner = MainGameLoop();
+                    cout << winner->GetPlayerName() << " has won (gg ez)" << endl;
                 }
 
                 else {
@@ -353,7 +359,7 @@ void GameEngine::PlayTournament(Command* command) {
     state = State::tournamentEnd;
     //Q should we sandwish the tournement with those states
     Notify(this);
-
+    cout << "gg ez" << endl;
     }
 
     else
@@ -437,7 +443,6 @@ void GameEngine::AddPlayer() {
 
     player->setName(playerName);
     player->setPlayerID(numberOfPlayers);
-    
 
     players.push_back(player);
     numberOfPlayers++;
@@ -458,6 +463,7 @@ void GameEngine::AddStrategyPlayer(string strategyName, int playerID) {
 
     player->setName(playerName);
     player->setPlayerID(playerID);
+    
 
     players.push_back(player);
     
@@ -480,11 +486,13 @@ void GameEngine::DistributeTerritories() {
         // Player* tempPlayer = players.at(playerIndex);
 
         mapTerritories[i]->setOwnerId(players[playerIndex]->GetPlayerID());
+        mapTerritories[i]->setPlayerOwner(players[playerIndex]);
 
         // Territory* tempTerritory = new Territory(*mapTerritories[i]);
         // just add the territory no need to copy
 
         players[playerIndex]->addTerritory(mapTerritories[i]);
+
 
         playerIndex++;
 
@@ -492,42 +500,37 @@ void GameEngine::DistributeTerritories() {
             playerIndex = 0;
         }
     }
+
+    for (auto p : players) p->toDefend();
+    for (auto p : players) p->toAttack();
 }
 
-void GameEngine::ShufflePlayers(vector<Player*> playersToShuffle) {
+void GameEngine::ShufflePlayers() {
 
     // obtain a time-based seed:
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine e(seed);
 
-    shuffle(begin(playersToShuffle), end(playersToShuffle), e);
+
+    shuffle(begin(players), end(players), e);
 }
 
 void GameEngine::GameStart() {
-
     DistributeTerritories();
-
-    ShufflePlayers(players);
-
+    ShufflePlayers();
     deck->create_deck();
 
     for (Player* player : players) {
-
         for (int i = 0; i < 2; i++) {
-
             player->AddCard(deck->draw());
         }
-
         player->addToReinforcePool(50);
     }
 
     cout << endl << "Players of this game ->" << endl;
 
     for (auto player : players)
-    {
-        
         cout << endl << *player << endl;
-    }
  //  GameEngine::MainGameLoop(); // Here we start the main game loop
 
     // For debugging:
@@ -546,13 +549,24 @@ void GameEngine::GameStart() {
 Player* GameEngine::MainGameLoop() {
 
     cout << "Starting Main Game Loop..." << endl;
+    ReinforcementPhase();
     while (true) {
-        ReinforcementPhase();
         IssueOrdersPhase();
         ExecuteOrdersPhase();
         // Eliminate players who don't have any more territories.
         for (int i = players.size() - 1; i >= 0; i--) {
-            if (true/* player has no more territories */) {
+            if (tournamentMode) {
+                cout << "A player has been eliminated." << endl;
+                players.erase(players.begin() + i);
+                if (players.size() == 1) {
+                    cout << "There's only one player left." << endl;
+                    state = State::win;
+                    Notify(this);
+                    Player* p = new Player(*players[0]);
+                    return p;
+                }
+            }
+            if (players[i]->getTerritoryList().size() == 0) {
                 cout << "A player has been eliminated." << endl;
                 players.erase(players.begin() + i);
                 if (players.size() == 1) {
@@ -588,7 +602,7 @@ void GameEngine::ReinforcementPhase() {
             count++;
         }
         //calcuate the contient bouns
-        check = (*players[i]).playerContinentBouns();
+        check = (*players[i]).playerContinentBonus();
 
         if (check == true)
         {
@@ -625,8 +639,10 @@ void GameEngine::IssueOrdersPhase() {
     
     for (auto player : players)
     {
-        if (tournamentMode) player->issueOrder();
-        else player->issueOrder("Deploy"); // what should be order?
+        if (tournamentMode) {
+            player->issueOrder();
+        }
+        else player->issueOrder(); // what should be order?
     }
     cout << "end of issue orders phase" << endl << endl;
 
@@ -654,7 +670,6 @@ void GameEngine::ExecuteOrdersPhase() {
                 // orderList.at(i)->validate();
                 // orderList.at(i)->execute();
                 // orderList.erase(orderList.begin() + i);
-                // TODO: fix, this part does not work because in validate, target is null and causes segfault
             }
         }
     }
@@ -670,7 +685,6 @@ void GameEngine::ExecuteOrdersPhase() {
             // orderList.at(0)->validate();
             // orderList.at(0)->execute();
             orderList.erase(orderList.begin());
-            // TODO: fix, this part does not work because in validate, target is null and causes segfault
         }
     } //order list should be empty
 

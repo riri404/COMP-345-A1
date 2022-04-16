@@ -99,7 +99,7 @@ public:
 	void DistributeTerritories();
 
 	// randomize the order of play of the players in the game
-	void ShufflePlayers(vector<Player*> players);
+	void ShufflePlayers();
 
 	void AttachToOrdersList(LogObserver* observer);
 	void AttachToProcessor(LogObserver* observer);

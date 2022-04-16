@@ -44,7 +44,7 @@ public:
 	void setPlayerID(const int& playerID);
 	void setStrategy(const string& strat, Deck* deck, vector<Player*>);
 	vector<Territory*> getTerritoryList();
-	bool playerContinentBouns();
+	bool playerContinentBonus();
 	//void setOrder(Orders*);
 	string GetPlayerName() const;
 	int GetPlayerID() const;

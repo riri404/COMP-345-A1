@@ -78,7 +78,6 @@ void HumanPlayerStrategy::issueOrder()
 	cout << "Your hand contains the following cards: " << endl;
 	player->getPlayerHand()->printHand();
 	cout << "Advance" << endl;
-	cout << "Exit" << endl;
 
 	cout << "Which order would you wish to issue?" << endl;
 	cin >> input;
@@ -119,7 +118,7 @@ void HumanPlayerStrategy::issueOrder()
 					Blockade* blockadeOrder = new Blockade(player, allPlayers, player->getListToDefend().at(target));
 					player->setOrder(blockadeOrder);
 				}
-				else if (input == "Negotitate")
+				else if (input == "Negotiate")
 				{
 					for (int i = 0; i < allPlayers.size(); i++) {
 						if (allPlayers.at(i) == player) {
@@ -226,14 +225,17 @@ vector<Territory*> HumanPlayerStrategy::toAttack()
 	string toAttack;
 	string input;
 
-	for (int i = 0; i < player->getTerritoryList().size(); i++)
+	auto tList = player->getTerritoryList();
+
+	for (int i = 0; i < tList.size(); i++)
 	{
-		for (int j = 0; j > player->getTerritoryList().at(i)->getAdjTerritories().size(); j++) {
+		auto adjT = tList.at(i)->getAdjTerritories();
+		for (int j = 0; j < adjT.size(); j++) {
 			// Make sure territory does not belong to player
-			if (player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner() != player) {
-				cout << "Adjacent territories of territory " << player->getTerritoryList().at(i)->getName() << " are: " << endl;
-				cout << "\t" << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() << " belonging to player " << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner()->GetPlayerName()
-					<< " and has " << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getArmies() << " armie units." << endl;
+			if (adjT.at(j)->getPlayerOwner()->GetPlayerID() != player->GetPlayerID()) {
+				cout << "Adjacent territories of territory " << tList.at(i)->getName() << " are: " << endl;
+				cout << "\t" << adjT.at(j)->getName() << " belonging to player " << adjT.at(j)->getPlayerOwner()->GetPlayerName()
+					<< " and has " << adjT.at(j)->getArmies() << " armie units." << endl;
 			}
 		}
 	}
@@ -241,17 +243,20 @@ vector<Territory*> HumanPlayerStrategy::toAttack()
 	/// Do while loop so the player can add the territories they wish to attack to the attackList
 	while (true)
 	{
-		cout << "Which territory do you wish to attack? (Enter territory name)" << endl;
+		cout << "Player: " << player->GetPlayerName() << " Which territory do you wish to attack? (Enter territory name)" << endl;
 		cin >> toAttack;
+		bool addedAttack = false;
 
 		for (int i = 0; i < player->getTerritoryList().size(); i++)
 		{
-			for (int j = 0; j > player->getTerritoryList().at(i)->getAdjTerritories().size(); j++) {
+			if (addedAttack) break;
+			for (int j = 0; j < player->getTerritoryList().at(i)->getAdjTerritories().size(); j++) {
 				// If territory does not belong to the player, then it's a valid input.
-				if (player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() == toAttack && player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner() != player) {
+				if (player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() == toAttack && player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner()->GetPlayerID() != player->GetPlayerID()) {
 					cout << "Territory " << player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() << " is being added to attackList." << endl;
 					player->addTerritoryToAttack(player->getTerritoryList().at(i)->getAdjTerritories().at(j));
-					continue;
+					addedAttack = true;
+					break;
 				}
 				// If territory belongs to the player, it's not a valid input
 				else if (player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getName() == toAttack && player->getTerritoryList().at(i)->getAdjTerritories().at(j)->getPlayerOwner() == player) {
@@ -289,8 +294,8 @@ vector<Territory*> HumanPlayerStrategy::toDefend()
 	int defend;
 	string input;
 
+	cout << "Your territories are: " << endl;
 	for (int i = 0; i < player->getTerritoryList().size(); i++) {
-		cout << "Your territories are: " << endl;
 		cout << "\t" << i << ". " << player->getTerritoryList().at(i)->getName() << " with armies: " << player->getTerritoryList().at(i)->getArmies() << endl;
 	}
 

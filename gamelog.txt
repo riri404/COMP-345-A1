@@ -1,68 +1,23 @@
 State: Starting game
-Command: tournament -M bigeurope bigeurope -P Aggressive Benevolent Neutral Cheater -G 3 -D 50
-Effect: Tournament Mode activated.
-Phase: Starting tournament
+Command: loadmap bigeurope
+Effect: maploaded
+Phase: Map loaded
+Command: validatemap
+Effect: mapvalidated
+Phase: Map validated
+Command: addplayer 1
+Effect: playersadded
 Phase: Players added
+Command: addplayer 2
+Effect: playersadded
 Phase: Players added
-Phase: Players added
-Phase: Players added
+Command: gamestart
+Effect: assignreinforcement
 Phase: Reinforcement
 Phase: Issue order
 Phase: Execute order
-Unknown phase
-Phase: Players added
-Phase: Players added
-Phase: Players added
-Phase: Players added
 Phase: Reinforcement
 Phase: Issue order
 Phase: Execute order
-Unknown phase
-Phase: Players added
-Phase: Players added
-Phase: Players added
-Phase: Players added
 Phase: Reinforcement
 Phase: Issue order
-Phase: Execute order
-Unknown phase
-Phase: Players added
-Phase: Players added
-Phase: Players added
-Phase: Players added
-Phase: Reinforcement
-Phase: Issue order
-Phase: Execute order
-Unknown phase
-Phase: Players added
-Phase: Players added
-Phase: Players added
-Phase: Players added
-Phase: Reinforcement
-Phase: Issue order
-Phase: Execute order
-Unknown phase
-Phase: Players added
-Phase: Players added
-Phase: Players added
-Phase: Players added
-Phase: Reinforcement
-Phase: Issue order
-Phase: Execute order
-Unknown phase
-Tournament mode:
-M: bigeurope bigeurope 
-P: Aggressive Benevolent Neutral Cheater 
-G: 3
-D: 50
-Results: 
-Game 1
-	Map: bigeurope, Won by Aggressive
-	Map: bigeurope, Won by Aggressive
-Game 2
-	Map: bigeurope, Won by Aggressive
-	Map: bigeurope, Won by Aggressive
-Game 3
-	Map: bigeurope, Won by Aggressive
-	Map: bigeurope, Won by Aggressive
-

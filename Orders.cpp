@@ -135,7 +135,9 @@ vector<Player*> Deploy::updateListOfPlayers()
 //If the target territory does not belong to the player that issued the order, the order is invalid.
 bool Deploy::validate() {
 	bool isValid = false;
-	if (target->getPlayerOwner() == player) {
+	cout << target << endl;
+	cout << player << endl;
+	if (target->getPlayerOwner()->GetPlayerID() == player->GetPlayerID()) {
 		cout << "Deploy order is valid." << endl;
 		isValid = true;
 	}
@@ -724,7 +726,7 @@ vector<Player*> Airlift::updateListOfPlayers()
 //If the source or target does not belong to the player that issued the order, the order is invalid.
 bool Airlift::validate() {
 	bool isValid = false;
-	if (source->getPlayerOwner() == player && target->getPlayerOwner() == player) {
+	if (source->getPlayerOwner()->GetPlayerID() == player->GetPlayerID() && target->getPlayerOwner()->GetPlayerID() == player->GetPlayerID()) {
 		cout << "Airlift order is valid" << endl;
 		isValid = true;
 	}
@@ -856,7 +858,7 @@ string Negotiate::stringToLog()
 ////--------------------------ORDERSLIST---------------------------
 //Default constructor
 OrdersList::OrdersList() {
-
+	
 }
 
 //Constructor

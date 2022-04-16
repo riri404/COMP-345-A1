@@ -134,34 +134,19 @@ std::ostream& operator<<(std::ostream& outs, const Player& p1)
 	p1.handCards->printHand();
 	outs << "Player's reinforcement pool" << *(p1.reinforcementPool) << endl;;
 	//outs << (p1.territoryList);
-	//outs << p1.orderList;
 
 	return outs;
 }
 
 vector<Territory*> Player::toAttack()
 {
-	vector<Territory*> territoriesToAttack;
-	if (territoriesToAttack != territoryList) {
-		for (auto it = territoriesToAttack.begin(); it != territoriesToAttack.end(); ++it) {
-			territoriesToAttack.push_back(*it);
-			std::cout << *it << std::endl;
-		}
-	}
-
-	return territoriesToAttack;
+	return ps->toAttack();
 }
 
 vector<Territory*> Player::toDefend()
 {
 
-	vector<Territory*> territoriesToDefend = territoryList;
-
-	for (auto defend = territoriesToDefend.begin(); defend != territoriesToDefend.end(); ++defend) {
-		// territoriesToDefend.push_back(*defend);
-		std::cout << *defend << std::endl;
-	}
-	return territoriesToDefend;
+	return ps->toDefend();
 }
 
 void Player::issueOrder(string order)
@@ -201,7 +186,7 @@ void Player::issueOrder()
 }
 
 // to calculate continent bonus for reinforcement phase
-bool Player::playerContinentBouns()
+bool Player::playerContinentBonus()
 {
 	string a = "NA";
 	string b = "AS";
@@ -344,6 +329,7 @@ OrdersList* Player::getOrdersList() {
 }
 
 void Player::setOrder(Order* order) {
+	order->execute();
 	orderList->addToListOfOrders(order);
 }
 
