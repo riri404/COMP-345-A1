@@ -417,7 +417,6 @@ void AggressivePlayerStrategy::issueOrder()
 	//Create a Deploy or Advance (on its own territory) order, move all armies on the strongest country
 	if (player->getReinforcementPool() > 0)
 	{
-		cout << "loop?" << endl;
 		// If player has reinforcement units, then deploy
 		target = player->getTerritoryList().at(0);
 		// Find territory with largest number of units

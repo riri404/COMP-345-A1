@@ -344,7 +344,6 @@ void GameEngine::PlayTournament(Command* command) {
 
             Player* playerWon = MainGameLoop(); // get player who won //Q is this a place holder?
             tournamentPlayersWon.push_back(playerWon);
-
             reset();
         }
     }
@@ -560,7 +559,8 @@ Player* GameEngine::MainGameLoop() {
                     cout << "There's only one player left." << endl;
                     state = State::win;
                     Notify(this);
-                    return players[0];
+                    Player* p = new Player(*players[0]);
+                    return p;
                 }
             }
         }
@@ -770,16 +770,16 @@ string GameEngine::tournamentLog() {
     oss << endl;
     oss << "P: ";
     // TODO: replace player->GetPlayerName() by getter for strategy name
-    for (auto player : players) oss << player->GetPlayerName() << " ";
+    for (auto player : tournamentPlayers) oss << player << " ";
     oss << endl;
     oss << "G: " << tournamentNumOfGames << endl;
-    oss << "D: " << tournamentMaxturns << endl << endl;
+    oss << "D: " << tournamentMaxturns << endl;
     // logging results
     oss << "Results: " << endl;
     for (int i = 0; i < tournamentNumOfGames; ++i) {
         oss << "Game " << i + 1 << endl;
         for (int j = 0; j < tournamentMaps.size(); ++j) {
-            auto player = tournamentPlayersWon.at(i * tournamentMaps.size() + j);
+            auto player = tournamentPlayersWon[i * tournamentMaps.size() + j];
             oss << "\t" << "Map: " << tournamentMaps.at(j) << ", Won by " << player->GetPlayerName() << endl;
         }
     }
@@ -795,24 +795,18 @@ bool GameEngine::loadAnotherMap(string file) {
 void GameEngine::reset() {
     // NOTE: All of these should be reloaded on each game in the tournament
     //Q Should not we call the destructors?
-    for (auto p : players) {
-     
-        delete p;
-    }
-  //  map->clear();
-   // map->~Map();
-   // delete map;
+    for (auto p : players) delete p;
     players.clear();
+    map->clear();
 
-
-    // mapTerritories.clear();
-    //delete mapLoader;
-    state = State::null;
+    mapTerritories.clear();
+    state = State::start;
    
     delete deck;
-   // deck = new Deck();
+    deck = new Deck();
     NumberOfTerritories = 0;
     numberOfPlayers = 0;
+    cout << "Resetted state" << endl;
     // we should use delete to call the destructures 
     // would not calling delete gameEngine take care of some of the cleaning .. check ~GameEngine
 }
@@ -887,4 +881,5 @@ void GameEngine::initTournament() {
     for (int i = 0; i < players.size(); ++i) {
         players[i]->setStrategy(tournamentPlayers[i], deck, players);
     }
+    cout << "Tournament initialized" << endl;
 }

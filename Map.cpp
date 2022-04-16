@@ -11,7 +11,6 @@ Territory::~Territory() {
     ownerID = -1;
     armies = 0;
     id = -1;
-    cout << name << endl << continentName << endl;
     name = "";             	// territory name.
 
     continentName = "";
@@ -195,8 +194,8 @@ void Map::clear() {
     continents.clear();
     mapLoader->clear();
     numTerritories = 0;
-    name = "N/A";
     isLoaded = false;
+    cout << "Map cleared" << endl;
 }
 
 Map::~Map() {

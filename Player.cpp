@@ -61,7 +61,7 @@ Player::Player(const Player& p)
 {
 	this->playerID = p.playerID;
 	this->reinforcementPool = p.reinforcementPool;
-	this->name = p.name;
+	this->name = new string(*(p.name));
 	this->territoryList = p.territoryList;
 	this->handCards = p.handCards;
 	this->orderList = p.orderList;
@@ -79,10 +79,10 @@ Player::~Player()
 	reinforcementPool = nullptr;
 	delete orderList;
 	orderList = nullptr;
-	for (auto p : territoryList)
-	{
-		delete p;
-	}
+	// for (auto p : territoryList)
+	// {
+	// 	delete p;
+	// }
 	territoryList.clear();
 
 	// Added by Justine & Jennifer
