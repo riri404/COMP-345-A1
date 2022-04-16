@@ -11,10 +11,13 @@ Territory::~Territory() {
     ownerID = -1;
     armies = 0;
     id = -1;
-   // name = "";
-//    continentName = "";
-  //  adjTerritories.clear();
-  //  delete player;
+    cout << name << endl << continentName << endl;
+    name = "";             	// territory name.
+
+    continentName = "";
+   // adjTerritories.clear();
+   // delete player;
+
 } // map will handle memory
 
 Territory::Territory() {

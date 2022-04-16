@@ -1,5 +1,5 @@
 State: Starting game
-Command: tournament -M bigeurope -P Aggressive Benevolent Neutral Cheater -G 1 -D 50
+Command: tournament -M bigeurope bigeurope -P Aggressive Benevolent Neutral Cheater -G 3 -D 50
 Effect: Tournament Mode activated.
 Phase: Starting tournament
 Phase: Players added
@@ -10,3 +10,7 @@ Phase: Reinforcement
 Phase: Issue order
 Phase: Execute order
 Unknown phase
+Phase: Players added
+Phase: Players added
+Phase: Players added
+Phase: Players added

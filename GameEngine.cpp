@@ -169,7 +169,6 @@ void GameEngine::TakeInput() {
             if (commandEntered->type == Command::CommandType::tournament) {
                 
                 // tournament -M <listofmaps> -P <listofplayerstrategies> -G <numberofgames> -D <maxnumberofturns>\" to enter the parameters
-                // 
                 // tournament -M bigeurope sw_baltic bigeurope2 sw_baltic2 map5 -P Aggressive Benevolent Neutral Cheater -G 3 -D 50
                 // tournament -M bigeurope bigeurope -P Aggressive Benevolent Neutral Cheater -G 3 -D 50
         
@@ -800,7 +799,7 @@ void GameEngine::reset() {
      
         delete p;
     }
-    map->clear();
+  //  map->clear();
    // map->~Map();
    // delete map;
     players.clear();
@@ -809,7 +808,7 @@ void GameEngine::reset() {
     // mapTerritories.clear();
     //delete mapLoader;
     state = State::null;
-
+   
     delete deck;
    // deck = new Deck();
     NumberOfTerritories = 0;

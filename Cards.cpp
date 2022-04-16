@@ -52,6 +52,9 @@ string* Cards::getCardType()
 
 Cards::~Cards()
 {
+	cardTypes.clear();
+	type = NULL;
+//	delete	type;
 }
 
 // ------------------------------------------------------
@@ -59,6 +62,9 @@ Cards::~Cards()
 // ------------------------------------------------------
 Deck::Deck()
 {
+	//this->myDeck = *new vector<Cards*>();
+	//this->cardPtr = new Cards();
+	//this->tempCard = new Cards();
 }
 
 // Assignment operator
@@ -81,6 +87,13 @@ Deck& Deck::operator=(const Deck& deck)
 
 void Deck::create_deck()
 {
+	//myDeck.clear();
+	//cardPtr = NULL;
+	//delete cardPtr;
+	//tempCard = NULL;
+	//delete tempCard;
+	//cardPtr = NULL;
+	// myDeck.clear();
 	// Assign 40 cards in deck vector, each type has 8 cards, 5 types
 	for (int i = 0; i < 10; i++)
 	{
@@ -155,7 +168,15 @@ void Deck::addCardDeck(Cards* card)
 
 Deck::~Deck()
 {
+
+	cout << "~Deck() " << cardPtr;
+
+	
+	delete tempCard; // for draw & remove element of vector
 	delete(cardPtr);
+	myDeck.clear();
+	myDeck.shrink_to_fit();
+	//myDeck.~vector();
 }
 
 // ----------------------------------------------------------
