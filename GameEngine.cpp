@@ -169,7 +169,9 @@ void GameEngine::TakeInput() {
             if (commandEntered->type == Command::CommandType::tournament) {
                 
                 // tournament -M <listofmaps> -P <listofplayerstrategies> -G <numberofgames> -D <maxnumberofturns>\" to enter the parameters
-                // tournament M map1 map2 map3 map4 map5 map6 P Aggressive sami wrong blabla the5th G 2 D 100
+                // 
+                // tournament -M bigeurope sw_baltic bigeurope2 sw_baltic2 map5 -P Aggressive Benevolent Neutral Cheater -G 3 -D 50
+                // tournament -M bigeurope bigeurope -P Aggressive Benevolent Neutral Cheater -G 3 -D 50
         
                 tournamentMode = true;
                 PlayTournament(commandEntered);
@@ -319,7 +321,7 @@ bool GameEngine::ValidateMapOld() {
 
 void GameEngine::PlayTournament(Command* command) {
     
-    cout << *command;
+ //   cout << *command;
  
   //  std::cout << "Use \"tournament -M <listofmaps> -P <listofplayerstrategies> -G <numberofgames> -D <maxnumberofturns>\" to enter the parameters" << std::endl;
 
@@ -341,7 +343,7 @@ void GameEngine::PlayTournament(Command* command) {
             // play game
             GameStart(); // is this the correct function? //Q yes
 
-            Player* playerWon = new Player(); // get player who won //Q is this a place holder?
+            Player* playerWon = MainGameLoop(); // get player who won //Q is this a place holder?
             tournamentPlayersWon.push_back(playerWon);
 
             reset();
@@ -528,7 +530,7 @@ void GameEngine::GameStart() {
         
         cout << endl << *player << endl;
     }
-   GameEngine::MainGameLoop(); // Here we start the main game loop
+ //  GameEngine::MainGameLoop(); // Here we start the main game loop
 
     // For debugging:
     
@@ -794,13 +796,22 @@ bool GameEngine::loadAnotherMap(string file) {
 void GameEngine::reset() {
     // NOTE: All of these should be reloaded on each game in the tournament
     //Q Should not we call the destructors?
-    for (auto p : players) delete p;
-    players.clear();
+    for (auto p : players) {
+     
+        delete p;
+    }
     map->clear();
-    mapTerritories.clear();
+   // map->~Map();
+   // delete map;
+    players.clear();
+
+
+    // mapTerritories.clear();
+    //delete mapLoader;
     state = State::null;
+
     delete deck;
-    deck = new Deck();
+   // deck = new Deck();
     NumberOfTerritories = 0;
     numberOfPlayers = 0;
     // we should use delete to call the destructures 

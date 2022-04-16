@@ -1,7 +1,7 @@
 #include "PlayerStrategy.h"
-#include "Orders.h"
-#include "Map.h"
-#include "Player.h"
+//#include "Orders.h"
+//#include "Map.h"
+//#include "Player.h"
 #include <vector>
 #include <set>
 using namespace std;
@@ -706,7 +706,9 @@ void CheaterPlayerStrategy::issueOrder()
 
 		// Conquer all adjacent territories that are not his
 		for (int j = 0; j < source->getAdjTerritories().size(); j++) {
-			target = source->getAdjTerritories().at(i);
+			//target = source->getAdjTerritories().at(i);
+			
+			target = source->getAdjTerritories().at(j);
 
 			if (target->getPlayerOwner() != player) {
 				target->setPlayerOwner(player);

@@ -1,10 +1,12 @@
 #include "Player.h"
-#include "Map.h"
-#include "Cards.h"
-#include <vector>
-#include <iostream>
-#include <string>
+//#include "Map.h"
+//#include "Cards.h"
+//#include <vector>
+//#include <iostream>
+//#include <string>
 using namespace std;
+
+//class PlayerStrategy;
 
 Player::Player()
 {
