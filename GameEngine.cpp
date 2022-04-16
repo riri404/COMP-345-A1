@@ -141,23 +141,17 @@ void GameEngine::StartupPhase() {
     // "During the start game state, a new tournament command can be entered by the user, 
     // which triggers the Tournament Mode"
 
-   // string input = "";
-   // std::cout << "Do you want to play tournament mode? Enter (y/n): ";
-   //while (input != "y" || input != "n") {
-   //     std::cout << "Enter (y/n): ";
-   //     std::cin >> input;
-   // }
-   //if (input == "y") {
-   //     playTournament();
-   //     return;
-   // }
-  
-    TakeInput();
-
-   // LoadMap();
-   // ValidateMap();
-   // AddPlayers();
-   // GameStart();
+   string input = "";
+   std::cout << "Do you want use the gamelog file to play the tournament? Enter (y/n): " << endl;
+   do {
+       std::cin >> input;
+       if (input == "n") break;
+   }  while (input != "y");
+   if (input == "y") {
+       processor->FileTournamentFunctionInput("tournamentLog.txt");
+       tournamentMode = true;
+       PlayTournament(nullptr);
+   } else TakeInput(); 
 }
 
 void GameEngine::TakeInput() {
@@ -324,15 +318,17 @@ bool GameEngine::ValidateMapOld() {
 }
 
 
-void GameEngine::PlayTournament(Command* command) {
+void GameEngine::PlayTournament(Command* command = nullptr) {
     
  //   cout << *command;
  
   //  std::cout << "Use \"tournament -M <listofmaps> -P <listofplayerstrategies> -G <numberofgames> -D <maxnumberofturns>\" to enter the parameters" << std::endl;
 
-    string commandText = command->getCommandText();
+    if (command != nullptr) {
+        string commandText = command->getCommandText();
+        processor->TournamentFunctionInput(commandText);
+    }
 
-    processor->TournamentFunctionInput(commandText);
     if (processor->TournamentValidation()) {
      // input is valid, so set the parameters
     initTournamentParams();
@@ -668,8 +664,8 @@ void GameEngine::ExecuteOrdersPhase() {
             {
                 //validate, excute and delete order
                 // orderList.at(i)->validate();
-                // orderList.at(i)->execute();
-                // orderList.erase(orderList.begin() + i);
+                orderList.at(i)->execute();
+                orderList.erase(orderList.begin() + i);
             }
         }
     }
@@ -683,7 +679,7 @@ void GameEngine::ExecuteOrdersPhase() {
         {
             //validate, excute and delete order
             // orderList.at(0)->validate();
-            // orderList.at(0)->execute();
+            orderList.at(0)->execute();
             orderList.erase(orderList.begin());
         }
     } //order list should be empty

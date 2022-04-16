@@ -263,7 +263,7 @@ vector<Player*> Advance::updateListOfPlayers()
 //If the target territory is not adjacent to the source territory, the order is invalid.
 bool Advance::validate() {
 	bool isValid = false;
-	if (source->getPlayerOwner() == player && target->isAdjacentTo(source->getId()) && !player->isNegociating(this->target->getPlayerOwner())) {
+	if (source->getPlayerOwner()->GetPlayerID() == player->GetPlayerID() && target->isAdjacentTo(source->getId()) && !player->isNegociating(this->target->getPlayerOwner())) {
 		cout << "Advance order is valid" << endl;
 		isValid = true;
 	}
